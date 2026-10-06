@@ -1,4 +1,12 @@
 /**
+ * Canonical site URL. Set NEXT_PUBLIC_SITE_URL once the custom domain is live; until then
+ * Vercel's production domain is used, and the placeholder domain only for local builds.
+ */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://www.socialstays.in");
+
+/**
  * Business details used across the site.
  * PLACEHOLDERS: WhatsApp number, phone, email and Instagram handle must be replaced
  * with the client's real details before launch (or set via the NEXT_PUBLIC_* env vars).
@@ -8,7 +16,7 @@ export const site = {
   tagline: "Luxury stay collection",
   description:
     "Private villas and farmhouses around Indore — in Jaam Gate, Mandu, Omkareshwar and Ujjain — booked whole for your family, friends or celebration.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.socialstays.in",
+  url: siteUrl,
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "910000000000",
   phone: {
     display: process.env.NEXT_PUBLIC_PHONE_DISPLAY ?? "+91 00000 00000",

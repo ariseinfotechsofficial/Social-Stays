@@ -42,7 +42,7 @@ export default function HomePage() {
           "@type": "Organization",
           name: site.name,
           url: site.url,
-          logo: `${site.url}/icon.svg`,
+          logo: `${site.url}/images/logo.jpeg`,
           description: site.description,
           email: site.email,
           telephone: site.phone.display,

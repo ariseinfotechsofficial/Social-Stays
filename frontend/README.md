@@ -9,10 +9,27 @@ npm install
 cp .env.example .env.local   # then fill in the real numbers and IDs
 npm run dev                  # http://localhost:3000
 npm run build && npm start   # production
-npm run lint
+npm run lint && npm run typecheck
 ```
 
 Node 20.9 or newer.
+
+## Deploy to Vercel
+
+The Next.js app is this `frontend/` folder; nothing outside it is needed to build or run the site.
+
+1. **Import the project.** Either push the repository to GitHub and import it in Vercel, with **Root Directory** set to `frontend`, or run `npx vercel` from inside `frontend/` with the Vercel CLI.
+2. **Keep the detected settings.** Framework preset: Next.js. Build command: `next build`. Install command: `npm ci`. Node 20.9 or newer, enforced by `engines` in `package.json`.
+3. **Add environment variables** under Project → Settings → Environment Variables, copied from `.env.example`:
+   - `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_PHONE_E164`, `NEXT_PUBLIC_PHONE_DISPLAY`, `NEXT_PUBLIC_EMAIL`: the client's real contact details.
+   - `NEXT_PUBLIC_GTM_ID`: once the Tag Manager container exists.
+   - `OWNER_LEADS_WEBHOOK_URL`: where owner leads are sent.
+   - `NEXT_PUBLIC_SITE_URL`: the custom domain, once it is connected. Until then the site uses Vercel's production domain for canonical links, the sitemap and social previews.
+4. **Redeploy after changing variables.** `NEXT_PUBLIC_*` values are baked in at build time.
+
+After the custom domain is live, submit `https://<domain>/sitemap.xml` in Google Search Console.
+
+Every page is pre-rendered at build time. The only server code is `/api/owner-leads`, which Vercel runs as a function. Photos are served through Vercel Image Optimization, which resizes them and converts them to WebP/AVIF.
 
 ## Stack
 
@@ -41,7 +58,9 @@ src/
   components/          layout, enquiry form, villa, home sections, motion helpers
   data/                ALL CONTENT (villas, destinations, experiences, FAQs, policies, reviews, team)
   lib/                 site config, WhatsApp message builder, UTM capture, analytics
-  assets/photos/       placeholder photography (WebP)
+  assets/photos/       placeholder photography (WebP), imported so Next can optimise it
+public/
+  images/              the client's original logo files (logo.jpeg, favicon.jpeg), served at /images/…
 ```
 
 ## Content is mock data
