@@ -36,11 +36,11 @@ export function LogoMark({ className, title }: { className?: string; title?: str
 /** Mark + wordmark lockup. `tone` sets the colour; the mark is always the brand gold on light grounds. */
 export function Logo({ tone = "dark", className }: { tone?: "dark" | "light"; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+    <span className={cn("inline-flex items-center gap-2.5 max-[22.5rem]:gap-2", className)}>
       <LogoMark className={cn("w-7 shrink-0 transition-colors duration-500", tone === "light" ? "text-white" : "text-gold")} />
       <span
         className={cn(
-          "font-display text-[1.3rem] leading-none font-medium tracking-[0.14em] uppercase transition-colors duration-500",
+          "font-display text-[1.3rem] leading-none font-medium tracking-[0.14em] uppercase transition-colors duration-500 max-[22.5rem]:text-[1.125rem] max-[22.5rem]:tracking-[0.1em]",
           tone === "light" ? "text-white" : "text-ink",
         )}
       >

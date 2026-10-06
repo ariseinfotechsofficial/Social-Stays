@@ -3,7 +3,7 @@
 import { WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import { useId, useState } from "react";
 import type { DateRange } from "react-day-picker";
-import { DatesField, GuestsField, SelectField } from "@/components/enquiry/fields";
+import { DatesField, GuestsField, GuestsSelect, SelectField } from "@/components/enquiry/fields";
 import { Button } from "@/components/ui/Button";
 import { destinations } from "@/data/destinations";
 import { enquiryOccasions } from "@/data/occasions";
@@ -17,8 +17,8 @@ export type EnquiryPrefill = {
 };
 
 type Props = EnquiryPrefill & {
-  /** "bar" = one row on large screens (home hero); "stack" = vertical card */
-  layout?: "bar" | "stack";
+  /** "bar" = one row on large screens (home hero); "compact" = 2×2 grid for phones; "stack" = vertical card */
+  layout?: "bar" | "compact" | "stack";
   /** Where the form sits, sent with the tracking event */
   placement: string;
   submitLabel?: string;
@@ -57,6 +57,29 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
   };
 
   const bar = layout === "bar";
+
+  if (layout === "compact") {
+    // Hairline grid: cells sit on a 1px gap over the line colour
+    const tile = "bg-white px-4 py-3";
+    return (
+      <form onSubmit={submit} className={cn("overflow-hidden rounded-[14px] bg-white", className)} aria-label="Check availability">
+        <div className="grid grid-cols-2 gap-px bg-line md:grid-cols-4">
+          {!villa && (
+            <SelectField id={`${id}-dest`} label="Destination" value={dest} onChange={setDest} options={destinationOptions} placeholder="Anywhere" className={tile} />
+          )}
+          <DatesField id={`${id}-dates`} range={range} onChange={setRange} compact className={tile} />
+          <GuestsSelect id={`${id}-guests`} value={guests} onChange={setGuests} max={villa?.maxGuests ?? 30} className={tile} />
+          <SelectField id={`${id}-occasion`} label="Occasion" value={occ} onChange={setOcc} options={occasionOptions} placeholder="Getaway" className={tile} />
+        </div>
+        <div className="border-t border-line p-2.5">
+          <Button type="submit" size="lg" className="w-full" icon={<WhatsappLogoIcon weight="regular" className="size-5" />}>
+            {submitLabel ?? "Enquire on WhatsApp"}
+          </Button>
+        </div>
+      </form>
+    );
+  }
+
   const cell = bar
     ? "px-5 py-3.5 lg:px-6 lg:py-0 border-b border-line lg:border-b-0 lg:border-r"
     : "px-4 py-3 border-b border-line";

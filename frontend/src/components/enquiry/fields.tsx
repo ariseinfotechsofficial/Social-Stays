@@ -82,11 +82,14 @@ export function DatesField({
   id,
   range,
   onChange,
+  compact = false,
   className,
 }: {
   id: string;
   range: DateRange | undefined;
   onChange: (range: DateRange | undefined) => void;
+  /** Shorter wording for half-width cells */
+  compact?: boolean;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -94,7 +97,9 @@ export function DatesField({
   const label = range?.from
     ? range.to
       ? `${format(range.from, "d MMM")} – ${format(range.to, "d MMM")}`
-      : `${format(range.from, "d MMM")} – add check-out`
+      : compact
+        ? `${format(range.from, "d MMM")} – …`
+        : `${format(range.from, "d MMM")} – add check-out`
     : "Add dates";
 
   return (
@@ -116,7 +121,7 @@ export function DatesField({
           align="start"
           sideOffset={14}
           collisionPadding={12}
-          className="z-[80] rounded-[6px] border border-line bg-white p-4 shadow-[0_24px_60px_-20px_rgb(42_36_27/0.35)] data-[state=open]:animate-[pop-in_220ms_var(--ease-out-expo)]"
+          className="z-[80] max-w-[calc(100vw-1.5rem)] rounded-[6px] border border-line bg-white p-4 shadow-[0_24px_60px_-20px_rgb(42_36_27/0.35)] data-[state=open]:animate-[pop-in_220ms_var(--ease-out-expo)]"
           data-lenis-prevent
         >
           <Calendar
@@ -137,6 +142,33 @@ export function DatesField({
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
+  );
+}
+
+/** Guest count as a native picker: on phones this opens the system wheel, which beats tiny +/− buttons. */
+export function GuestsSelect({
+  id,
+  value,
+  onChange,
+  max = 30,
+  className,
+}: {
+  id: string;
+  value: number;
+  onChange: (value: number) => void;
+  max?: number;
+  className?: string;
+}) {
+  return (
+    <SelectField
+      id={id}
+      label="Guests"
+      value={value ? String(value) : ""}
+      onChange={(v) => onChange(Number(v) || 0)}
+      options={Array.from({ length: max }, (_, i) => ({ value: String(i + 1), label: `${i + 1} guest${i ? "s" : ""}` }))}
+      placeholder="Add guests"
+      className={className}
+    />
   );
 }
 
