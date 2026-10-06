@@ -132,4 +132,4 @@ Structured data: `Organization` (home), `LodgingBusiness` (each villa), `Tourist
 
 - **Gold:** `#8A6B24` is for buttons and large text. Small gold text uses `gold-deep` (`#75591B`), which passes WCAG AA on both white and beige. `brass` is for rules and stars only.
 - **Typography:** type sizes are the `type-*` utilities; avoid `text-*` names for them, because `tailwind-merge` treats those as colours.
-- **Motion:** keep it intentional. The hero load sequence, photo reveals on large images, and motion that responds to the visitor. Avoid adding fade-ins to every section.
+- **Motion:** keep it intentional. The hero load sequence, photo reveals on large images, and motion that responds to the visitor. Avoid adding fade-ins to every section. oaky
