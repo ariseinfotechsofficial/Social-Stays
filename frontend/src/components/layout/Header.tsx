@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 const MobileMenu = dynamic(() => import("@/components/layout/MobileMenu").then((mod) => mod.MobileMenu), { ssr: false });
 
 /** Pages that open on a full-bleed photo: the header starts transparent with white text. */
-const OVERLAY_ROUTES = [/^\/$/, /^\/destinations\/[^/]+$/, /^\/celebrations$/, /^\/owners$/, /^\/about$/, /^\/experiences$/];
+const OVERLAY_ROUTES = [/^\/$/, /^\/destinations\/[^/]+$/, /^\/owners$/, /^\/about$/, /^\/experiences$/];
 
 function FlipLabel({ children }: { children: string }) {
   return (
@@ -64,10 +64,17 @@ export function Header() {
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-500",
-          solid ? "border-b border-line bg-white/95 backdrop-blur-md" : "border-b border-transparent bg-transparent",
+          solid ? "border-b border-line bg-white/90 backdrop-blur-md" : "border-b border-transparent bg-transparent",
+          scrolled && "shadow-[0_10px_30px_-18px_rgb(42_36_27/0.35)]",
         )}
       >
-        <div className="container-page flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+        {/* Compacts once the page is scrolled, leaving more room for content */}
+        <div
+          className={cn(
+            "container-page flex items-center justify-between gap-6 transition-[height] duration-500 ease-out-expo",
+            scrolled ? "h-16 lg:h-[4.25rem]" : "h-[4.5rem] lg:h-20",
+          )}
+        >
           <Link href="/" aria-label="Social Stays, home" className="shrink-0">
             <Logo tone={tone} />
           </Link>

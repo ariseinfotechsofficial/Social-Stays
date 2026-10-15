@@ -61,13 +61,19 @@ export type Destination = {
   seo: { title: string; description: string };
 };
 
-export type Room = { name: string; beds: string; note?: string };
+export type VillaCategory = "luxury" | "value";
+
+export type Room ={ name: string; beds: string; note?: string };
 
 export type Villa = {
   slug: string;
   name: string;
   destination: DestinationSlug;
   status: "live" | "coming-soon";
+  /** Home page splits the collection into Luxury Stays and Value Stays */
+  category: VillaCategory;
+  /** Short label on the card photo, e.g. "Signature" */
+  badge?: string;
   /** One line under the name */
   tagline: string;
   /** Card summary, ~20 words */

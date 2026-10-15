@@ -61,7 +61,7 @@ export default function ContactPage() {
           })}
         </ul>
 
-        <div className="rounded-[8px] border border-line">
+        <div className="self-start overflow-hidden rounded-[8px] border border-line pb-4">
           <div className="px-5 pt-6 pb-2">
             <h2 className="type-display-m">Check availability</h2>
             <p className="mt-1 text-[0.9375rem] text-ink-soft">The form opens WhatsApp with your details filled in.</p>

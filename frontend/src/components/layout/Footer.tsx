@@ -14,9 +14,8 @@ const columns = [
   {
     title: "Stay with us",
     links: [
-      { label: "All villas", href: "/villas" },
+      { label: "All stays", href: "/villas" },
       { label: "Experiences", href: "/experiences" },
-      { label: "Celebrations", href: "/celebrations" },
       { label: "FAQ", href: "/faq" },
     ],
   },
@@ -24,7 +23,7 @@ const columns = [
     title: "Company",
     links: [
       { label: "About us", href: "/about" },
-      { label: "List your villa", href: "/owners" },
+      { label: "Partner with us", href: "/owners" },
       { label: "Contact", href: "/contact" },
     ],
   },

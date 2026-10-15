@@ -1,4 +1,4 @@
-import type { DestinationSlug, Villa } from "@/data/types";
+import type { DestinationSlug, Villa, VillaCategory } from "@/data/types";
 
 /*
  * MOCK DATA — villa names, prices, hosts and ratings are placeholders written for the
@@ -19,6 +19,7 @@ export const villas: Villa[] = [
     name: "Amaltas House",
     destination: "jaam-gate",
     status: "live",
+    category: "luxury",
     tagline: "A glass-fronted villa on two acres of lawn below the Vindhya ridge",
     summary: "Four bedrooms opening onto a pool and an old jamun tree, ten minutes from the Jaam Gate viewpoint.",
     description: [
@@ -72,6 +73,7 @@ export const villas: Villa[] = [
     name: "Sunset Ridge",
     destination: "jaam-gate",
     status: "live",
+    category: "luxury",
     tagline: "Three bedrooms on the edge of the escarpment, with a pool facing west",
     summary: "An infinity pool that looks straight down the Narmada valley. Built for couples and small groups who come for the view.",
     description: [
@@ -123,6 +125,8 @@ export const villas: Villa[] = [
     name: "Palash Farm",
     destination: "jaam-gate",
     status: "live",
+    category: "luxury",
+    badge: "Signature",
     tagline: "Five cottages and two acres of lawn, made for big family weekends",
     summary: "Brick cottages around a pool and a lawn that seats sixty. Our favourite for birthdays and family get-togethers.",
     description: [
@@ -181,6 +185,8 @@ export const villas: Villa[] = [
     name: "Baobab House",
     destination: "mandu",
     status: "live",
+    category: "value",
+    badge: "Best value",
     tagline: "Arched verandahs, a courtyard and a pool, ten minutes from Jahaz Mahal",
     summary: "A courtyard home built in the Mandu way, with pointed arches, thick stone walls and a pool lit up at night.",
     description: [
@@ -232,6 +238,7 @@ export const villas: Villa[] = [
     name: "Kesar Bagh",
     destination: "mandu",
     status: "coming-soon",
+    category: "luxury",
     tagline: "A restored haveli-style home with a rooftop facing the plateau",
     summary: "Four rooms around a stone courtyard, and a rooftop terrace for long dinners. Opening this winter.",
     description: [
@@ -271,6 +278,8 @@ export const villas: Villa[] = [
     name: "Rewa Riverside",
     destination: "omkareshwar",
     status: "live",
+    category: "luxury",
+    badge: "Riverside",
     tagline: "A quiet villa above the Narmada, fifteen minutes from the temple",
     summary: "Three bedrooms, a pool among the trees and mornings on the river. Close to darshan, far from the crowds.",
     description: [
@@ -322,6 +331,8 @@ export const villas: Villa[] = [
     name: "Mahua Farm",
     destination: "omkareshwar",
     status: "live",
+    category: "luxury",
+    badge: "New",
     tagline: "A working farm with cottages, a pool and room for the dogs to run",
     summary: "Four bedrooms on a mango and mahua farm near the backwaters. Pet-friendly, child-friendly, slow in the best way.",
     description: [
@@ -378,6 +389,7 @@ export const villas: Villa[] = [
     name: "Avantika House",
     destination: "ujjain",
     status: "live",
+    category: "luxury",
     tagline: "A calm, modern villa for temple trips, twenty minutes from Mahakaleshwar",
     summary: "Four bedrooms around a lawn and pool on the Indore side of Ujjain. Easy for early darshan, easy for grandparents.",
     description: [
@@ -430,6 +442,8 @@ export const villas: Villa[] = [
     name: "Shipra Farm",
     destination: "ujjain",
     status: "live",
+    category: "luxury",
+    badge: "Family pick",
     tagline: "Six bedrooms, a stone farmhouse and a lawn that seats eighty for dinner",
     summary: "Our largest home: a stone farmhouse, a long pool and a lawn for haldis, birthdays and team weekends.",
     description: [
@@ -488,6 +502,21 @@ export const villas: Villa[] = [
 ];
 
 export const liveVillas = villas.filter((v) => v.status === "live");
+
+export const villaCategories: { slug: VillaCategory; label: string; short: string; blurb: string }[] = [
+  {
+    slug: "luxury",
+    label: "Luxury Stays",
+    short: "Luxury",
+    blurb: "Our finest homes: private pools, big lawns and a cook on call.",
+  },
+  {
+    slug: "value",
+    label: "Value Stays",
+    short: "Value",
+    blurb: "The same whole-villa privacy and family hosting, in simpler homes at a gentler price. More are joining the collection soon.",
+  },
+];
 
 export const getVilla = (slug: string) => villas.find((v) => v.slug === slug);
 

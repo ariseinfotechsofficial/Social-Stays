@@ -51,7 +51,7 @@ src/
       page.tsx         home
       villas/          listing with filters + villa detail template
       destinations/    index + 4 SEO landing pages
-      experiences/  celebrations/  owners/  about/  faq/  contact/  policies/
+      experiences/  owners/  about/  faq/  contact/  policies/
     (landing)/lp/      ad landing template: no menu, one villa or one occasion
     api/owner-leads/   owner partnership form endpoint
     sitemap.ts  robots.ts  icon.svg  apple-icon.png

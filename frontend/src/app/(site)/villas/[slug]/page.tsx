@@ -1,24 +1,28 @@
-import { ClockIcon, MapPinIcon, ShieldCheckIcon } from "@phosphor-icons/react/dist/ssr";
+import { CalendarXIcon, CheckIcon, ClockIcon, MapPinIcon, WalletIcon, WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EnquireTrigger } from "@/components/enquiry/EnquiryDialog";
 import { amenities } from "@/components/icons";
+import { WhatsAppLink } from "@/components/layout/ContactLinks";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { MapEmbed } from "@/components/shared/MapEmbed";
 import { Stars } from "@/components/shared/Reviews";
-import { TextLink } from "@/components/ui/Button";
+import { TextLink, buttonClasses } from "@/components/ui/Button";
 import { Gallery } from "@/components/villa/Gallery";
 import { MobileBookingBar, TrackVillaView, VillaEnquiryCard, type BookingVilla } from "@/components/villa/VillaBooking";
 import { VillaCard } from "@/components/villa/VillaCard";
-import { VillaFacts } from "@/components/villa/VillaFacts";
 import { destinationName, getDestination } from "@/data/destinations";
 import { experiences } from "@/data/experiences";
 import { photo } from "@/data/photos";
 import { getReviewsFor } from "@/data/reviews";
 import { getVilla, similarVillas, villas } from "@/data/villas";
 import { site } from "@/lib/site";
-import { formatINR, priceLabel } from "@/lib/utils";
+import { cn, formatINR, priceLabel } from "@/lib/utils";
+
+/** Amenities shown on phones before "Show all" */
+const MOBILE_AMENITIES = 8;
 
 export function generateStaticParams() {
   return villas.map((v) => ({ slug: v.slug }));
@@ -40,7 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/villas/[slug]">):
 
 function Block({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className="scroll-mt-28 border-t border-line py-8 lg:py-10">
+    <section id={id} className="scroll-mt-28 border-t border-line py-7 lg:py-10">
       <h2 className="type-display-m">{title}</h2>
       <div className="mt-5">{children}</div>
     </section>
@@ -98,50 +102,94 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
       <div className="container-page pt-26 lg:pt-28">
         <Breadcrumbs
           items={[
-            { label: "Villas", href: "/villas" },
+            { label: "Stays", href: "/villas" },
             { label: destination.name, href: `/destinations/${destination.slug}` },
             { label: villa.name, href: `/villas/${villa.slug}` },
           ]}
         />
 
-        <header className="mt-5 mb-6 flex flex-col gap-3 lg:mb-7 lg:flex-row lg:items-end lg:justify-between">
+      </div>
+
+      <section className="mt-5 bg-sand py-8 lg:mt-6 lg:py-12">
+        <div className="container-page grid items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
+          <Gallery photos={photos} title={villa.name} morphName={`villa-${villa.slug}`} />
+
           <div>
-            <Link href={`/destinations/${destination.slug}`} className="text-[0.9375rem] font-semibold text-gold-deep hover:underline hover:underline-offset-4">
-              {destination.name}, {villa.location.fromIndore} from Indore
+            <Link href={`/destinations/${destination.slug}`} className="text-[0.8125rem] font-semibold tracking-[0.14em] text-gold-deep uppercase hover:underline hover:underline-offset-4">
+              {destination.name} · {villa.location.fromIndore} from Indore
             </Link>
-            <h1 className="type-display-xl mt-2">{villa.name}</h1>
-            <p className="type-lead mt-2 max-w-2xl text-ink-soft">{villa.tagline}</p>
+            <h1 className="type-display-xl mt-3">{villa.name}</h1>
+            <span aria-hidden className="mt-4 block h-0.5 w-14 bg-brass" />
+            {villa.rating ? (
+              <a href="#reviews" className="mt-4 flex w-fit items-center gap-3 text-[0.9375rem] text-ink-soft">
+                <Stars rating={villa.rating.score} />
+                <span>
+                  <strong className="font-semibold text-ink">{villa.rating.score}</strong> from {villa.rating.count} stays
+                </span>
+              </a>
+            ) : (
+              soon && <span className="mt-4 inline-block rounded-full bg-white px-4 py-2 text-[0.9375rem] font-semibold">{villa.openingNote}</span>
+            )}
+            <p className="mt-4 leading-relaxed text-ink-soft">{villa.description[0]}</p>
+
+            <dl className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
+              {[
+                { label: "Bedrooms", value: `${villa.bedrooms} · ${villa.bathrooms} baths` },
+                { label: "Guests", value: `Up to ${villa.guests.max}` },
+                { label: "Check-in / out", value: `${villa.checkIn} / ${villa.checkOut}` },
+                { label: "Price", value: `${soon ? "Expected from" : "From"} ${formatINR(villa.priceFrom)} / night` },
+              ].map((f) => (
+                <div key={f.label} className="rounded-[10px] border border-line bg-white px-4 py-3">
+                  <dt className="text-[0.75rem] font-semibold tracking-[0.12em] text-gold-deep uppercase">{f.label}</dt>
+                  <dd className="mt-1 font-semibold">{f.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+              {villa.amenities.slice(0, 6).map((key) => (
+                <li key={key} className="flex items-center gap-3 text-[0.9375rem]">
+                  <CheckIcon aria-hidden weight="bold" className="size-4 shrink-0 text-gold" />
+                  {amenities[key].label}
+                </li>
+              ))}
+            </ul>
+
+            {soon ? (
+              <WhatsAppLink
+                placement="villa_spotlight_waitlist"
+                message={`Hello Social Stays, please let me know when ${villa.name} in ${destination.name} opens.`}
+                className={buttonClasses("primary", "lg", "mt-7")}
+              >
+                <WhatsappLogoIcon className="size-5" /> Notify me when it opens
+              </WhatsAppLink>
+            ) : (
+              <EnquireTrigger
+                className={buttonClasses("primary", "lg", "mt-7")}
+                prefill={{ title: `Enquire for ${villa.name}`, villa: { name: villa.name, slug: villa.slug, destination: destination.name, maxGuests: villa.guests.max } }}
+              >
+                <WhatsappLogoIcon className="size-5" /> Enquire for {villa.name}
+              </EnquireTrigger>
+            )}
           </div>
-          {villa.rating ? (
-            <a href="#reviews" className="flex items-center gap-3 text-ink-soft lg:pb-2">
-              <Stars rating={villa.rating.score} />
-              <span>
-                <strong className="font-semibold text-ink">{villa.rating.score}</strong> from {villa.rating.count} stays
-              </span>
-            </a>
-          ) : (
-            soon && <span className="w-fit rounded-full bg-sand px-4 py-2 text-[0.9375rem] font-semibold lg:mb-3">{villa.openingNote}</span>
-          )}
-        </header>
+        </div>
+      </section>
 
-        <Gallery photos={photos} title={villa.name} morphName={`villa-${villa.slug}`} />
-
-        <div className="grid gap-x-12 pt-6 pb-14 lg:grid-cols-[minmax(0,1fr)_23rem] lg:pt-8 lg:pb-20 xl:gap-x-16">
+      <div className="container-page">
+        <div className="grid gap-x-12 pb-14 lg:grid-cols-[minmax(0,1fr)_23rem] lg:pb-20 xl:gap-x-16">
           <div className="min-w-0">
-            <VillaFacts villa={villa} />
-
-            <section className="py-8 lg:py-10">
+            <section className="py-7 lg:py-10">
               <h2 className="sr-only">About {villa.name}</h2>
-              <div className="measure space-y-4 leading-relaxed text-ink-soft">
-                {villa.description.map((p, i) => (
-                  <p key={i} className={i === 0 ? "type-lead text-ink" : undefined}>
-                    {p}
-                  </p>
-                ))}
-              </div>
+              {villa.description.length > 1 && (
+                <div className="measure space-y-4 leading-relaxed text-ink-soft">
+                  {villa.description.slice(1).map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+              )}
               <ul className="mt-7 grid gap-3 sm:grid-cols-3">
                 {villa.highlights.map((h) => (
-                  <li key={h} className="rounded-[6px] bg-sand px-4 py-4 font-display text-[1.25rem] leading-snug font-medium">
+                  <li key={h} className="rounded-[6px] bg-sand px-4 py-3 font-display text-[1.125rem] leading-snug font-medium sm:py-4 sm:text-[1.25rem]">
                     {h}
                   </li>
                 ))}
@@ -154,7 +202,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
             <Block title="Where you'll sleep">
               <ul className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {villa.rooms.map((r) => (
-                  <li key={r.name} className="rounded-[6px] border border-line px-3.5 py-3 text-[0.9375rem] sm:px-4 sm:py-3.5 sm:text-base">
+                  <li key={r.name} className="rounded-[6px] border border-line px-3.5 py-3 odd:last:col-span-2 text-[0.9375rem] sm:px-4 sm:py-3.5 sm:text-base">
                     <p className="font-semibold">{r.name}</p>
                     <p className="mt-0.5 text-ink-soft">{r.beds}</p>
                     {r.note && <p className="mt-1 text-[0.875rem] text-ink-soft">{r.note}</p>}
@@ -164,17 +212,27 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
             </Block>
 
             <Block title="What's at the villa">
-              <ul className="grid grid-cols-2 gap-x-6 gap-y-3.5 xl:grid-cols-3">
-                {villa.amenities.map((key) => {
-                  const { label, icon: Icon } = amenities[key];
-                  return (
-                    <li key={key} className="flex items-center gap-3 text-[0.9375rem]">
-                      <Icon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
-                      <span>{label}</span>
-                    </li>
-                  );
-                })}
-              </ul>
+              {/* Phones show the first eight; the checkbox reveals the rest without any script */}
+              <div className="group">
+                <ul className="grid grid-cols-2 gap-x-6 gap-y-3.5 xl:grid-cols-3">
+                  {villa.amenities.map((key, i) => {
+                    const { label, icon: Icon } = amenities[key];
+                    return (
+                      <li key={key} className={cn("flex items-center gap-3 text-[0.9375rem]", i >= MOBILE_AMENITIES && "max-sm:hidden max-sm:group-has-checked:flex")}>
+                        <Icon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
+                        <span>{label}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {villa.amenities.length > MOBILE_AMENITIES && (
+                  <label className="mt-5 inline-flex cursor-pointer items-center rounded-full border border-ink/25 px-5 py-2.5 text-[0.9375rem] font-semibold has-focus-visible:outline-2 has-focus-visible:outline-gold sm:hidden">
+                    <input type="checkbox" className="sr-only" />
+                    <span className="group-has-checked:hidden">Show all {villa.amenities.length} amenities</span>
+                    <span className="hidden group-has-checked:inline">Show fewer</span>
+                  </label>
+                )}
+              </div>
             </Block>
 
             <Block title="Meals and add-ons">
@@ -206,14 +264,14 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
                   </div>
                 </li>
                 <li className="flex gap-3">
-                  <ShieldCheckIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
+                  <WalletIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
                   <div>
                     <p className="font-semibold">Security deposit</p>
                     <p className="mt-1 text-ink-soft">{formatINR(villa.securityDeposit)}, refunded within 3 working days</p>
                   </div>
                 </li>
                 <li className="flex gap-3">
-                  <ShieldCheckIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
+                  <CalendarXIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
                   <div>
                     <p className="font-semibold">Cancellation</p>
                     <p className="mt-1 text-ink-soft">
@@ -267,7 +325,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
             )}
           </div>
 
-          <aside className="hidden lg:block">
+          <aside className="hidden pt-10 lg:block">
             <div className="sticky top-28">
               <VillaEnquiryCard villa={booking} />
             </div>

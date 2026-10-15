@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
 
   poweredByHeader: false,
 
+  // Celebrations was folded into Experiences; keep old links and ads working
+  async redirects() {
+    return [{ source: "/celebrations", destination: "/experiences", permanent: true }];
+  },
+
   // Basic hardening from the brief (§6); the Google Maps embed is unaffected
   async headers() {
     return [

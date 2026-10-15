@@ -39,11 +39,10 @@ export const site = {
 } as const;
 
 export const nav = [
-  { label: "Villas", href: "/villas" },
+  { label: "Stays", href: "/villas" },
   { label: "Destinations", href: "/destinations" },
   { label: "Experiences", href: "/experiences" },
-  { label: "Celebrations", href: "/celebrations" },
-  { label: "For owners", href: "/owners" },
+  { label: "Partner with us", href: "/owners" },
 ] as const;
 
 export const secondaryNav = [

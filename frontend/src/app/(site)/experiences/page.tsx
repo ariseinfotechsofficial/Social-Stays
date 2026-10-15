@@ -30,11 +30,12 @@ export default function ExperiencesPage() {
             Prices are indicative and per the unit shown. Your WhatsApp quote confirms the final amount, along with what is
             possible at the villa you choose.
           </p>
-          <ul className="mt-8 grid gap-x-8 gap-y-11 md:grid-cols-2 xl:grid-cols-3">
+          {/* Phones: a swipe row instead of six long cards stacked */}
+          <ul className="no-scrollbar -mx-5 mt-8 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-11 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-3">
             {experiences.map((e) => {
               const p = photo(e.photo);
               return (
-                <li key={e.slug} id={e.slug} className="group flex scroll-mt-28 flex-col">
+                <li key={e.slug} id={e.slug} className="group flex w-[84%] shrink-0 snap-start scroll-mt-28 flex-col md:w-auto">
                   <div className="relative aspect-[3/2] overflow-hidden rounded-photo bg-sand-deep">
                     <Image src={p.src} alt={p.alt} fill sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw" className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.04]" />
                   </div>

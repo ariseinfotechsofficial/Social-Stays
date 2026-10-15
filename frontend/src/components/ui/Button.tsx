@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -66,8 +67,9 @@ export function ButtonLink({
 
 export function TextLink({ className, children, ...props }: ComponentProps<typeof Link>) {
   return (
-    <Link className={cn("link-draw inline-flex items-center gap-2 font-semibold text-gold-deep hover:text-gold-press", className)} {...props}>
+    <Link className={cn("group/tl link-draw inline-flex items-center gap-2 font-semibold text-gold-deep hover:text-gold-press", className)} {...props}>
       {children}
+      <ArrowRightIcon aria-hidden className="size-[0.95em] shrink-0 transition-transform duration-300 ease-out-expo group-hover/tl:translate-x-1" />
     </Link>
   );
 }
