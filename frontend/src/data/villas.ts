@@ -73,7 +73,7 @@ export const villas: Villa[] = [
     name: "Sunset Ridge",
     destination: "jaam-gate",
     status: "live",
-    category: "luxury",
+    category: "budget",
     tagline: "Three bedrooms on the edge of the escarpment, with a pool facing west",
     summary: "An infinity pool that looks straight down the Narmada valley. Built for couples and small groups who come for the view.",
     description: [
@@ -185,7 +185,7 @@ export const villas: Villa[] = [
     name: "Baobab House",
     destination: "mandu",
     status: "live",
-    category: "value",
+    category: "budget",
     badge: "Best value",
     tagline: "Arched verandahs, a courtyard and a pool, ten minutes from Jahaz Mahal",
     summary: "A courtyard home built in the Mandu way, with pointed arches, thick stone walls and a pool lit up at night.",
@@ -278,7 +278,7 @@ export const villas: Villa[] = [
     name: "Rewa Riverside",
     destination: "omkareshwar",
     status: "live",
-    category: "luxury",
+    category: "budget",
     badge: "Riverside",
     tagline: "A quiet villa above the Narmada, fifteen minutes from the temple",
     summary: "Three bedrooms, a pool among the trees and mornings on the river. Close to darshan, far from the crowds.",
@@ -389,7 +389,7 @@ export const villas: Villa[] = [
     name: "Avantika House",
     destination: "ujjain",
     status: "live",
-    category: "luxury",
+    category: "budget",
     tagline: "A calm, modern villa for temple trips, twenty minutes from Mahakaleshwar",
     summary: "Four bedrooms around a lawn and pool on the Indore side of Ujjain. Easy for early darshan, easy for grandparents.",
     description: [
@@ -511,10 +511,10 @@ export const villaCategories: { slug: VillaCategory; label: string; short: strin
     blurb: "Our finest homes: private pools, big lawns and a cook on call.",
   },
   {
-    slug: "value",
-    label: "Value Stays",
-    short: "Value",
-    blurb: "The same whole-villa privacy and family hosting, in simpler homes at a gentler price. More are joining the collection soon.",
+    slug: "budget",
+    label: "Budget Stays",
+    short: "Budget",
+    blurb: "The same whole-villa privacy and family hosting, in simpler homes at a gentler price.",
   },
 ];
 

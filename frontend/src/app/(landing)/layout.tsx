@@ -11,7 +11,7 @@ export default function LandingLayout({ children }: LayoutProps<"/">) {
     <>
       <header className="absolute inset-x-0 top-0 z-30">
         <div className="container-page flex h-20 items-center justify-between">
-          <Logo tone="light" />
+          <Logo tone="light" preload />
           <CallLink placement="landing_header" className="inline-flex h-11 items-center gap-2 rounded-full border border-white/50 px-4 text-[0.9375rem] font-semibold text-white">
             <PhoneIcon className="size-[1.1rem]" />
             <span className="hidden sm:inline">{site.phone.display}</span>

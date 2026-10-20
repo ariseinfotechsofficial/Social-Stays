@@ -76,7 +76,7 @@ export function Header() {
           )}
         >
           <Link href="/" aria-label="Social Stays, home" className="shrink-0">
-            <Logo tone={tone} />
+            <Logo tone={tone} preload className={cn("transition-[height] duration-500 ease-out-expo", scrolled ? "h-12 lg:h-[3.25rem]" : "h-14 lg:h-16")} />
           </Link>
 
           <nav aria-label="Main" className="hidden lg:block">

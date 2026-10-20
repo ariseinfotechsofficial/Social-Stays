@@ -2,6 +2,7 @@
 
 import { m, AnimatePresence } from "motion/react";
 import { useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { Rail } from "@/components/villa/VillaCarousel";
 import type { Villa, VillaCategory } from "@/data/types";
 import { cn } from "@/lib/utils";
 
@@ -31,9 +32,10 @@ const defaultFilters: Filters = { category: "all", big: false, pool: false, pets
 /** Reads filters from a shared link like /villas?category=luxury&pool=1 */
 function filtersFromSearch(search: string): Filters {
   const p = new URLSearchParams(search);
-  const category = p.get("category");
+  // "value" was the old name for budget; older shared links still use it
+  const category = p.get("category") === "value" ? "budget" : p.get("category");
   return {
-    category: category === "luxury" || category === "value" ? category : "all",
+    category: category === "luxury" || category === "budget" ? category : "all",
     big: p.get("guests") === String(BIG_GROUP),
     pool: p.get("pool") === "1",
     pets: p.get("pets") === "1",
@@ -59,7 +61,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 /**
- * Villas listing: title on the left, one row of filter chips on the right.
+ * Villas listing: title on the left, one row of filter chips on the right,
+ * then one band per category (Luxury, Budget), each a sideways-scrolling rail of cards.
  * Filters live in the URL so a filtered list can be shared on WhatsApp.
  */
 export function VillaBrowser({
@@ -72,7 +75,7 @@ export function VillaBrowser({
   villas: Villa[];
   heading: string;
   intro: string;
-  categories: { slug: VillaCategory; short: string }[];
+  categories: { slug: VillaCategory; label: string; short: string; blurb: string }[];
   /** Pre-rendered cards keyed by slug (server components) */
   children: Record<string, ReactNode>;
 }) {
@@ -103,6 +106,9 @@ export function VillaBrowser({
     const live = (v: Villa) => (v.status === "live" ? 0 : 1);
     return [...list].sort((a, b) => live(a) - live(b));
   }, [villas, f]);
+
+  // One section per category, in the order given; empty ones are left out
+  const sections = categories.map((category) => ({ category, list: results.filter((v) => v.category === category.slug) })).filter((s) => s.list.length);
 
   const filtered = f.category !== "all" || f.big || f.pool || f.pets;
   const reset = () => update(defaultFilters);
@@ -135,27 +141,41 @@ export function VillaBrowser({
         </div>
       </div>
 
-      <p className="mt-6 mb-6 text-ink-soft lg:mt-8" aria-live="polite">
+      <p className="sr-only" aria-live="polite">
         {results.length === 1 ? "1 villa" : `${results.length} villas`}
       </p>
 
       {results.length ? (
-        <m.ul layout className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-14">
+        <div className="mt-8 lg:mt-10">
           <AnimatePresence mode="popLayout" initial={false}>
-            {results.map((v) => (
-              <m.li
-                key={v.slug}
+            {sections.map(({ category, list }) => (
+              <m.section
+                key={category.slug}
                 layout
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97 }}
+                exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.6, ease }}
+                aria-labelledby={`cat-${category.slug}`}
+                className="border-t border-line py-8 first:border-t-0 first:pt-0 lg:py-10"
               >
-                {children[v.slug]}
-              </m.li>
+                <div className="mb-6 flex items-end justify-between gap-4">
+                  <div>
+                    <h2 id={`cat-${category.slug}`} className="type-display-l">
+                      {category.label}
+                    </h2>
+                    <p className="mt-1 max-w-2xl text-[0.9375rem] text-ink-soft">{category.blurb}</p>
+                  </div>
+                  <p className="shrink-0 text-[0.9375rem] text-ink-soft">{list.length === 1 ? "1 villa" : `${list.length} villas`}</p>
+                </div>
+                {/* Keyed by the villas shown, so a new filter starts the rail from the first card */}
+                <Rail key={list.map((v) => v.slug).join()} label={category.label}>
+                  {list.map((v) => children[v.slug])}
+                </Rail>
+              </m.section>
             ))}
           </AnimatePresence>
-        </m.ul>
+        </div>
       ) : (
         <div className="rounded-[8px] bg-sand px-6 py-16 text-center">
           <p className="type-display-m">No villa matches all of that yet.</p>

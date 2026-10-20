@@ -31,7 +31,7 @@ type Props = {
   priority?: boolean;
   /** Portrait for the home carousel; landscape for grids, which are scanned rather than browsed */
   ratio?: "portrait" | "landscape";
-  /** Listing grid: amenity pills plus "View villa" and "Check dates" buttons */
+  /** Villas listing: one row of amenity pills, then "View villa" and "Check dates" pinned to the bottom */
   detailed?: boolean;
   className?: string;
 };
@@ -53,7 +53,7 @@ export function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width
   );
 
   return (
-    <article className={cn("group relative", className)}>
+    <article className={cn("group relative", detailed && "flex h-full flex-col", className)}>
       <div
         className={cn(
           "relative overflow-hidden rounded-photo bg-sand-deep transition-shadow duration-500 ease-out-expo group-hover:shadow-[0_28px_50px_-30px_rgb(42_36_27/0.6)]",
@@ -73,42 +73,42 @@ export function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width
           </span>
         )}
       </div>
-      <div className="mt-4 flex items-start justify-between gap-5">
-        <div className="min-w-0">
-          <p className="text-[0.8125rem] font-semibold tracking-[0.14em] text-gold-deep uppercase">{destination}</p>
-          <h3 className="mt-1 font-display text-[1.625rem] leading-tight font-medium">
-            <Link href={`/villas/${villa.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:outline-2 after:focus-visible:outline-gold">
-              {villa.name}
-            </Link>
-          </h3>
-        </div>
-        <p className="shrink-0 pt-1 text-right">
-          <span className="block text-[0.8125rem] text-ink-soft">{soon ? "Expected from" : "from"}</span>
-          <span className="type-price text-[1.375rem] leading-none">{formatINR(villa.priceFrom)}</span>
-          <span className="block text-[0.8125rem] text-ink-soft">per night</span>
-        </p>
-      </div>
-      <p className="mt-1.5 text-[0.9375rem] text-ink-soft">
-        {`${villa.bedrooms} bedrooms · up to ${villa.guests.max} guests · ${villa.bathrooms} baths`}
-      </p>
-
-      {detailed && (
-        <div>
-          <ul className="mt-3.5 flex flex-wrap gap-1.5">
-            {villaPills(villa).map((p) => (
-              <li key={p} className="rounded-full bg-sand px-3 py-1 text-[0.8125rem] font-medium">
+      {detailed ? (
+        <div className="mt-4 flex flex-1 flex-col">
+          <div className="flex items-start justify-between gap-5">
+            <div className="min-w-0">
+              <p className="text-[0.8125rem] font-semibold tracking-[0.14em] text-gold-deep uppercase">{destination}</p>
+              <h3 className="mt-1 truncate font-display text-[1.625rem] leading-tight font-medium">
+                <Link href={`/villas/${villa.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:outline-2 after:focus-visible:outline-gold">
+                  {villa.name}
+                </Link>
+              </h3>
+            </div>
+            <p className="shrink-0 text-right">
+              <span className="block text-[0.8125rem] text-ink-soft">{soon ? "Expected from" : "from"}</span>
+              <span className="type-price text-[1.375rem] leading-tight">{formatINR(villa.priceFrom)}</span>
+              <span className="block text-[0.8125rem] text-ink-soft">per night</span>
+            </p>
+          </div>
+          <p className="mt-2 text-[0.9375rem] text-ink-soft">
+            {`${villa.bedrooms} bedrooms · up to ${villa.guests.max} guests · ${villa.bathrooms} baths`}
+          </p>
+          {/* One row only, so every card in a row ends at the same height */}
+          <ul className="mt-3 mb-5 flex gap-1.5 overflow-hidden">
+            {villaPills(villa, 3).map((p) => (
+              <li key={p} className="shrink-0 rounded-full bg-sand px-3 py-1 text-[0.8125rem] font-medium whitespace-nowrap">
                 {p}
               </li>
             ))}
           </ul>
-          {/* Above the card's stretched link */}
-          <div className="relative z-10 mt-5 flex flex-wrap gap-2.5">
-            <Link href={`/villas/${villa.slug}`} className={buttonClasses("outline", "sm", "px-5")}>
+          {/* Pinned to the bottom, above the card's stretched link */}
+          <div className="relative z-10 mt-auto grid grid-cols-2 gap-2.5 border-t border-line pt-4">
+            <Link href={`/villas/${villa.slug}`} className={buttonClasses("outline", "sm", cn("w-full", soon && "col-span-2"))}>
               View villa
             </Link>
             {!soon && (
               <EnquireTrigger
-                className={buttonClasses("primary", "sm", "px-5")}
+                className={buttonClasses("primary", "sm", "w-full")}
                 prefill={{ title: "Check dates", villa: { name: villa.name, slug: villa.slug, destination, maxGuests: villa.guests.max } }}
               >
                 Check dates
@@ -116,6 +116,27 @@ export function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width
             )}
           </div>
         </div>
+      ) : (
+        <>
+          <div className="mt-4 flex items-start justify-between gap-5">
+            <div className="min-w-0">
+              <p className="text-[0.8125rem] font-semibold tracking-[0.14em] text-gold-deep uppercase">{destination}</p>
+              <h3 className="mt-1 font-display text-[1.625rem] leading-tight font-medium">
+                <Link href={`/villas/${villa.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:outline-2 after:focus-visible:outline-gold">
+                  {villa.name}
+                </Link>
+              </h3>
+            </div>
+            <p className="shrink-0 pt-1 text-right">
+              <span className="block text-[0.8125rem] text-ink-soft">{soon ? "Expected from" : "from"}</span>
+              <span className="type-price text-[1.375rem] leading-none">{formatINR(villa.priceFrom)}</span>
+              <span className="block text-[0.8125rem] text-ink-soft">per night</span>
+            </p>
+          </div>
+          <p className="mt-1.5 text-[0.9375rem] text-ink-soft">
+            {`${villa.bedrooms} bedrooms · up to ${villa.guests.max} guests · ${villa.bathrooms} baths`}
+          </p>
+        </>
       )}
     </article>
   );

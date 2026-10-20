@@ -9,7 +9,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Villas & farmhouses near Indore with private pools",
   description:
-    "Browse private villas and farmhouses near Indore in Jaam Gate, Mandu, Omkareshwar and Ujjain. Filter by luxury or value, private pool, group size and pet-friendly. Whole-villa stays from ₹14,500 a night.",
+    "Browse private villas and farmhouses near Indore in Jaam Gate, Mandu, Omkareshwar and Ujjain. Filter by luxury or budget, private pool, group size and pet-friendly. Whole-villa stays from ₹14,500 a night.",
   alternates: { canonical: "/villas" },
 };
 

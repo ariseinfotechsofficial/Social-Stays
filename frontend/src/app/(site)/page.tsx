@@ -5,7 +5,7 @@ import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { InstagramStrip, OwnerBand } from "@/components/shared/Bands";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { ReviewReels } from "@/components/home/ReviewReels";
+import { ReviewSpotlight } from "@/components/home/ReviewSpotlight";
 import { Stars } from "@/components/shared/Reviews";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { TextLink, buttonClasses } from "@/components/ui/Button";
@@ -40,7 +40,7 @@ export default function HomePage() {
           "@type": "Organization",
           name: site.name,
           url: site.url,
-          logo: `${site.url}/images/logo.jpeg`,
+          logo: `${site.url}/images/logo.png`,
           description: site.description,
           email: site.email,
           telephone: site.phone.display,
@@ -182,7 +182,7 @@ export default function HomePage() {
 
       <HowItWorks />
 
-      <section className="section-y overflow-hidden" aria-labelledby="reviews-heading">
+      <section className="section-y" aria-labelledby="reviews-heading">
         <div className="container-page">
           <SectionHeading
             title={<span id="reviews-heading">From recent guests</span>}
@@ -195,21 +195,18 @@ export default function HomePage() {
               </span>
             }
           />
-        </div>
-        <div className="stack-head">
-          <ReviewReels
-            reels={reviews.map((r) => {
-              const villa = getVilla(r.villa);
-              return {
+          <div className="stack-head">
+            <ReviewSpotlight
+              photo={photo("site/guests-lawn")}
+              reviews={reviews.map((r) => ({
                 id: r.id,
                 text: r.text,
                 name: r.name,
                 rating: r.rating,
-                meta: [villa?.name, r.occasion].filter(Boolean).join(" · "),
-                photo: photo(villa ? (villa.photos[1] ?? villa.photos[0]) : "occasions/friends"),
-              };
-            })}
-          />
+                meta: [getVilla(r.villa)?.name, r.occasion].filter(Boolean).join(" · "),
+              }))}
+            />
+          </div>
         </div>
       </section>
 

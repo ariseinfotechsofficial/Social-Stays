@@ -1,6 +1,6 @@
 import { EnvelopeIcon, InstagramLogoIcon, PhoneIcon, WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { LogoMark } from "@/components/brand/Logo";
+import { LogoBadge } from "@/components/brand/Logo";
 import { CallLink, WhatsAppLink } from "@/components/layout/ContactLinks";
 import { destinations } from "@/data/destinations";
 import { policies } from "@/data/policies";
@@ -35,10 +35,7 @@ export function Footer() {
       <div className="container-page pt-14 pb-8 lg:pt-20">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr] lg:gap-14">
           <div className="max-w-sm">
-            <div className="flex items-center gap-3">
-              <LogoMark className="w-9 text-brass" />
-              <span className="font-display text-2xl font-medium tracking-[0.14em] uppercase">Social Stays</span>
-            </div>
+            <LogoBadge />
             <p className="mt-5 leading-relaxed text-sand/75">
               Private villas and farmhouses around Indore, hosted by the families who own them.
             </p>

@@ -50,6 +50,7 @@ import p44 from "@/assets/photos/site/celebrations-hero.webp";
 import p45 from "@/assets/photos/site/experiences-hero.webp";
 import p46 from "@/assets/photos/site/family-diwali.webp";
 import p47 from "@/assets/photos/site/friends-sunset.webp";
+import pGuestsLawn from "@/assets/photos/site/guests-lawn.webp";
 import p48 from "@/assets/photos/site/owners-hero.webp";
 import p49 from "@/assets/photos/villas/amaltas-house/01.webp";
 import p50 from "@/assets/photos/villas/amaltas-house/02.webp";
@@ -161,6 +162,7 @@ const PHOTOS = {
   "site/celebrations-hero": { src: p44, alt: "Cottage strung with lights for an evening celebration" },
   "site/experiences-hero": { src: p45, alt: "Marigolds and candles on a dinner table" },
   "site/family-diwali": { src: p46, alt: "A family greeting each other during a festival" },
+  "site/guests-lawn": { src: pGuestsLawn, alt: "Friends sharing chai and snacks on the villa lawn beside the pool" },
   "site/friends-sunset": { src: p47, alt: "Friends silhouetted on a hill at sunset" },
   "site/owners-hero": { src: p48, alt: "A farmhouse with a deep verandah and lawn" },
   "villas/amaltas-house/01": { src: p49, alt: "The pool at Amaltas House, set into the lawn under an old tree" },

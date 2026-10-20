@@ -52,6 +52,7 @@ Replace them with the client's professional shoot before launch — villa photos
 | `site/celebrations-hero.webp` | Cottage strung with lights for an evening celebration | [Unsplash](https://unsplash.com/photos/cozy-backyard-dinner-setup-with-string-lights-and-autumn-leaves-3dSyKfncVu4) |
 | `site/experiences-hero.webp` | Marigolds and candles on a dinner table | [Unsplash](https://unsplash.com/photos/a-table-is-set-with-candles-and-plates-of-food-HCFqhYC_Hvw) |
 | `site/family-diwali.webp` | A family greeting each other during a festival | [Unsplash](https://unsplash.com/photos/a-man-hugging-a-woman-in-front-of-other-people-kHZn083lb54) |
+| `site/guests-lawn.webp` | Friends sharing chai on the villa lawn beside the pool (home reviews) | AI-generated (Gemini), supplied by the project team |
 | `site/friends-sunset.webp` | Friends silhouetted on a hill at sunset | [Unsplash](https://unsplash.com/photos/silhouette-photo-of-six-persons-on-top-of-mountain-Sj0iMtq_Z4w) |
 | `site/owners-hero.webp` | A farmhouse with a deep verandah and lawn | [Unsplash](https://unsplash.com/photos/a-white-house-with-a-red-roof-surrounded-by-trees-2Hk2biJ7_vc) |
 | `villas/amaltas-house/01.webp` | The pool at Amaltas House, set into the lawn under an old tree | [Unsplash](https://unsplash.com/photos/green-trees-beside-swimming-pool-under-blue-sky-during-daytime-j0Z0VyGFbKE) |
