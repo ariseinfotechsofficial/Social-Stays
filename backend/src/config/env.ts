@@ -13,6 +13,8 @@ const schema = z.object({
   /** Extra comma-separated origins allowed by CORS (preview deployments etc.) */
   CORS_ORIGINS: z.string().default(""),
   REVALIDATE_SECRET: z.string().default(""),
+  /** Optional private address of the website for cache refreshes (defaults to SITE_URL) */
+  REVALIDATE_URL: z.string().default(""),
   RAZORPAY_KEY_ID: z.string().default(""),
   RAZORPAY_KEY_SECRET: z.string().default(""),
   RAZORPAY_WEBHOOK_SECRET: z.string().default(""),

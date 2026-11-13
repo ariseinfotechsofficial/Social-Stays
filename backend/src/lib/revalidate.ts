@@ -12,7 +12,7 @@ export function revalidateSite() {
   clearTimeout(timer);
   timer = setTimeout(async () => {
     try {
-      const res = await fetch(`${env.SITE_URL}/api/revalidate`, {
+      const res = await fetch(`${env.REVALIDATE_URL || env.SITE_URL}/api/revalidate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-revalidate-secret": env.REVALIDATE_SECRET },
         body: JSON.stringify({ tags: ["cms"] }),
