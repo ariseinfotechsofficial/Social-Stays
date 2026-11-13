@@ -23,6 +23,9 @@ REF="${1:-main}"
 NODE_BIN="/opt/alt/alt-nodejs22/root/usr/bin"
 export PATH="$NODE_BIN:$PATH"
 export NEXT_TELEMETRY_DISABLED=1
+# The host reports 64 CPUs but caps threads per account: Node/libuv/sharp would otherwise start dozens
+# of threads each and builds die with "pthread_create: Resource temporarily unavailable".
+export NODE_OPTIONS="--v8-pool-size=2" UV_THREADPOOL_SIZE=2 VIPS_CONCURRENCY=1 RAYON_NUM_THREADS=2 TOKIO_WORKER_THREADS=2
 
 log() { printf '\n\033[1;33m==> %s\033[0m\n' "$*"; }
 
@@ -72,12 +75,21 @@ log "Pruning backend dev dependencies"
 log "Switching current -> $(basename "$REL") and restarting"
 ln -sfn "$REL" "$BASE/current.tmp" && mv -Tf "$BASE/current.tmp" "$BASE/current"
 
+# LiteSpeed starts the app through this wrapper so the live process gets the same thread caps
+mkdir -p "$BASE/bin"
+cat > "$BASE/bin/node" <<EOF
+#!/bin/sh
+export UV_THREADPOOL_SIZE=4 VIPS_CONCURRENCY=2
+exec $NODE_BIN/node --v8-pool-size=4 "\$@"
+EOF
+chmod 755 "$BASE/bin/node"
+
 HTACCESS="$BASE/public_html/.htaccess"
 cat > "$HTACCESS.new" <<EOF
 # Managed by deploy/hostinger/deploy.sh — the whole domain is served by the Node app.
 PassengerAppRoot $BASE/current
 PassengerBaseURI /
-PassengerNodejs $NODE_BIN/node
+PassengerNodejs $BASE/bin/node
 PassengerAppType node
 PassengerStartupFile deploy/hostinger/server.cjs
 EOF

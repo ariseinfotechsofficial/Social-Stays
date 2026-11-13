@@ -27,6 +27,9 @@ const nextConfig: NextConfig = {
 
   poweredByHeader: false,
 
+  // Shared hosting caps processes per account: NEXT_BUILD_CPUS limits the build's worker processes there
+  ...(process.env.NEXT_BUILD_CPUS ? { experimental: { cpus: Number(process.env.NEXT_BUILD_CPUS) } } : {}),
+
   images: {
     remotePatterns,
     qualities: [75],
