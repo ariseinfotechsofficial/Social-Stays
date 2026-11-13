@@ -1,0 +1,438 @@
+{
+ "destinations/jaam-gate/hero": {
+  "file": "destinations/jaam-gate/hero.webp",
+  "alt": "The ghat road climbing the Vindhya range near Jaam Gate"
+ },
+ "destinations/jaam-gate/hills": {
+  "file": "destinations/jaam-gate/hills.webp",
+  "alt": "Hills rising behind farmland on the way to Jaam Gate"
+ },
+ "destinations/jaam-gate/maheshwar": {
+  "file": "destinations/jaam-gate/maheshwar.webp",
+  "alt": "Temple spires above the Narmada at Maheshwar"
+ },
+ "destinations/jaam-gate/monsoon": {
+  "file": "destinations/jaam-gate/monsoon.webp",
+  "alt": "The Vindhyas turning green in the monsoon"
+ },
+ "destinations/jaam-gate/rain-road": {
+  "file": "destinations/jaam-gate/rain-road.webp",
+  "alt": "A quiet road through the forest after rain"
+ },
+ "destinations/mandu/arches": {
+  "file": "destinations/mandu/arches.webp",
+  "alt": "A corridor of pointed arches in Mandu's old palaces"
+ },
+ "destinations/mandu/baobab": {
+  "file": "destinations/mandu/baobab.webp",
+  "alt": "A baobab on the rocky plateau"
+ },
+ "destinations/mandu/hero": {
+  "file": "destinations/mandu/hero.webp",
+  "alt": "Jahaz Mahal and its gardens in Mandu"
+ },
+ "destinations/mandu/hoshang-tomb": {
+  "file": "destinations/mandu/hoshang-tomb.webp",
+  "alt": "Hoshang Shah's marble tomb in the afternoon light"
+ },
+ "destinations/mandu/jahaz-mahal": {
+  "file": "destinations/mandu/jahaz-mahal.webp",
+  "alt": "Jahaz Mahal at blue hour"
+ },
+ "destinations/mandu/pavilion": {
+  "file": "destinations/mandu/pavilion.webp",
+  "alt": "A domed pavilion at the top of a stone stairway"
+ },
+ "destinations/omkareshwar/boats": {
+  "file": "destinations/omkareshwar/boats.webp",
+  "alt": "Boats waiting at the ghats"
+ },
+ "destinations/omkareshwar/hero": {
+  "file": "destinations/omkareshwar/hero.webp",
+  "alt": "The Narmada curving past the ghats of Omkareshwar"
+ },
+ "destinations/omkareshwar/river": {
+  "file": "destinations/omkareshwar/river.webp",
+  "alt": "The wide river and boats from the bridge"
+ },
+ "destinations/omkareshwar/sunset": {
+  "file": "destinations/omkareshwar/sunset.webp",
+  "alt": "Sunset behind the old bridge"
+ },
+ "destinations/omkareshwar/temple": {
+  "file": "destinations/omkareshwar/temple.webp",
+  "alt": "Temple walls on the cliff above the river"
+ },
+ "destinations/ujjain/ghat-night": {
+  "file": "destinations/ujjain/ghat-night.webp",
+  "alt": "Lamps on the ghats of the Shipra at night"
+ },
+ "destinations/ujjain/hero": {
+  "file": "destinations/ujjain/hero.webp",
+  "alt": "Temples along Ram Ghat on the Shipra in Ujjain"
+ },
+ "destinations/ujjain/mahakal": {
+  "file": "destinations/ujjain/mahakal.webp",
+  "alt": "The shikhara of Mahakaleshwar Jyotirlinga"
+ },
+ "destinations/ujjain/mahakal-lok": {
+  "file": "destinations/ujjain/mahakal-lok.webp",
+  "alt": "Lamp posts along the Mahakal Lok corridor at dusk"
+ },
+ "destinations/ujjain/shikhara": {
+  "file": "destinations/ujjain/shikhara.webp",
+  "alt": "A temple spire against the monsoon sky"
+ },
+ "experiences/bbq": {
+  "file": "experiences/bbq.webp",
+  "alt": "Paneer and vegetable skewers on the grill"
+ },
+ "experiences/bonfire": {
+  "file": "experiences/bonfire.webp",
+  "alt": "A bonfire at dusk with the hills behind"
+ },
+ "experiences/candlelight": {
+  "file": "experiences/candlelight.webp",
+  "alt": "Candle-lit table with marigolds and warm light"
+ },
+ "experiences/chai": {
+  "file": "experiences/chai.webp",
+  "alt": "Chai in a clay kulhad"
+ },
+ "experiences/chef": {
+  "file": "experiences/chef.webp",
+  "alt": "Rotis being made fresh on the tawa"
+ },
+ "experiences/day-trip": {
+  "file": "experiences/day-trip.webp",
+  "alt": "Walking through Mandu's arches with a local guide"
+ },
+ "experiences/decor": {
+  "file": "experiences/decor.webp",
+  "alt": "A birthday banner strung across the garden hedge"
+ },
+ "experiences/mehendi": {
+  "file": "experiences/mehendi.webp",
+  "alt": "Friends showing their mehendi"
+ },
+ "experiences/poha": {
+  "file": "experiences/poha.webp",
+  "alt": "Indori poha for breakfast"
+ },
+ "experiences/thali": {
+  "file": "experiences/thali.webp",
+  "alt": "A home-style Malwa thali served at the villa"
+ },
+ "occasions/anniversary": {
+  "file": "occasions/anniversary.webp",
+  "alt": "A long table set for an anniversary dinner on the lawn"
+ },
+ "occasions/birthday": {
+  "file": "occasions/birthday.webp",
+  "alt": "Birthday dinner in a garden under string lights"
+ },
+ "occasions/family": {
+  "file": "occasions/family.webp",
+  "alt": "Three generations of a family together outdoors"
+ },
+ "occasions/friends": {
+  "file": "occasions/friends.webp",
+  "alt": "Friends laughing on the lawn"
+ },
+ "occasions/haldi": {
+  "file": "occasions/haldi.webp",
+  "alt": "Bride in a marigold garland at her haldi"
+ },
+ "occasions/haldi-mehendi": {
+  "file": "occasions/haldi-mehendi.webp",
+  "alt": "Two friends at a mehendi afternoon"
+ },
+ "occasions/offsite": {
+  "file": "occasions/offsite.webp",
+  "alt": "Colleagues talking in the garden during an offsite"
+ },
+ "occasions/pre-wedding": {
+  "file": "occasions/pre-wedding.webp",
+  "alt": "Couple on a pre-wedding shoot in the green hills"
+ },
+ "people/team-1": {
+  "file": "people/team-1.webp",
+  "alt": "Portrait of Arjun Malviya"
+ },
+ "people/team-2": {
+  "file": "people/team-2.webp",
+  "alt": "Portrait of Nandini Joshi"
+ },
+ "people/team-3": {
+  "file": "people/team-3.webp",
+  "alt": "Portrait of Kabir Solanki"
+ },
+ "people/team-4": {
+  "file": "people/team-4.webp",
+  "alt": "Portrait of Ritika Patidar"
+ },
+ "site/about-hero": {
+  "file": "site/about-hero.webp",
+  "alt": "Chai being poured into copper cups"
+ },
+ "site/celebrations-hero": {
+  "file": "site/celebrations-hero.webp",
+  "alt": "Cottage strung with lights for an evening celebration"
+ },
+ "site/experiences-hero": {
+  "file": "site/experiences-hero.webp",
+  "alt": "Marigolds and candles on a dinner table"
+ },
+ "site/family-diwali": {
+  "file": "site/family-diwali.webp",
+  "alt": "A family greeting each other during a festival"
+ },
+ "site/guests-lawn": {
+  "file": "site/guests-lawn.webp",
+  "alt": "Friends sharing chai and snacks on the villa lawn beside the pool"
+ },
+ "site/friends-sunset": {
+  "file": "site/friends-sunset.webp",
+  "alt": "Friends silhouetted on a hill at sunset"
+ },
+ "site/owners-hero": {
+  "file": "site/owners-hero.webp",
+  "alt": "A farmhouse with a deep verandah and lawn"
+ },
+ "villas/amaltas-house/01": {
+  "file": "villas/amaltas-house/01.webp",
+  "alt": "The pool at Amaltas House, set into the lawn under an old tree"
+ },
+ "villas/amaltas-house/02": {
+  "file": "villas/amaltas-house/02.webp",
+  "alt": "Sun loungers along the pool deck at Amaltas House"
+ },
+ "villas/amaltas-house/03": {
+  "file": "villas/amaltas-house/03.webp",
+  "alt": "Living room at Amaltas House opening onto the garden"
+ },
+ "villas/amaltas-house/04": {
+  "file": "villas/amaltas-house/04.webp",
+  "alt": "Master bedroom at Amaltas House with a private balcony"
+ },
+ "villas/amaltas-house/05": {
+  "file": "villas/amaltas-house/05.webp",
+  "alt": "Garden-facing bedroom at Amaltas House"
+ },
+ "villas/amaltas-house/06": {
+  "file": "villas/amaltas-house/06.webp",
+  "alt": "Freestanding tub in the master bathroom at Amaltas House"
+ },
+ "villas/amaltas-house/07": {
+  "file": "villas/amaltas-house/07.webp",
+  "alt": "Dining table under the old tree, looking out over the valley"
+ },
+ "villas/avantika-house/01": {
+  "file": "villas/avantika-house/01.webp",
+  "alt": "Avantika House and its pool lit up at dusk"
+ },
+ "villas/avantika-house/02": {
+  "file": "villas/avantika-house/02.webp",
+  "alt": "Single-storey wings around the lawn and pool"
+ },
+ "villas/avantika-house/03": {
+  "file": "villas/avantika-house/03.webp",
+  "alt": "Front lawn at Avantika House"
+ },
+ "villas/avantika-house/04": {
+  "file": "villas/avantika-house/04.webp",
+  "alt": "Open living and dining room"
+ },
+ "villas/avantika-house/05": {
+  "file": "villas/avantika-house/05.webp",
+  "alt": "Bedroom with a carved wooden bed"
+ },
+ "villas/avantika-house/06": {
+  "file": "villas/avantika-house/06.webp",
+  "alt": "Calm, light-filled guest bedroom"
+ },
+ "villas/avantika-house/07": {
+  "file": "villas/avantika-house/07.webp",
+  "alt": "Bathroom with a deep soaking tub"
+ },
+ "villas/baobab-house/01": {
+  "file": "villas/baobab-house/01.webp",
+  "alt": "Arched verandahs around the pool at Baobab House in the evening"
+ },
+ "villas/baobab-house/02": {
+  "file": "villas/baobab-house/02.webp",
+  "alt": "The arched colonnade around the inner courtyard"
+ },
+ "villas/baobab-house/03": {
+  "file": "villas/baobab-house/03.webp",
+  "alt": "Living room with a Mandu-style arched doorway"
+ },
+ "villas/baobab-house/04": {
+  "file": "villas/baobab-house/04.webp",
+  "alt": "Pointed-arch entrance to one of the bedrooms"
+ },
+ "villas/baobab-house/05": {
+  "file": "villas/baobab-house/05.webp",
+  "alt": "Sunlit bedroom with a private balcony"
+ },
+ "villas/baobab-house/06": {
+  "file": "villas/baobab-house/06.webp",
+  "alt": "Bathroom with a freestanding tub and rain shower"
+ },
+ "villas/baobab-house/07": {
+  "file": "villas/baobab-house/07.webp",
+  "alt": "Breakfast table laid out in the courtyard"
+ },
+ "villas/kesar-bagh/01": {
+  "file": "villas/kesar-bagh/01.webp",
+  "alt": "Rooftop terrace at Kesar Bagh, a restored haveli-style home in Mandu"
+ },
+ "villas/kesar-bagh/02": {
+  "file": "villas/kesar-bagh/02.webp",
+  "alt": "Stone courtyard with potted plants at Kesar Bagh"
+ },
+ "villas/kesar-bagh/03": {
+  "file": "villas/kesar-bagh/03.webp",
+  "alt": "Garden walk at Kesar Bagh"
+ },
+ "villas/mahua-farm/01": {
+  "file": "villas/mahua-farm/01.webp",
+  "alt": "View from the bedroom window to the pool and lawn at Mahua Farm"
+ },
+ "villas/mahua-farm/02": {
+  "file": "villas/mahua-farm/02.webp",
+  "alt": "Pool and cottages at Mahua Farm"
+ },
+ "villas/mahua-farm/03": {
+  "file": "villas/mahua-farm/03.webp",
+  "alt": "The main farmhouse at Mahua Farm"
+ },
+ "villas/mahua-farm/04": {
+  "file": "villas/mahua-farm/04.webp",
+  "alt": "Lime-washed sitting room with clay pots and linen"
+ },
+ "villas/mahua-farm/05": {
+  "file": "villas/mahua-farm/05.webp",
+  "alt": "Bedroom with handwoven textiles"
+ },
+ "villas/mahua-farm/06": {
+  "file": "villas/mahua-farm/06.webp",
+  "alt": "Fresh rotis from the farm kitchen"
+ },
+ "villas/mahua-farm/07": {
+  "file": "villas/mahua-farm/07.webp",
+  "alt": "Old trees shading the back lawn"
+ },
+ "villas/palash-farm/01": {
+  "file": "villas/palash-farm/01.webp",
+  "alt": "The pool and lawns at Palash Farm"
+ },
+ "villas/palash-farm/02": {
+  "file": "villas/palash-farm/02.webp",
+  "alt": "The main lawn at Palash Farm, set up for a family gathering"
+ },
+ "villas/palash-farm/03": {
+  "file": "villas/palash-farm/03.webp",
+  "alt": "Brick cottages with clay-tiled roofs at Palash Farm"
+ },
+ "villas/palash-farm/04": {
+  "file": "villas/palash-farm/04.webp",
+  "alt": "Cottage verandah strung with lights for an evening dinner"
+ },
+ "villas/palash-farm/05": {
+  "file": "villas/palash-farm/05.webp",
+  "alt": "Beamed living room in the main house at Palash Farm"
+ },
+ "villas/palash-farm/06": {
+  "file": "villas/palash-farm/06.webp",
+  "alt": "Loft bedroom with a wooden staircase"
+ },
+ "villas/palash-farm/07": {
+  "file": "villas/palash-farm/07.webp",
+  "alt": "Bonfire on the lawn at Palash Farm"
+ },
+ "villas/rewa-riverside/01": {
+  "file": "villas/rewa-riverside/01.webp",
+  "alt": "Pool and tiled-roof cottage at Rewa Riverside, with the hills behind"
+ },
+ "villas/rewa-riverside/02": {
+  "file": "villas/rewa-riverside/02.webp",
+  "alt": "The Narmada below Rewa Riverside on a still morning"
+ },
+ "villas/rewa-riverside/03": {
+  "file": "villas/rewa-riverside/03.webp",
+  "alt": "Shaded pergola beside the pool"
+ },
+ "villas/rewa-riverside/04": {
+  "file": "villas/rewa-riverside/04.webp",
+  "alt": "Dining nook by tall windows facing the trees"
+ },
+ "villas/rewa-riverside/05": {
+  "file": "villas/rewa-riverside/05.webp",
+  "alt": "Bedroom opening onto the garden"
+ },
+ "villas/rewa-riverside/06": {
+  "file": "villas/rewa-riverside/06.webp",
+  "alt": "Stone basin in the master bathroom"
+ },
+ "villas/rewa-riverside/07": {
+  "file": "villas/rewa-riverside/07.webp",
+  "alt": "Fruit, juice and breakfast served outdoors"
+ },
+ "villas/shipra-farm/01": {
+  "file": "villas/shipra-farm/01.webp",
+  "alt": "The stone farmhouse and pool at Shipra Farm in the evening"
+ },
+ "villas/shipra-farm/02": {
+  "file": "villas/shipra-farm/02.webp",
+  "alt": "Loungers on the back lawn"
+ },
+ "villas/shipra-farm/03": {
+  "file": "villas/shipra-farm/03.webp",
+  "alt": "Pool pavilion surrounded by garden"
+ },
+ "villas/shipra-farm/04": {
+  "file": "villas/shipra-farm/04.webp",
+  "alt": "The main living room at Shipra Farm"
+ },
+ "villas/shipra-farm/05": {
+  "file": "villas/shipra-farm/05.webp",
+  "alt": "Farmhouse kitchen and dining table for twelve"
+ },
+ "villas/shipra-farm/06": {
+  "file": "villas/shipra-farm/06.webp",
+  "alt": "Warmly lit bedroom in the main house"
+ },
+ "villas/shipra-farm/07": {
+  "file": "villas/shipra-farm/07.webp",
+  "alt": "Long table laid for dinner on the lawn"
+ },
+ "villas/sunset-ridge/01": {
+  "file": "villas/sunset-ridge/01.webp",
+  "alt": "Infinity pool and pavilion at Sunset Ridge as the light fades over the Vindhyas"
+ },
+ "villas/sunset-ridge/02": {
+  "file": "villas/sunset-ridge/02.webp",
+  "alt": "Pergola at the edge of the pool at Sunset Ridge"
+ },
+ "villas/sunset-ridge/03": {
+  "file": "villas/sunset-ridge/03.webp",
+  "alt": "Round plunge pool overlooking the scrub forest below the ridge"
+ },
+ "villas/sunset-ridge/04": {
+  "file": "villas/sunset-ridge/04.webp",
+  "alt": "Dining room with valley views at Sunset Ridge"
+ },
+ "villas/sunset-ridge/05": {
+  "file": "villas/sunset-ridge/05.webp",
+  "alt": "Bedroom with floor-to-ceiling glass at Sunset Ridge"
+ },
+ "villas/sunset-ridge/06": {
+  "file": "villas/sunset-ridge/06.webp",
+  "alt": "Stone-walled bathroom with a soaking tub"
+ },
+ "villas/sunset-ridge/07": {
+  "file": "villas/sunset-ridge/07.webp",
+  "alt": "Reading in the hammock on the verandah"
+ }
+}

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* The admin has its own stylesheet (app/admin/admin.css); keep its classes out of this one */
+@source not "../admin";
+@source not "./admin";
+
 /* The rupee sign comes from an installed system font (unicode-range limits this face to ₹),
    which saves downloading the extended-Latin files of both web fonts. */
 @font-face {
@@ -32,6 +36,7 @@
   --color-field: #9c8c70; /* input borders (3.3:1) */
   --color-night: #1d1913; /* deepest ink, for dark bands */
   --color-error: #9b3423;
+  --color-success: #3d6a39; /* confirmations and discounts (6.1:1 on white) */
 
   --font-display: "SS Rupee", var(--font-cormorant), "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-sans: "SS Rupee", var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
@@ -338,6 +343,12 @@ html.lenis body {
 
 .ss-calendar .rdp-months {
   gap: 2rem;
+}
+
+/* Booked nights: struck through so they read as taken, not just faded */
+.ss-calendar .ss-booked:not(.rdp-selected) .rdp-day_button {
+  text-decoration: line-through;
+  text-decoration-color: var(--color-ink-soft);
 }
 
 /* ------------------------------------------------------------------ */

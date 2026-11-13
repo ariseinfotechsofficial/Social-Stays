@@ -5,6 +5,7 @@ import { m, AnimatePresence, useMotionValueEvent, useScroll } from "motion/react
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { WhatsAppLink } from "@/components/layout/ContactLinks";
+import { useSite } from "@/components/layout/SiteProvider";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,13 +14,14 @@ import { cn } from "@/lib/utils";
  */
 export function FloatingWhatsApp() {
   const pathname = usePathname();
+  const { floatingWhatsapp } = useSite();
   const onVilla = /^\/villas\/[^/]+$/.test(pathname);
   const [pastHero, setPastHero] = useState(false);
   const { scrollY } = useScroll();
 
   // On the home page the hero already has the enquiry bar, so wait until it scrolls away
   useMotionValueEvent(scrollY, "change", (y) => setPastHero(y > 480));
-  const visible = pathname !== "/" || pastHero;
+  const visible = floatingWhatsapp && (pathname !== "/" || pastHero);
 
   return (
     <AnimatePresence>

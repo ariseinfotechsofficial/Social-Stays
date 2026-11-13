@@ -1,0 +1,36 @@
+# Nginx in front of the API and the website (the admin is the website's /admin). Get certificates with:
+#   certbot --nginx -d www.socialstays.in -d socialstays.in -d api.socialstays.in
+
+server {
+    server_name www.socialstays.in socialstays.in;
+    # Admin photo uploads pass through the website's /api proxy
+    client_max_body_size 40m;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    server_name api.socialstays.in;
+    client_max_body_size 40m;
+    # Photos change name when replaced, so they can be cached for a year
+    location /uploads/ {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_set_header Host $host;
+        expires 365d;
+        add_header Cache-Control "public, immutable";
+    }
+    location / {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Daily database backup at 2:30 am (crontab -e):
+# 30 2 * * * cd /srv/social-stays/backend && npm run backup:prod >> /var/log/ss-backup.log 2>&1
+# …and copy backend/backups and the uploads folder off the server (e.g. rclone to Google Drive).

@@ -9,8 +9,8 @@ import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { useEnquiry } from "@/components/enquiry/EnquiryDialog";
 import { CallLink } from "@/components/layout/ContactLinks";
+import { useSite } from "@/components/layout/SiteProvider";
 import { buttonClasses } from "@/components/ui/Button";
-import { nav, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const MobileMenu = dynamic(() => import("@/components/layout/MobileMenu").then((mod) => mod.MobileMenu), { ssr: false });
@@ -37,6 +37,8 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuLoaded, setMenuLoaded] = useState(false);
   const { openEnquiry } = useEnquiry();
+  const site = useSite();
+  const { nav } = site;
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (y) => {
@@ -130,7 +132,7 @@ export function Header() {
                 "hidden h-11 px-5 sm:inline-flex",
               )}
             >
-              Check availability
+              {site.ctaLabel}
             </button>
             <button
               type="button"

@@ -1,0 +1,47 @@
+# Render blueprint for the backend API (testing). The website (with the admin at /admin) deploys to Vercel.
+# Render's free disk is wiped on every deploy/restart: seed photos survive (they ship in seed-assets/),
+# but photos uploaded in the admin do not. Use a paid persistent disk, or move to the VPS, before launch.
+services:
+  - type: web
+    name: social-stays-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PUBLIC_URL
+        sync: false # e.g. https://social-stays-api.onrender.com
+      - key: SITE_URL
+        sync: false # the Vercel website URL
+      - key: ADMIN_URL
+        sync: false # same as SITE_URL: the admin is served at {SITE_URL}/admin
+      - key: CORS_ORIGINS
+        sync: false # optional: preview URLs, comma-separated
+      - key: REVALIDATE_SECRET
+        sync: false # same value as the website's REVALIDATE_SECRET
+      - key: UPLOADS_DIR
+        value: ./uploads
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        value: Social Stays <bookings@socialstays.in>

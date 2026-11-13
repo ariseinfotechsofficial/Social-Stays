@@ -1,0 +1,119 @@
+/* Only the admin's files are scanned, so its utilities never ship to the public site */
+@import "tailwindcss" source(none);
+@source "../../admin";
+@source "./";
+
+/* Same palette and fonts as the website, tuned for a dense working UI */
+
+@font-face {
+  font-family: "SS Rupee";
+  src: local("Segoe UI"), local("Roboto"), local("Noto Sans"), local("Arial"), local("Helvetica Neue");
+  unicode-range: U+20B9;
+}
+
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-canvas: #faf7f1; /* app background */
+  --color-sand: #f6f0e5;
+  --color-sand-deep: #ede3d1;
+  --color-gold: #8a6b24;
+  --color-gold-deep: #75591b;
+  --color-gold-press: #66501a;
+  --color-brass: #b8944a;
+  --color-ink: #2a241b;
+  --color-ink-soft: #5e5546;
+  --color-ink-muted: #8c8271;
+  --color-line: #e8dfcf;
+  --color-field: #c9bca4;
+  --color-night: #1d1913;
+  --color-error: #9b3423;
+  --color-error-soft: #f6e4df;
+  --color-success: #3d6a39;
+  --color-success-soft: #e3eedf;
+  --color-info: #2f5a7a;
+  --color-info-soft: #e1ebf2;
+  --color-warn: #8a5a12;
+  --color-warn-soft: #f7ead2;
+
+  --font-display: "SS Rupee", var(--font-cormorant), "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans: "SS Rupee", var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility type-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+@utility type-heading {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.375rem;
+  line-height: 1.2;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    font-family: var(--font-sans);
+    font-size: 15px;
+  }
+
+  body {
+    background: var(--color-canvas);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-sand-deep);
+  }
+}
+
+/* Date picker */
+.rdp-root.ss-calendar {
+  --rdp-accent-color: var(--color-gold);
+  --rdp-accent-background-color: var(--color-sand);
+  --rdp-day-height: 2.25rem;
+  --rdp-day-width: 2.25rem;
+  --rdp-day_button-height: 2.125rem;
+  --rdp-day_button-width: 2.125rem;
+  --rdp-day_button-border-radius: 999px;
+  --rdp-range_middle-background-color: var(--color-sand);
+  --rdp-range_middle-color: var(--color-ink);
+  --rdp-range_start-date-background-color: var(--color-gold);
+  --rdp-range_end-date-background-color: var(--color-gold);
+  --rdp-today-color: var(--color-gold);
+  font-size: 0.8125rem;
+}
+
+.ss-calendar .rdp-caption_label {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.ss-calendar .rdp-chevron {
+  fill: var(--color-ink);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

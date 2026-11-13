@@ -6,7 +6,7 @@ import { AnimatePresence, m } from "motion/react";
 import Image from "next/image";
 import { Dialog } from "radix-ui";
 import { useCallback, useEffect, useState } from "react";
-import type { Photo } from "@/data/photos";
+import type { Photo } from "@/data/types";
 import { cn } from "@/lib/utils";
 
 /** Full-screen photo viewer: swipe or arrow keys, thumbnails on larger screens. Loaded on first open. */

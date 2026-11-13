@@ -3,9 +3,8 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import { EnquireTrigger } from "@/components/enquiry/EnquiryDialog";
 import { buttonClasses } from "@/components/ui/Button";
-import { destinationName } from "@/data/destinations";
-import { photo } from "@/data/photos";
 import type { Villa } from "@/data/types";
+import { destinationName, getContent } from "@/lib/content";
 import { cn, formatINR } from "@/lib/utils";
 
 /** Short pills for the listing grid, most distinctive first */
@@ -36,12 +35,13 @@ type Props = {
   className?: string;
 };
 
-export function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 88vw", morph = true, priority, ratio = "portrait", detailed, className }: Props) {
-  const cover = photo(villa.photos[0]);
+export async function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 88vw", morph = true, priority, ratio = "portrait", detailed, className }: Props) {
+  const c = await getContent();
+  const cover = villa.photos[0];
   const soon = villa.status === "coming-soon";
-  const destination = destinationName(villa.destination);
+  const destination = destinationName(c, villa.destination);
   const badge = soon ? (villa.openingNote ?? "Coming soon") : villa.badge;
-  const img = (
+  const img = cover ? (
     <Image
       src={cover.src}
       alt={cover.alt}
@@ -50,7 +50,7 @@ export function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width
       preload={priority}
       className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.045]"
     />
-  );
+  ) : null;
 
   return (
     <article className={cn("group relative", detailed && "flex h-full flex-col", className)}>
@@ -109,7 +109,7 @@ export function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min-width
             {!soon && (
               <EnquireTrigger
                 className={buttonClasses("primary", "sm", "w-full")}
-                prefill={{ title: "Check dates", villa: { name: villa.name, slug: villa.slug, destination, maxGuests: villa.guests.max } }}
+                prefill={{ title: "Check dates", villa: { name: villa.name, slug: villa.slug, destination, maxGuests: villa.guests.max, whatsappNumber: villa.whatsappNumber } }}
               >
                 Check dates
               </EnquireTrigger>

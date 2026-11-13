@@ -6,36 +6,43 @@ The public website for Social Stays: private villas and farmhouses around Indore
 
 ```bash
 npm install
-cp .env.example .env.local   # then fill in the real numbers and IDs
-npm run dev                  # http://localhost:3000
-npm run build && npm start   # production
+cp .env.example .env.local   # NEXT_PUBLIC_API_URL, REVALIDATE_SECRET, NEXT_PUBLIC_SITE_URL
+npm run dev                  # site on http://localhost:3000, admin on http://localhost:3000/admin (the backend must be running)
+npm run build && npm start   # production; the build reads all content from the API
 npm run lint && npm run typecheck
 ```
 
 Node 20.9 or newer.
 
+The admin panel lives in this app at `/admin`; see [ADMIN.md](ADMIN.md).
+
+## Where the content comes from
+
+All content (villas, destinations, experiences, page copy, photos, contact details, menus, SEO, tracking IDs) is edited in the **admin panel** and served by the **backend** (`../backend`). The site fetches one bundle, `GET /api/public/content`, through `src/lib/content.ts`:
+
+- The fetch is cached by Next.js under the tag `cms` (and refreshed at least hourly), so pages stay static and fast.
+- Every save in the admin makes the backend call `POST /api/revalidate` with the shared `REVALIDATE_SECRET`; the next visit to each page renders the new content.
+- Photo paths in the bundle (`/uploads/…`) are turned into absolute URLs on the backend's host and optimised by `next/image`.
+- Settings that client components need (WhatsApp number, menus, enquiry options) reach them through `<SiteProvider>` (`useSite()`).
+- Page sections are rendered in the order and on/off state set in the admin (`getPage()`); a section's text is read with `section.text("key", fallback)` so a half-filled section never breaks a page.
+- Redirects managed in the admin are applied by the catch-all route `app/(site)/[...path]`.
+
 ## Deploy to Vercel
 
-The Next.js app is this `frontend/` folder; nothing outside it is needed to build or run the site.
+1. Deploy the backend first (see `../README.md`): the build fetches every page's content from it.
+2. Import the repository in Vercel with **Root Directory** `frontend`. Framework Next.js, `npm ci`, `next build`.
+3. Environment variables: `NEXT_PUBLIC_API_URL` (the backend), `REVALIDATE_SECRET` (same as the backend), `NEXT_PUBLIC_SITE_URL` (the custom domain, once connected).
+4. In the backend, set `SITE_URL` and `ADMIN_URL` to this site's URL, so admin saves reach `/api/revalidate`.
 
-1. **Import the project.** Either push the repository to GitHub and import it in Vercel, with **Root Directory** set to `frontend`, or run `npx vercel` from inside `frontend/` with the Vercel CLI.
-2. **Keep the detected settings.** Framework preset: Next.js. Build command: `next build`. Install command: `npm ci`. Node 20.9 or newer, enforced by `engines` in `package.json`.
-3. **Add environment variables** under Project → Settings → Environment Variables, copied from `.env.example`:
-   - `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_PHONE_E164`, `NEXT_PUBLIC_PHONE_DISPLAY`, `NEXT_PUBLIC_EMAIL`: the client's real contact details.
-   - `NEXT_PUBLIC_GTM_ID`: once the Tag Manager container exists.
-   - `OWNER_LEADS_WEBHOOK_URL`: where owner leads are sent.
-   - `NEXT_PUBLIC_SITE_URL`: the custom domain, once it is connected. Until then the site uses Vercel's production domain for canonical links, the sitemap and social previews.
-4. **Redeploy after changing variables.** `NEXT_PUBLIC_*` values are baked in at build time.
+The admin's photo uploads pass through this app's `/api` proxy; the browser shrinks photos before upload, which keeps requests under Vercel's 4.5 MB limit.
 
-After the custom domain is live, submit `https://<domain>/sitemap.xml` in Google Search Console.
-
-Every page is pre-rendered at build time. The only server code is `/api/owner-leads`, which Vercel runs as a function. Photos are served through Vercel Image Optimization, which resizes them and converts them to WebP/AVIF.
+After the custom domain is live, submit `https://<domain>/sitemap.xml` in Google Search Console (the verification code goes in the admin under Settings → SEO & tracking).
 
 ## Stack
 
 | | |
 | --- | --- |
-| Framework | Next.js 16 (App Router), React 19, TypeScript. Every page is pre-rendered as static HTML. |
+| Framework | Next.js 16 (App Router), React 19, TypeScript. Every page is pre-rendered from the API and refreshed on demand. |
 | Styling | Tailwind CSS v4. Design tokens live in `src/app/globals.css`. |
 | Motion | Motion (`motion/react`) via `LazyMotion`, so animation code loads after first paint. Lenis smooth scrolling on mouse devices only. React `<ViewTransition>` for page changes and the villa photo morph. |
 | UI primitives | Radix (dialog, popover, accordion), Embla (carousels), react-day-picker (loaded on demand) |
@@ -48,62 +55,47 @@ Every page is pre-rendered at build time. The only server code is `/api/owner-le
 src/
   app/
     (site)/            pages with the full header and footer
-      page.tsx         home
+      page.tsx         home: sections in the admin's order
       villas/          listing with filters + villa detail template
-      destinations/    index + 4 SEO landing pages
+      destinations/    index + one page per destination
       experiences/  owners/  about/  faq/  contact/  policies/
+      booking/         checkout, the guest's booking page, find my booking
+      [...path]/       redirects from the admin, otherwise 404
     (landing)/lp/      ad landing template: no menu, one villa or one occasion
-    api/owner-leads/   owner partnership form endpoint
-    sitemap.ts  robots.ts  icon.svg  apple-icon.png
-  components/          layout, enquiry form, villa, home sections, motion helpers
-  data/                ALL CONTENT (villas, destinations, experiences, FAQs, policies, reviews, team)
+    admin/             the admin panel: its own root layout and stylesheet (see ADMIN.md)
+    api/revalidate/    called by the backend after admin saves
+    sitemap.ts  robots.ts
+  components/          layout, enquiry form, booking, villa, home sections, motion helpers
+  data/types.ts        the content model (matches the backend's bundle)
+  lib/content.ts       getContent() + lookups (getVilla, villasIn, getPage…)
+  lib/booking.ts       quotes, availability, Razorpay Checkout
   lib/                 site config, WhatsApp message builder, UTM capture, analytics
-  assets/photos/       placeholder photography (WebP), imported so Next can optimise it
-public/
-  images/              the client's original logo files (logo.jpeg, favicon.jpeg), served at /images/…
+  assets/brand/        fallback logos, used until logos are uploaded in Settings
+  admin/               the admin's components, lib and resource configs (imported as @admin/…)
 ```
-
-## Content is mock data
-
-Everything in `src/data` is written for the design and must be replaced or confirmed by the client before launch:
-
-- **Villas** (`villas.ts`): names, prices, rooms, hosts, ratings and coordinates are placeholders.
-- **Reviews** (`reviews.ts`): written for the layout. Do not publish them as real; replace them with genuine reviews or the Google reviews widget.
-- **Team** (`company.ts`): names, bios and portraits are placeholders.
-- **Policies** (`policies.ts`): draft text; needs legal review.
-- **Photos**: Unsplash placeholders, credited in `../docs/image-credits.md`. Villa photos must be swapped for the client's professional shoot.
-- **Contact details** (`src/lib/site.ts` or `.env.local`): WhatsApp, phone, email and Instagram are placeholders.
-
-The data types in `src/data/types.ts` match what the Phase 2 admin panel and API should return, so pages can switch from static files to fetches without component changes.
 
 ## How enquiries work
 
 1. A visitor fills in the enquiry form (destination or villa, dates, guests, occasion).
-2. `lib/whatsapp.ts` builds a plain-text message and opens `wa.me/<number>` with it pre-filled.
-3. The message ends with the traffic source, e.g. `Source: Instagram ad (diwali-weekends)`, captured by `lib/attribution.ts` from `utm_*`, `gclid`/`fbclid` or the referrer, and kept for 30 days.
+2. The enquiry is saved to the admin's Enquiries inbox in the background (`keepalive` request), then `lib/whatsapp.ts` opens `wa.me/<number>` with a pre-filled message. The number comes from Settings, or from the villa if it has its own.
+3. The message ends with the traffic source, e.g. `Source: Instagram ad (diwali-weekends)`, captured by `lib/attribution.ts` from `utm_*`, `gclid`/`fbclid` or the referrer, and kept for 30 days. The same source is stored with the enquiry.
 
-Example of what arrives on WhatsApp:
+## Online booking
 
-```
-Hello Social Stays, I'd like to check availability.
+Shown on a villa only when the backend has Razorpay keys, booking is switched on in Settings, and the villa is set to Instant or Request. Otherwise the villa keeps the WhatsApp enquiry card.
 
-Villa: Amaltas House, Jaam Gate
-Dates: Fri 16 Oct – Sun 18 Oct 2026 (2 nights)
-Guests: 8
-Occasion: Birthday
-
-Source: Instagram ad (diwali-weekends)
-Page: socialstays.in/lp/amaltas-house?utm_source=instagram…
-```
+- **Booking card** (villa sidebar): dates with booked nights struck through, guests, live price.
+- **Checkout** (`/booking/checkout`): add-ons, coupon, guest details, then Razorpay (instant) or a request the team approves.
+- **Booking page** (`/booking/<ref>?key=…`): status, payment of the balance, cancellation with the policy's refund shown. Guests reach it from their email or from Find my booking (reference + phone).
 
 ## Tracking
 
-Set `NEXT_PUBLIC_GTM_ID` and configure GA4, Meta Pixel and Conversions API inside Google Tag Manager. The site pushes these events to `dataLayer` (`lib/analytics.ts`), each with `traffic_source`, `traffic_medium` and `traffic_campaign`:
+Set the Google Tag Manager ID in the admin (Settings → SEO & tracking) and configure GA4, Meta Pixel and Conversions API inside GTM. (Direct GA4 / Pixel IDs work too when no GTM ID is set.) The site pushes these events to `dataLayer` (`lib/analytics.ts`), each with `traffic_source`, `traffic_medium` and `traffic_campaign`:
 
 | Event | Fired when | Extra fields |
 | --- | --- | --- |
 | `whatsapp_click` | any WhatsApp button or enquiry submit | `placement`, `villa` |
-| `form_submit` | an enquiry form is submitted | `form`, `villa`, `occasion` |
+| `form_submit` | an enquiry form, checkout or booking request is submitted | `form`, `villa`, `occasion` |
 | `call_click` | any click-to-call link | `placement` |
 | `villa_view` | a villa page is opened | `villa`, `villa_name` |
 | `owner_lead` | the owner partnership form succeeds | `rooms` |
@@ -112,11 +104,11 @@ If the Meta Pixel is loaded directly, these also map to the standard events `Con
 
 ## Ad landing pages
 
-`/lp/amaltas-house` (single villa) and `/lp/birthday-farmhouse` (occasion) are examples. Add more in `src/data/landing.ts`. They are `noindex`, show no menu, and keep a WhatsApp button fixed on mobile. Point ads at them with UTM tags.
+Created in the admin (Ad landing pages) at `/lp/<slug>`. They are `noindex` by default, show no menu, and keep a WhatsApp button fixed on mobile. Point ads at them with UTM tags.
 
 ## Owner leads
 
-`POST /api/owner-leads` validates the form. Set `OWNER_LEADS_WEBHOOK_URL` (for example a Google Apps Script web app that appends to a Sheet and sends an email) and leads are forwarded there; without it they are only logged on the server.
+The Partner with us form posts to the backend; leads appear in the admin under Owner leads.
 
 ## Performance and SEO
 

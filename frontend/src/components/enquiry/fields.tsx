@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Popover } from "radix-ui";
 import { useState, type ReactNode } from "react";
 import type { DateRange } from "react-day-picker";
+import { useSite } from "@/components/layout/SiteProvider";
 import { cn } from "@/lib/utils";
 
 // The calendar (react-day-picker + its styles) only downloads when someone opens the dates field
@@ -84,6 +85,8 @@ export function DatesField({
   onChange,
   compact = false,
   className,
+  unavailable,
+  note,
 }: {
   id: string;
   range: DateRange | undefined;
@@ -91,8 +94,13 @@ export function DatesField({
   /** Shorter wording for half-width cells */
   compact?: boolean;
   className?: string;
+  /** Booked nights ("yyyy-MM-dd") to grey out */
+  unavailable?: Set<string>;
+  /** Replaces the "flexible dates" line under the calendar */
+  note?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const { enquiry } = useSite();
 
   const label = range?.from
     ? range.to
@@ -125,6 +133,7 @@ export function DatesField({
           data-lenis-prevent
         >
           <Calendar
+            unavailable={unavailable}
             range={range}
             onSelect={(next) => {
               onChange(next);
@@ -132,7 +141,7 @@ export function DatesField({
             }}
           />
           <div className="mt-3 flex items-center justify-between gap-4 border-t border-line pt-3 text-sm text-ink-soft">
-            <span>Flexible? Leave the dates empty and tell us on WhatsApp.</span>
+            <span>{note ?? enquiry.flexibleNote}</span>
             {range?.from && (
               <button type="button" className="font-semibold text-gold-deep underline-offset-4 hover:underline" onClick={() => onChange(undefined)}>
                 Clear

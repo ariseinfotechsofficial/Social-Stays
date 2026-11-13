@@ -5,7 +5,7 @@ import { m, AnimatePresence, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Stars, type ReviewItem } from "@/components/shared/Reviews";
-import type { Photo } from "@/data/photos";
+import type { Photo } from "@/data/types";
 
 /** How long each review stays up before the next one fades in */
 const INTERVAL = 7000;

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import type { Photo } from "@/data/photos";
+import type { Photo } from "@/data/types";
 import { cn } from "@/lib/utils";
 
 /** Full-bleed photo opening for inner pages. Text sits bottom-left on a flat dark wash. */
@@ -12,7 +12,7 @@ export function PageHero({
   meta,
   className,
 }: {
-  photo: Photo;
+  photo: Photo | null;
   title: ReactNode;
   intro?: ReactNode;
   children?: ReactNode;
@@ -21,14 +21,7 @@ export function PageHero({
 }) {
   return (
     <section className={cn("relative isolate flex min-h-[62svh] items-end overflow-hidden bg-night text-white lg:min-h-[70svh]", className)}>
-      <Image
-        src={photo.src}
-        alt={photo.alt}
-        fill
-        preload
-        sizes="100vw"
-        className="hero-settle -z-10 object-cover"
-      />
+      {photo && <Image src={photo.src} alt={photo.alt} fill preload sizes="100vw" className="hero-settle -z-10 object-cover" />}
       <div aria-hidden className="absolute inset-0 -z-10 bg-night/45" />
       {/* Title on the left; actions or key facts on the right on large screens */}
       <div className="container-page grid w-full gap-7 pt-32 pb-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-end lg:gap-16 lg:pb-14">

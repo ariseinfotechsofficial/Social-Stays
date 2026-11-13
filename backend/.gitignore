@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+# Runtime uploads (admin uploads). Seed photos live in seed-assets/ and are committed.
+uploads
+backups

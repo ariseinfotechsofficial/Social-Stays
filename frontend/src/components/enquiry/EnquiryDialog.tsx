@@ -5,7 +5,7 @@ import { m, AnimatePresence } from "motion/react";
 import { Dialog } from "radix-ui";
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { EnquiryForm, type EnquiryPrefill } from "@/components/enquiry/EnquiryForm";
-import { site } from "@/lib/site";
+import { useSite } from "@/components/layout/SiteProvider";
 
 type Ctx = { openEnquiry: (prefill?: EnquiryPrefill & { title?: string }) => void };
 
@@ -17,6 +17,7 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 /** One enquiry dialog for the whole site, opened from the header, CTAs and celebration pages. */
 export function EnquiryProvider({ children }: { children: ReactNode }) {
+  const site = useSite();
   const [open, setOpen] = useState(false);
   const [prefill, setPrefill] = useState<EnquiryPrefill & { title?: string }>({});
 
@@ -54,9 +55,9 @@ export function EnquiryProvider({ children }: { children: ReactNode }) {
                 >
                   <div className="flex items-start justify-between gap-6 px-5 pt-6 pb-2">
                     <div>
-                      <Dialog.Title className="type-display-m">{prefill.title ?? "Plan your stay"}</Dialog.Title>
+                      <Dialog.Title className="type-display-m">{prefill.title ?? site.enquiry.dialogTitle}</Dialog.Title>
                       <p className="mt-1 text-[0.9375rem] text-ink-soft">
-                        {prefill.villa ? `${prefill.villa.name}, ${prefill.villa.destination}` : "Tell us a little; we'll suggest the right villa."}
+                        {prefill.villa ? `${prefill.villa.name}, ${prefill.villa.destination}` : site.enquiry.dialogIntro}
                       </p>
                     </div>
                     <Dialog.Close className="-mt-1 -mr-1 grid size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-sand" aria-label="Close">
@@ -64,7 +65,7 @@ export function EnquiryProvider({ children }: { children: ReactNode }) {
                     </Dialog.Close>
                   </div>
                   <EnquiryForm {...prefill} placement="enquiry_dialog" onSubmitted={() => setOpen(false)} />
-                  <p className="px-5 pb-6 text-[0.8125rem] text-ink-soft">No payment needed to enquire. {site.replyHours}</p>
+                  <p className="px-5 pb-6 text-[0.8125rem] text-ink-soft">{site.enquiry.note} {site.replyHours}</p>
                 </m.div>
               </Dialog.Content>
             </Dialog.Portal>

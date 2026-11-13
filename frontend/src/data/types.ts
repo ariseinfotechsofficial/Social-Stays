@@ -1,50 +1,21 @@
-import type { PhotoKey } from "@/data/photos";
-
 /*
- * Content model. Shaped so the Phase 2 admin panel / API can return the same fields;
- * swap the static modules in src/data for fetches without touching components.
+ * Content model, as returned by the backend's /api/public/content bundle.
+ * Every slug reference (villa.destination, review.villa, …) points at an item in the same bundle.
  */
 
-export type DestinationSlug = "jaam-gate" | "mandu" | "omkareshwar" | "ujjain";
+/** A photo with its intrinsic size; `src` is an absolute URL once it reaches components */
+export type Photo = { src: string; width: number; height: number; alt: string; blur?: string };
 
-export type OccasionSlug = "birthdays" | "anniversaries" | "pre-wedding" | "offsites";
-
-export type AmenityKey =
-  | "pool"
-  | "wifi"
-  | "ac"
-  | "parking"
-  | "kitchen"
-  | "caretaker"
-  | "chef"
-  | "breakfast"
-  | "bbq"
-  | "bonfire"
-  | "lawn"
-  | "music"
-  | "tv"
-  | "power"
-  | "pets"
-  | "kids"
-  | "games"
-  | "view"
-  | "terrace"
-  | "events"
-  | "hot-water"
-  | "workspace";
+export type Seo = { title: string; description: string; keywords: string[]; ogImage: Photo | null; noindex: boolean };
 
 export type Faq = { q: string; a: string };
 
-export type ThingToDo = {
-  title: string;
-  description: string;
-  photo?: PhotoKey;
-  /** e.g. "Half day", "1–2 hours" */
-  time?: string;
-};
+export type Link = { label: string; href: string };
+
+export type ThingToDo = { title: string; description: string; photo: Photo | null; time?: string };
 
 export type Destination = {
-  slug: DestinationSlug;
+  slug: string;
   name: string;
   district: string;
   driveMinutes: number;
@@ -53,58 +24,68 @@ export type Destination = {
   tagline: string;
   intro: string[];
   bestTime: string;
-  hero: PhotoKey;
-  card: PhotoKey;
+  hero: Photo | null;
+  card: Photo | null;
   thingsToDo: ThingToDo[];
   faqs: Faq[];
   coordinates: { lat: number; lng: number };
-  seo: { title: string; description: string };
+  seo: Seo;
+  updatedAt?: string;
 };
 
-export type VillaCategory = "luxury" | "budget";
+export type VillaCategory = { slug: string; label: string; short: string; blurb: string };
 
-export type Room ={ name: string; beds: string; note?: string };
+export type Amenity = { key: string; label: string; icon: string };
+
+export type CancellationPolicy = { key: string; name: string; summary: string; tiers: { daysBefore: number; refundPercent: number }[] };
+
+export type Room = { name: string; beds: string; note?: string };
+
+export type BookingMode = "instant" | "request" | "enquiry";
 
 export type Villa = {
   slug: string;
   name: string;
-  destination: DestinationSlug;
+  destination: string;
   status: "live" | "coming-soon";
-  /** Home page splits the collection into Luxury Stays and Budget Stays */
-  category: VillaCategory;
-  /** Short label on the card photo, e.g. "Signature" */
+  category: string;
   badge?: string;
-  /** One line under the name */
   tagline: string;
-  /** Card summary, ~20 words */
   summary: string;
   description: string[];
   /** Weekday price per night, whole villa */
   priceFrom: number;
   weekendPrice?: number;
+  extraGuestCharge: number;
+  minNights: number;
   guests: { base: number; max: number };
   bedrooms: number;
   bathrooms: number;
   privatePool: boolean;
   petFriendly: boolean;
   highlights: string[];
-  amenities: AmenityKey[];
+  amenities: string[];
   rooms: Room[];
   meals: string;
   houseRules: string[];
   checkIn: string;
   checkOut: string;
-  cancellation: "standard" | "peak";
+  cancellation: string;
   securityDeposit: number;
-  photos: PhotoKey[];
+  photos: Photo[];
   /** Approximate — never the exact gate */
   location: { area: string; lat: number; lng: number; fromIndore: string };
   host: { name: string; note: string };
   rating?: { score: number; count: number };
-  occasions: OccasionSlug[];
+  occasions: string[];
   openingNote?: string;
-  seo: { title: string; description: string };
+  seo: Seo;
+  bookingMode: BookingMode;
+  whatsappNumber?: string;
+  updatedAt?: string;
 };
+
+export type ChargeType = "per_person" | "per_person_per_night" | "per_unit" | "per_night" | "on_request";
 
 export type Experience = {
   slug: string;
@@ -112,18 +93,21 @@ export type Experience = {
   summary: string;
   description: string;
   price: { amount: number; unit: string; from?: boolean };
+  chargeType: ChargeType;
+  minGuests: number;
+  bookable: boolean;
   includes: string[];
-  photo: PhotoKey;
-  availableAt: "all" | DestinationSlug[];
+  photo: Photo | null;
+  availableAt: "all" | string[];
 };
 
 export type Occasion = {
-  slug: OccasionSlug;
+  slug: string;
   title: string;
   heading: string;
   summary: string;
   description: string;
-  photo: PhotoKey;
+  photo: Photo | null;
   ideas: string[];
   groupSize: string;
   villas: string[];
@@ -139,16 +123,80 @@ export type Review = {
   date: string;
   rating: number;
   text: string;
+  featured: boolean;
 };
 
-export type TeamMember = { name: string; role: string; bio: string; photo: PhotoKey };
+export type FaqGroup = { id: string; title: string; items: (Faq & { showOnHome: boolean })[] };
+
+export type TeamMember = { name: string; role: string; bio: string; photo: Photo | null };
 
 export type PolicySection = { heading: string; body: string[] };
 
-export type Policy = {
-  slug: "terms" | "cancellation-refund" | "privacy";
-  title: string;
-  summary: string;
-  updated: string;
-  sections: PolicySection[];
+export type Policy = { slug: string; title: string; summary: string; updated: string; sections: PolicySection[]; seo: Seo };
+
+export type LandingPage = {
+  slug: string;
+  kind: "villa" | "occasion";
+  headline: string;
+  subhead: string;
+  bullets: string[];
+  hero: Photo | null;
+  gallery: Photo[];
+  villas: string[];
+  occasion?: string;
+  formTitle: string;
+  formIntro: string;
+  villasTitle: string;
+  ctaTitle: string;
+  ctaLabel: string;
+  stickyLabel: string;
+  stickyMessage: string;
+  seo: Seo;
+};
+
+export type Section = { key: string; type: string; enabled: boolean; data: Record<string, unknown> };
+
+export type PageContent = { seo: Seo; sections: Section[] };
+
+export type SiteSettings = {
+  brand: { name: string; tagline: string; description: string; logo: Photo | null; logoLight: Photo | null; badge: Photo | null; favicon: Photo | null };
+  contact: {
+    whatsappNumber: string;
+    phoneDisplay: string;
+    phoneE164: string;
+    email: string;
+    replyHours: string;
+    callHours: string;
+    defaultWhatsappMessage: string;
+    floatingWhatsapp: boolean;
+  };
+  social: { instagramHandle: string; instagramUrl: string; facebookUrl: string; youtubeUrl: string; googleReviewsUrl: string };
+  address: { street: string; locality: string; region: string; postalCode: string; country: string; lat: number; lng: number; mapNote: string };
+  header: { nav: Link[]; secondaryNav: Link[]; ctaLabel: string };
+  footer: { blurb: string; columns: { title: string; auto: "" | "destinations" | "policies"; links: Link[] }[]; copyright: string };
+  seo: Seo;
+  titleTemplate: string;
+  tracking: { gtmId: string; ga4Id: string; metaPixelId: string; googleSiteVerification: string };
+  reviewSummary: { score: number; count: number; source: string };
+  enquiry: { occasions: string[]; dialogTitle: string; dialogIntro: string; note: string; submitLabel: string; flexibleNote: string };
+  booking: { available: boolean; razorpayKeyId: string; weekendNights: number[]; gstPercent: number; gstInclusive: boolean; maxAdvanceDays: number; termsNote: string };
+};
+
+export type Content = {
+  generatedAt: string;
+  settings: SiteSettings;
+  pages: Record<string, PageContent>;
+  destinations: Destination[];
+  categories: VillaCategory[];
+  amenities: Amenity[];
+  cancellationPolicies: CancellationPolicy[];
+  villas: Villa[];
+  experiences: Experience[];
+  occasions: Occasion[];
+  reviews: Review[];
+  faqGroups: FaqGroup[];
+  team: TeamMember[];
+  policies: Policy[];
+  landingPages: LandingPage[];
+  redirects: { from: string; to: string; permanent: boolean }[];
 };

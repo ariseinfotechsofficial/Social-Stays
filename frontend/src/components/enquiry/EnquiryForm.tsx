@@ -4,14 +4,13 @@ import { WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import { useId, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { DatesField, GuestsField, GuestsSelect, SelectField } from "@/components/enquiry/fields";
+import { useSite } from "@/components/layout/SiteProvider";
 import { Button } from "@/components/ui/Button";
-import { destinations } from "@/data/destinations";
-import { enquiryOccasions } from "@/data/occasions";
 import { openWhatsAppEnquiry } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
 export type EnquiryPrefill = {
-  villa?: { name: string; slug: string; destination: string; maxGuests: number };
+  villa?: { name: string; slug: string; destination: string; maxGuests: number; /** Per-villa WhatsApp number */ whatsappNumber?: string };
   destination?: string;
   occasion?: string;
 };
@@ -26,15 +25,16 @@ type Props = EnquiryPrefill & {
   onSubmitted?: () => void;
 };
 
-const destinationOptions = destinations.map((d) => ({ value: d.name, label: d.name }));
-const occasionOptions = enquiryOccasions.map((o) => ({ value: o, label: o }));
-
 /**
  * The enquiry flow from the brief: destination, dates, guests, occasion →
  * opens WhatsApp with a pre-filled message including the villa and traffic source.
  */
 export function EnquiryForm({ villa, destination, occasion, layout = "stack", placement, submitLabel, className, onSubmitted }: Props) {
   const id = useId();
+  const site = useSite();
+  const destinationOptions = site.destinations.map((d) => ({ value: d.name, label: d.name }));
+  const occasionOptions = site.enquiry.occasions.map((o) => ({ value: o, label: o }));
+  const defaultLabel = site.enquiry.submitLabel || "Enquire on WhatsApp";
   const [dest, setDest] = useState(destination ?? "");
   const [range, setRange] = useState<DateRange | undefined>();
   const [guests, setGuests] = useState(0);
@@ -52,6 +52,8 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
         occasion: occ || undefined,
       },
       placement,
+      villa?.whatsappNumber || site.whatsappNumber,
+      site.name,
     );
     onSubmitted?.();
   };
@@ -73,7 +75,7 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
         </div>
         <div className="border-t border-line p-2.5">
           <Button type="submit" size="lg" className="w-full" icon={<WhatsappLogoIcon weight="regular" className="size-5" />}>
-            {submitLabel ?? "Enquire on WhatsApp"}
+            {submitLabel ?? defaultLabel}
           </Button>
         </div>
       </form>
@@ -123,7 +125,7 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
           className={cn("w-full", bar && "lg:h-[4.25rem] lg:px-8")}
           icon={<WhatsappLogoIcon weight="regular" className="size-5" />}
         >
-          {submitLabel ?? "Enquire on WhatsApp"}
+          {submitLabel ?? defaultLabel}
         </Button>
       </div>
     </form>

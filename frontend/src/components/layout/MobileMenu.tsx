@@ -7,8 +7,8 @@ import { Dialog } from "radix-ui";
 import { Logo } from "@/components/brand/Logo";
 import { useEnquiry } from "@/components/enquiry/EnquiryDialog";
 import { CallLink, WhatsAppLink } from "@/components/layout/ContactLinks";
+import { useSite } from "@/components/layout/SiteProvider";
 import { Button } from "@/components/ui/Button";
-import { nav, secondaryNav, site } from "@/lib/site";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 const easeOut = [0.16, 1, 0.3, 1] as const;
@@ -16,6 +16,8 @@ const easeOut = [0.16, 1, 0.3, 1] as const;
 /** Full-screen menu that wipes down from the top, links rising in sequence (portfolio menu, calmer). */
 export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { openEnquiry } = useEnquiry();
+  const site = useSite();
+  const { nav, secondaryNav } = site;
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -81,7 +83,7 @@ export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange
                       openEnquiry();
                     }}
                   >
-                    Check availability
+                    {site.ctaLabel}
                   </Button>
                   <div className="flex flex-wrap gap-x-6 gap-y-3 text-[0.9375rem] font-medium text-ink">
                     <WhatsAppLink placement="mobile_menu" className="inline-flex items-center gap-2">
@@ -90,9 +92,11 @@ export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange
                     <CallLink placement="mobile_menu" className="inline-flex items-center gap-2">
                       <PhoneIcon className="size-5 text-gold" /> {site.phone.display}
                     </CallLink>
+                    {site.instagram.url && (
                     <a href={site.instagram.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
                       <InstagramLogoIcon className="size-5 text-gold" /> Instagram
                     </a>
+                    )}
                   </div>
                 </m.div>
               </m.div>

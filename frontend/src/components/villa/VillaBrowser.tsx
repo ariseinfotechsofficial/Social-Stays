@@ -4,10 +4,8 @@ import { m, AnimatePresence } from "motion/react";
 import { useMemo, useSyncExternalStore, type ReactNode } from "react";
 import { Rail } from "@/components/villa/VillaCarousel";
 import type { Villa, VillaCategory } from "@/data/types";
+import { fill } from "@/lib/fill";
 import { cn } from "@/lib/utils";
-
-/** "12+ guests" chip */
-const BIG_GROUP = 12;
 
 const SEARCH_EVENT = "ss:villa-filters";
 
@@ -21,7 +19,7 @@ function subscribeToSearch(onChange: () => void) {
 }
 
 export type Filters = {
-  category: VillaCategory | "all";
+  category: string;
   big: boolean;
   pool: boolean;
   pets: boolean;
@@ -30,13 +28,13 @@ export type Filters = {
 const defaultFilters: Filters = { category: "all", big: false, pool: false, pets: false };
 
 /** Reads filters from a shared link like /villas?category=luxury&pool=1 */
-function filtersFromSearch(search: string): Filters {
+function filtersFromSearch(search: string, slugs: string[], bigGroup: number): Filters {
   const p = new URLSearchParams(search);
   // "value" was the old name for budget; older shared links still use it
-  const category = p.get("category") === "value" ? "budget" : p.get("category");
+  const category = p.get("category") === "value" ? "budget" : (p.get("category") ?? "");
   return {
-    category: category === "luxury" || category === "budget" ? category : "all",
-    big: p.get("guests") === String(BIG_GROUP),
+    category: slugs.includes(category) ? category : "all",
+    big: p.get("guests") === String(bigGroup),
     pool: p.get("pool") === "1",
     pets: p.get("pets") === "1",
   };
@@ -65,23 +63,38 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
  * then one band per category (Luxury, Budget), each a sideways-scrolling rail of cards.
  * Filters live in the URL so a filtered list can be shared on WhatsApp.
  */
+export type BrowserLabels = {
+  allLabel: string;
+  poolLabel: string;
+  groupLabel: string;
+  groupSize: number;
+  petsLabel: string;
+  emptyTitle: string;
+  emptyBody: string;
+  emptyReset: string;
+};
+
 export function VillaBrowser({
   villas,
   heading,
   intro,
   categories,
+  labels,
   children,
 }: {
   villas: Villa[];
   heading: string;
   intro: string;
-  categories: { slug: VillaCategory; label: string; short: string; blurb: string }[];
+  categories: VillaCategory[];
+  labels: BrowserLabels;
   /** Pre-rendered cards keyed by slug (server components) */
   children: Record<string, ReactNode>;
 }) {
+  const BIG_GROUP = labels.groupSize || 12;
+  const slugKey = categories.map((c) => c.slug).join(",");
   // The server renders every villa (good for search engines); a shared link applies once the page hydrates.
   const search = useSyncExternalStore(subscribeToSearch, () => window.location.search, () => "");
-  const f = useMemo(() => (search ? filtersFromSearch(search) : defaultFilters), [search]);
+  const f = useMemo(() => (search ? filtersFromSearch(search, slugKey.split(","), BIG_GROUP) : defaultFilters), [search, slugKey, BIG_GROUP]);
 
   const update = (patch: Partial<Filters>) => {
     const next = { ...f, ...patch };
@@ -105,7 +118,7 @@ export function VillaBrowser({
     );
     const live = (v: Villa) => (v.status === "live" ? 0 : 1);
     return [...list].sort((a, b) => live(a) - live(b));
-  }, [villas, f]);
+  }, [villas, f, BIG_GROUP]);
 
   // One section per category, in the order given; empty ones are left out
   const sections = categories.map((category) => ({ category, list: results.filter((v) => v.category === category.slug) })).filter((s) => s.list.length);
@@ -122,7 +135,7 @@ export function VillaBrowser({
         </div>
         <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0 lg:justify-end" role="group" aria-label="Filter villas">
           <Chip active={!filtered} onClick={reset}>
-            All
+            {labels.allLabel}
           </Chip>
           {categories.map((c) => (
             <Chip key={c.slug} active={f.category === c.slug} onClick={() => update({ category: f.category === c.slug ? "all" : c.slug })}>
@@ -130,13 +143,13 @@ export function VillaBrowser({
             </Chip>
           ))}
           <Chip active={f.pool} onClick={() => update({ pool: !f.pool })}>
-            Private pool
+            {labels.poolLabel}
           </Chip>
           <Chip active={f.big} onClick={() => update({ big: !f.big })}>
-            {BIG_GROUP}+ guests
+            {fill(labels.groupLabel, { n: BIG_GROUP })}
           </Chip>
           <Chip active={f.pets} onClick={() => update({ pets: !f.pets })}>
-            Pet friendly
+            {labels.petsLabel}
           </Chip>
         </div>
       </div>
@@ -178,12 +191,10 @@ export function VillaBrowser({
         </div>
       ) : (
         <div className="rounded-[8px] bg-sand px-6 py-16 text-center">
-          <p className="type-display-m">No villa matches all of that yet.</p>
-          <p className="mx-auto mt-3 max-w-md text-ink-soft">
-            Try fewer filters, or tell us what you need on WhatsApp. New villas join the collection every month.
-          </p>
+          <p className="type-display-m">{labels.emptyTitle}</p>
+          <p className="mx-auto mt-3 max-w-md text-ink-soft">{labels.emptyBody}</p>
           <button type="button" onClick={reset} className="mt-6 font-semibold text-gold-deep underline underline-offset-4">
-            Show all villas
+            {labels.emptyReset}
           </button>
         </div>
       )}

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { m, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import type { Photo } from "@/data/photos";
+import type { Photo } from "@/data/types";
 import { cn } from "@/lib/utils";
 
 const ease = [0.16, 1, 0.3, 1] as const;

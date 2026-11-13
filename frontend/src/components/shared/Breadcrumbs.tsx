@@ -1,7 +1,7 @@
 import { CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { site } from "@/lib/site";
+import { siteUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export type Crumb = { label: string; href: string };
@@ -32,7 +32,7 @@ export function Breadcrumbs({ items, className, tone = "dark" }: { items: Crumb[
         data={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
-          itemListElement: all.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.label, item: `${site.url}${c.href}` })),
+          itemListElement: all.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.label, item: `${siteUrl}${c.href}` })),
         }}
       />
     </>

@@ -4,7 +4,7 @@ import { ImagesIcon } from "@phosphor-icons/react/dist/ssr";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { ViewTransition, useState } from "react";
-import type { Photo } from "@/data/photos";
+import type { Photo } from "@/data/types";
 
 const Lightbox = dynamic(() => import("@/components/villa/Lightbox").then((mod) => mod.Lightbox), { ssr: false });
 

@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { DestinationSlug } from "@/data/types";
+import type { Photo } from "@/data/types";
 
 /*
  * Line illustrations, one per destination: ink strokes over soft brass and sand shapes.
@@ -14,7 +15,7 @@ const stroke = {
   strokeLinejoin: "round",
 } as const;
 
-const icons: Record<DestinationSlug, ReactNode> = {
+const icons: Record<string, ReactNode> = {
   // Ridge with the old Jaam Gate darwaza on the ghat road
   "jaam-gate": (
     <>
@@ -85,7 +86,7 @@ const icons: Record<DestinationSlug, ReactNode> = {
   ),
 };
 
-export type PickerStop = { slug: DestinationSlug; name: string; drive: string; villas: number };
+export type PickerStop = { slug: string; name: string; drive: string; villas: number; /** Shown when the destination has no drawn icon */ photo?: Photo | null };
 
 /** Home: one icon per destination, each linking to its page. */
 export function DestinationPicker({ stops }: { stops: PickerStop[] }) {
@@ -95,9 +96,15 @@ export function DestinationPicker({ stops }: { stops: PickerStop[] }) {
         <li key={s.slug}>
           <Link href={`/destinations/${s.slug}`} className="group flex flex-col items-center text-center">
             <span className="grid size-36 place-items-center rounded-full bg-white shadow-[0_18px_40px_-28px_rgb(42_36_27/0.5)] ring-1 ring-line transition-[translate,box-shadow] duration-500 ease-out-expo group-hover:-translate-y-1.5 group-hover:shadow-[0_28px_50px_-26px_rgb(42_36_27/0.55)] group-hover:ring-brass sm:size-44">
-              <svg viewBox="0 0 96 96" aria-hidden className="size-24 text-ink sm:size-28">
-                {icons[s.slug]}
-              </svg>
+              {icons[s.slug] || !s.photo ? (
+                <svg viewBox="0 0 96 96" aria-hidden className="size-24 text-ink sm:size-28">
+                  {icons[s.slug]}
+                </svg>
+              ) : (
+                <span className="relative size-[calc(100%-1rem)] overflow-hidden rounded-full">
+                  <Image src={s.photo.src} alt="" fill sizes="176px" className="object-cover" />
+                </span>
+              )}
             </span>
             <span className="mt-4 bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-[position:0_100%] bg-no-repeat pb-0.5 font-display text-[1.5rem] leading-tight font-medium transition-[color,background-size] duration-500 ease-out-expo group-hover:bg-[length:100%_1px] group-hover:text-gold sm:text-[1.75rem]">
               {s.name}

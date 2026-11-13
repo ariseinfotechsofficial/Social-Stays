@@ -3,7 +3,8 @@
 import { CheckCircleIcon, CircleNotchIcon } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { getAttribution } from "@/lib/attribution";
+import { ApiError, api } from "@/lib/api";
+import { describeAttribution, getAttribution } from "@/lib/attribution";
 import { track } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -29,8 +30,10 @@ function Field({ id, label, hint, error, children }: { id: string; label: string
   );
 }
 
-/** Owner partnership lead form from the brief: name, location, rooms, photos link → /api/owner-leads. */
-export function OwnerForm() {
+export type OwnerFormCopy = { submitLabel: string; successTitle: string; successBody: string; privacyNote: string };
+
+/** Owner partnership lead form from the brief: name, location, rooms, photos link → the admin's Owner leads inbox. */
+export function OwnerForm({ copy }: { copy: OwnerFormCopy }) {
   const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<"idle" | "sending" | "sent" | "failed">("idle");
 
@@ -49,15 +52,26 @@ export function OwnerForm() {
 
     setState("sending");
     try {
-      const res = await fetch("/api/owner-leads", {
+      const a = getAttribution();
+      await api("/owner-leads", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, source: getAttribution().source, page: window.location.pathname }),
+        json: {
+          ...data,
+          photos: data.photos?.trim() ?? "",
+          source: describeAttribution(a),
+          page: window.location.pathname,
+          attribution: { source: a.source, medium: a.medium, campaign: a.campaign, landing: a.landingPage, label: describeAttribution(a) },
+        },
       });
-      if (!res.ok) throw new Error(String(res.status));
       track("owner_lead", { rooms: Number(data.rooms) });
       setState("sent");
-    } catch {
+    } catch (err) {
+      // Server-side field errors (same rules) land on the same fields
+      if (err instanceof ApiError && err.details) {
+        setErrors(Object.fromEntries(Object.entries(err.details).map(([k, v]) => [k, v[0]])) as Errors);
+        setState("idle");
+        return;
+      }
       setState("failed");
     }
   };
@@ -66,9 +80,9 @@ export function OwnerForm() {
     return (
       <div className="rounded-[8px] bg-white p-8 sm:p-10" role="status">
         <CheckCircleIcon weight="light" className="size-12 text-gold" />
-        <h3 className="type-display-m mt-5">Thank you, we have your details</h3>
+        <h3 className="type-display-m mt-5">{copy.successTitle}</h3>
         <p className="mt-3 leading-relaxed text-ink-soft">
-          Someone from our partnerships team will call you within two working days to talk about your property and arrange a visit.
+          {copy.successBody}
         </p>
       </div>
     );
@@ -106,9 +120,9 @@ export function OwnerForm() {
         </p>
       )}
       <Button type="submit" size="lg" className="mt-8 w-full sm:w-auto" disabled={state === "sending"} icon={state === "sending" ? <CircleNotchIcon className="size-5 animate-spin" /> : undefined}>
-        {state === "sending" ? "Sending" : "Send property details"}
+        {state === "sending" ? "Sending" : copy.submitLabel}
       </Button>
-      <p className="mt-4 text-[0.8125rem] text-ink-soft">We use these details only to get in touch about a partnership.</p>
+      {copy.privacyNote && <p className="mt-4 text-[0.8125rem] text-ink-soft">{copy.privacyNote}</p>}
     </form>
   );
 }

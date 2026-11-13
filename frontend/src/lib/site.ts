@@ -1,52 +1,52 @@
+import type { Content, Link, Photo } from "@/data/types";
+
 /**
  * Canonical site URL. Set NEXT_PUBLIC_SITE_URL once the custom domain is live; until then
  * Vercel's production domain is used, and the placeholder domain only for local builds.
  */
-const siteUrl =
+export const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://www.socialstays.in");
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://www.socialstays.in")
+).replace(/\/+$/, "");
 
-/**
- * Business details used across the site.
- * PLACEHOLDERS: WhatsApp number, phone, email and Instagram handle must be replaced
- * with the client's real details before launch (or set via the NEXT_PUBLIC_* env vars).
- */
-export const site = {
-  name: "Social Stays",
-  tagline: "Luxury stay collection",
-  description:
-    "Private villas and farmhouses around Indore — in Jaam Gate, Mandu, Omkareshwar and Ujjain — booked whole for your family, friends or celebration.",
-  url: siteUrl,
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "910000000000",
-  phone: {
-    display: process.env.NEXT_PUBLIC_PHONE_DISPLAY ?? "+91 00000 00000",
-    href: `tel:${process.env.NEXT_PUBLIC_PHONE_E164 ?? "+910000000000"}`,
-  },
-  email: process.env.NEXT_PUBLIC_EMAIL ?? "hello@socialstays.in",
-  instagram: {
-    handle: "socialstays",
-    url: "https://www.instagram.com/socialstays",
-  },
-  address: {
-    locality: "Indore",
-    region: "Madhya Pradesh",
-    postalCode: "452001",
-    country: "IN",
-  },
-  replyHours: "We reply on WhatsApp from 9 am to 10 pm, every day.",
-  /** Approximate office location for the contact map (central Indore). */
-  office: { lat: 22.7196, lng: 75.8577 },
-} as const;
+/** The settings client components need (contact links, menus, enquiry form), passed down through <SiteProvider>. */
+export type ClientSite = {
+  name: string;
+  whatsappNumber: string;
+  phone: { display: string; href: string };
+  email: string;
+  replyHours: string;
+  defaultWhatsappMessage: string;
+  floatingWhatsapp: boolean;
+  instagram: { handle: string; url: string };
+  nav: Link[];
+  secondaryNav: Link[];
+  ctaLabel: string;
+  logo: Photo | null;
+  logoLight: Photo | null;
+  enquiry: Content["settings"]["enquiry"];
+  destinations: { slug: string; name: string }[];
+  booking: Content["settings"]["booking"];
+};
 
-export const nav = [
-  { label: "Stays", href: "/villas" },
-  { label: "Destinations", href: "/destinations" },
-  { label: "Experiences", href: "/experiences" },
-  { label: "Partner with us", href: "/owners" },
-] as const;
-
-export const secondaryNav = [
-  { label: "About", href: "/about" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
-] as const;
+export function clientSite(c: Content): ClientSite {
+  const s = c.settings;
+  return {
+    name: s.brand.name,
+    whatsappNumber: s.contact.whatsappNumber.replace(/\D/g, ""),
+    phone: { display: s.contact.phoneDisplay, href: `tel:${s.contact.phoneE164.replace(/[^\d+]/g, "")}` },
+    email: s.contact.email,
+    replyHours: s.contact.replyHours,
+    defaultWhatsappMessage: s.contact.defaultWhatsappMessage,
+    floatingWhatsapp: s.contact.floatingWhatsapp,
+    instagram: { handle: s.social.instagramHandle, url: s.social.instagramUrl },
+    nav: s.header.nav,
+    secondaryNav: s.header.secondaryNav,
+    ctaLabel: s.header.ctaLabel || "Check availability",
+    logo: s.brand.logo,
+    logoLight: s.brand.logoLight,
+    enquiry: s.enquiry,
+    destinations: c.destinations.map((d) => ({ slug: d.slug, name: d.name })),
+    booking: s.booking,
+  };
+}
