@@ -12,7 +12,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
   if (typeof key !== "string" || !key) redirect(`/booking?ref=${encodeURIComponent(ref)}`);
   const t = labels(await getContent(), "booking");
   return (
-    <div className="container-page pt-28 pb-16 lg:pt-32 lg:pb-24">
+    <div className="container-page pt-32 pb-16 lg:pt-36 lg:pb-24">
       <BookingView refCode={ref.toUpperCase()} accessKey={key} labels={{ confirmedBody: t.text("confirmedBody"), requestedBody: t.text("requestedBody") }} />
     </div>
   );

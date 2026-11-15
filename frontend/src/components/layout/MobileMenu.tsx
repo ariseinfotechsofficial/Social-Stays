@@ -34,9 +34,9 @@ export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange
                 data-lenis-prevent
               >
                 <Dialog.Title className="sr-only">Menu</Dialog.Title>
-                <div className="container-page flex h-[4.5rem] shrink-0 items-center justify-between">
+                <div className="container-page flex h-[5.25rem] shrink-0 items-center justify-between gap-3">
                   <Link href="/" onClick={() => onOpenChange(false)} aria-label="Social Stays, home">
-                    <Logo />
+                    <Logo className="h-[min(4.55rem,calc((100vw-6rem)/3.31))]" />
                   </Link>
                   <Dialog.Close className="grid size-11 place-items-center rounded-full border border-ink/20 text-ink" aria-label="Close menu">
                     <XIcon className="size-5" />

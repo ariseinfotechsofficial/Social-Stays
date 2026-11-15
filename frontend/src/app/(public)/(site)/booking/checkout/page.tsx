@@ -26,7 +26,7 @@ export default async function CheckoutPage({ searchParams }: PageProps<"/booking
   const checkOut = one("out");
 
   return (
-    <div className="container-page pt-26 pb-16 lg:pt-30 lg:pb-24">
+    <div className="container-page pt-30 pb-16 lg:pt-34 lg:pb-24">
       <Breadcrumbs
         items={[
           { label: "Stays", href: "/villas" },

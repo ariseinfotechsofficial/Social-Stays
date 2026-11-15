@@ -40,7 +40,7 @@ export function Hero({ data }: { data: SectionData }) {
         )}
         <div aria-hidden className="absolute inset-0 -z-10 bg-night/50 lg:bg-night/40" />
 
-        <div className="container-page w-full pt-[6.75rem] pb-20 sm:pt-28 lg:pb-32">
+        <div className="container-page w-full pt-[7.75rem] pb-20 sm:pt-32 lg:pb-32">
           <h1 className="type-display-xl max-w-[13ch] max-lg:text-[clamp(2.75rem,11.5vw,3.75rem)] max-lg:leading-[0.98]">
             <span className="sr-only">{[line1, line2].filter(Boolean).join(" ")}</span>
             <span aria-hidden>

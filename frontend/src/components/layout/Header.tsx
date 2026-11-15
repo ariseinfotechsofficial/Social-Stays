@@ -73,16 +73,27 @@ export function Header() {
         {/* Compacts once the page is scrolled, leaving more room for content */}
         <div
           className={cn(
-            "container-page flex items-center justify-between gap-6 transition-[height] duration-500 ease-out-expo",
-            scrolled ? "h-16 lg:h-[4.25rem]" : "h-[4.5rem] lg:h-20",
+            "container-page flex items-center justify-between gap-3 transition-[height] duration-500 ease-out-expo sm:gap-6",
+            scrolled ? "h-[4.5rem] lg:h-[4.75rem]" : "h-[5.25rem] lg:h-24",
           )}
         >
           <Link href="/" aria-label="Social Stays, home" className="shrink-0">
-            <Logo tone={tone} preload className={cn("transition-[height] duration-500 ease-out-expo", scrolled ? "h-12 lg:h-[3.25rem]" : "h-14 lg:h-16")} />
+            {/* 30% larger than the original lockup. On narrow phones it shrinks just enough to leave room for the call and menu buttons;
+                between lg and xl it stays a step smaller so the nav links still fit on one line. */}
+            <Logo
+              tone={tone}
+              preload
+              className={cn(
+                "transition-[height] duration-500 ease-out-expo",
+                scrolled
+                  ? "h-[min(3.9rem,calc((100vw-9.25rem)/3.31))] lg:h-[3.65rem] xl:h-[4.225rem]"
+                  : "h-[min(4.55rem,calc((100vw-9.25rem)/3.31))] lg:h-[4.5rem] xl:h-[5.2rem]",
+              )}
+            />
           </Link>
 
           <nav aria-label="Main" className="hidden lg:block">
-            <ul className="flex items-center gap-8">
+            <ul className="flex items-center gap-6 xl:gap-8">
               {nav.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (

@@ -118,7 +118,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
         }}
       />
 
-      <div className="container-page pt-26 lg:pt-28">
+      <div className="container-page pt-30 lg:pt-32">
         <Breadcrumbs
           items={[
             { label: "Stays", href: "/villas" },

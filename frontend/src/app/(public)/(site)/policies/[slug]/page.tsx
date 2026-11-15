@@ -27,7 +27,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
   if (!policy) notFound();
 
   return (
-    <article className="container-page pt-26 pb-16 lg:pt-30 lg:pb-24">
+    <article className="container-page pt-30 pb-16 lg:pt-34 lg:pb-24">
       <Breadcrumbs items={[{ label: policy.title, href: `/policies/${policy.slug}` }]} />
       <div className="mt-6 grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16">
         <nav aria-label="Policies" className="order-2 lg:order-1">

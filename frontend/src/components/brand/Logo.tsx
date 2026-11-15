@@ -24,7 +24,7 @@ export function Logo({ tone = "dark", className, preload }: { tone?: "dark" | "l
         height={dark.height}
         alt={name}
         preload={preload}
-        sizes="220px"
+        sizes="280px"
         className={cn("h-full w-auto transition-opacity duration-500", tone === "light" && "opacity-0")}
       />
       <Image
@@ -33,7 +33,7 @@ export function Logo({ tone = "dark", className, preload }: { tone?: "dark" | "l
         height={light.height}
         alt=""
         aria-hidden
-        sizes="220px"
+        sizes="280px"
         className={cn("absolute inset-0 h-full w-auto transition-opacity duration-500", tone === "dark" && "opacity-0")}
       />
     </span>

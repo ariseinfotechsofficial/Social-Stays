@@ -20,7 +20,7 @@ export default async function VillasPage() {
 
   return (
     <>
-      <div className="container-page pt-26 lg:pt-30">
+      <div className="container-page pt-30 lg:pt-34">
         <Breadcrumbs items={[{ label: c.settings.header.nav.find((n) => n.href === "/villas")?.label ?? "Stays", href: "/villas" }]} />
       </div>
 
