@@ -93,7 +93,7 @@ export function Header() {
           </Link>
 
           <nav aria-label="Main" className="hidden lg:block">
-            <ul className="flex items-center gap-6 xl:gap-8">
+            <ul className="flex items-center gap-5 xl:gap-8">
               {nav.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
@@ -102,7 +102,7 @@ export function Header() {
                       href={item.href}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "group relative block py-2 text-[0.9375rem] font-medium transition-colors duration-500",
+                        "group relative block py-2 text-[0.875rem] font-medium whitespace-nowrap transition-colors duration-500 xl:text-[0.9375rem]",
                         tone === "light" ? "text-white" : "text-ink",
                       )}
                     >

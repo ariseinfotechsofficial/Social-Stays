@@ -336,10 +336,10 @@ async function main() {
           { label: "Stays", href: "/villas" },
           { label: "Destinations", href: "/destinations" },
           { label: "Experiences", href: "/experiences" },
+          { label: "About", href: "/about" },
           { label: "Partner with us", href: "/owners" },
         ],
         secondaryNav: [
-          { label: "About", href: "/about" },
           { label: "FAQ", href: "/faq" },
           { label: "Contact", href: "/contact" },
         ],
