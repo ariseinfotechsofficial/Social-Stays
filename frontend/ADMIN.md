@@ -13,18 +13,16 @@ It is kept separate from the public site:
 
 | Screen | |
 | --- | --- |
-| Dashboard | Things needing action, enquiry and booking trends, arrivals. Owners see their own dashboard |
-| Bookings | Requests to approve, payments, refunds, cancellations, moving dates, adding WhatsApp bookings |
-| Calendar | Every villa's booked, held and blocked nights; click to block or open |
-| Coupons, Owner payouts | Discount codes; monthly owner statements and paid status |
-| Enquiries, Owner leads | Inboxes with status, notes, WhatsApp/call buttons, CSV export |
-| Villas … Cancellation rules | The catalogue (villas have a Seasonal prices tab) |
+| Dashboard | New enquiries and owner leads, enquiry trends, listing requests, recent activity |
+| Enquiries, Owner leads | Inboxes with status, notes, WhatsApp/call buttons, CSV export. Welcome pop-up leads show the form "Welcome pop-up" |
+| Calendar | Internal only: which nights each villa is blocked (e.g. stays confirmed on WhatsApp). Not shown on the website |
+| Villas … Occasions | The catalogue |
 | Pages & sections | Every heading, paragraph, photo and button on the website; show/hide and reorder sections |
 | Reviews … Ad landing pages, Media library | The rest of the website content and the photo library |
-| Site settings, Redirects | Contact details, menus, footer, SEO, tracking IDs, booking and payment rules |
+| Site settings, Redirects | Contact details, menus, footer, SEO, tracking IDs, enquiry form and welcome pop-up |
 | Users & owners, Listing requests, Activity log | Accounts and roles, owners' change requests, who changed what |
 
-Owners see: Dashboard, Bookings, Calendar (block their own dates), Earnings & payouts, My villas (suggest changes).
+Owners see: My villas (suggest changes to their listing, which an admin approves).
 
 ## Adding a new editable thing
 

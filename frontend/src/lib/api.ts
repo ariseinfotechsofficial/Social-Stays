@@ -1,4 +1,4 @@
-/** Browser-side calls to the backend (forms, availability, bookings). */
+/** Browser-side calls to the backend (forms). */
 export const PUBLIC_API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/+$/, "");
 
 export class ApiError extends Error {

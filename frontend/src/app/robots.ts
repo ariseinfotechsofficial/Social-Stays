@@ -7,7 +7,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   // "Hide the whole site from search" in Settings → SEO (useful before launch)
   if (settings.seo.noindex) return { rules: [{ userAgent: "*", disallow: "/" }] };
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/booking/", "/admin"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/admin"] }],
     sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

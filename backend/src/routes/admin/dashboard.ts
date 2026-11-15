@@ -1,18 +1,16 @@
 import { Router } from "express";
 import { can } from "../../lib/auth.js";
-import { Booking, ListingRequest, VillaNight } from "../../models/booking.js";
-import { Villa } from "../../models/catalog.js";
+import { ListingRequest } from "../../models/calendar.js";
 import { Enquiry, OwnerLead } from "../../models/leads.js";
 import { Activity } from "../../models/users.js";
-import { addDays, dayKey, monthStart, todayIST } from "../../services/dates.js";
+import { addDays, dayKey, todayIST } from "../../services/dates.js";
 
 export const dashboardRouter = Router();
 
-/** The admin home: what needs attention today, plus the trend lines. Each block appears only for roles that can act on it. */
+/** The admin home: new leads and listing requests, plus the enquiry trend. Each block appears only for roles that can act on it. */
 dashboardRouter.get("/", async (req, res) => {
   const user = req.user!;
   const today = todayIST();
-  const in30 = addDays(today, 30);
   const since30 = new Date(Date.now() - 30 * 86_400_000);
   const out: Record<string, unknown> = {};
 
@@ -39,50 +37,6 @@ dashboardRouter.get("/", async (req, res) => {
     };
   }
 
-  if (can(user, "bookings")) {
-    const [requests, cancellations, arrivals, liveVillas, bookedNights, revenueByMonth, upcomingCount] = await Promise.all([
-      Booking.countDocuments({ status: "requested" }),
-      Booking.countDocuments({ "cancellation.status": "requested" }),
-      Booking.find({ status: "confirmed", checkIn: { $gte: today, $lte: addDays(today, 7) } })
-        .sort("checkIn")
-        .limit(12)
-        .select("ref villaName checkIn checkOut guests guest.name amountPaid pricing.total")
-        .lean(),
-      Villa.countDocuments({ status: "live" }),
-      VillaNight.countDocuments({ kind: "booking", date: { $gte: today, $lt: in30 }, $or: [{ expiresAt: { $exists: false } }, { expiresAt: null }] }),
-      Booking.aggregate([
-        { $match: { status: { $in: ["confirmed", "completed"] }, checkIn: { $gte: monthStart(addDays(today, -150)) } } },
-        { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$checkIn" } }, value: { $sum: "$pricing.total" }, count: { $sum: 1 } } },
-        { $sort: { _id: 1 } },
-      ]),
-      Booking.countDocuments({ status: "confirmed", checkIn: { $gte: today } }),
-    ]);
-    const months = Array.from({ length: 6 }, (_, i) => {
-      const d = monthStart(today);
-      d.setUTCMonth(d.getUTCMonth() - 5 + i);
-      return d.toISOString().slice(0, 7);
-    });
-    const byMonth = Object.fromEntries(revenueByMonth.map((m) => [m._id, m]));
-    out.bookings = {
-      requests,
-      cancellations,
-      upcoming: upcomingCount,
-      arrivals,
-      occupancy30: liveVillas ? Math.round((bookedNights / (liveVillas * 30)) * 100) : 0,
-      byMonth: months.map((m) => ({ month: m, value: byMonth[m]?.value ?? 0, count: byMonth[m]?.count ?? 0 })),
-    };
-  }
-
-  if (can(user, "payments")) {
-    const start = monthStart(today);
-    const [collected] = await Booking.aggregate([
-      { $unwind: "$payments" },
-      { $match: { "payments.status": "paid", "payments.paidAt": { $gte: start } } },
-      { $group: { _id: null, amount: { $sum: "$payments.amount" } } },
-    ]);
-    out.payments = { collectedThisMonth: collected?.amount ?? 0 };
-  }
-
   if (can(user, "owners") || can(user, "catalog")) {
     out.listingRequests = await ListingRequest.countDocuments({ status: "pending" });
   }
@@ -97,11 +51,10 @@ dashboardRouter.get("/", async (req, res) => {
 /** Small counts for the sidebar badges, polled every minute */
 dashboardRouter.get("/counts", async (req, res) => {
   const user = req.user!;
-  const [needsAction, newEnquiries, newOwnerLeads, listingRequests] = await Promise.all([
-    can(user, "bookings") ? Booking.countDocuments({ $or: [{ status: "requested" }, { "cancellation.status": "requested" }] }) : 0,
+  const [newEnquiries, newOwnerLeads, listingRequests] = await Promise.all([
     can(user, "leads") ? Enquiry.countDocuments({ status: "new" }) : 0,
     can(user, "leads") ? OwnerLead.countDocuments({ status: "new" }) : 0,
     can(user, "owners") || can(user, "catalog") ? ListingRequest.countDocuments({ status: "pending" }) : 0,
   ]);
-  res.json({ needsAction, newEnquiries, newOwnerLeads, listingRequests });
+  res.json({ newEnquiries, newOwnerLeads, listingRequests });
 });

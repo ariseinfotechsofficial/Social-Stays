@@ -89,27 +89,13 @@ const SettingsSchema = new Schema(
       submitLabel: { type: String, default: "Enquire on WhatsApp" },
       flexibleNote: { type: String, default: "Flexible? Leave the dates empty and tell us on WhatsApp." },
     },
-    booking: {
-      /** Master switch for online booking; villas still choose instant / request / enquiry */
+    /** Name + phone pop-up shown once per visit; submissions land in Enquiries as "welcome_popup" */
+    welcomePopup: {
       enabled: { type: Boolean, default: true },
-      paymentMode: { type: String, enum: ["advance", "full", "choice"], default: "advance" },
-      advancePercent: { type: Number, default: 50, min: 1, max: 100 },
-      /** Balance due this many days before check-in */
-      balanceDueDays: { type: Number, default: 7 },
-      /** Unpaid checkouts hold the dates for this long */
-      holdMinutes: { type: Number, default: 20 },
-      /** Hours the team has to approve a request before it lapses */
-      requestExpiryHours: { type: Number, default: 24 },
-      /** Hours a guest has to pay after a request is approved */
-      paymentWindowHours: { type: Number, default: 24 },
-      /** Nights starting on these weekdays use the weekend price (0 = Sunday … 6 = Saturday) */
-      weekendNights: { type: [Number], default: [5, 6] },
-      gstPercent: { type: Number, default: 18 },
-      gstInclusive: { type: Boolean, default: false },
-      gstin: { type: String, default: "" },
-      legalName: { type: String, default: "" },
-      maxAdvanceDays: { type: Number, default: 365 },
-      termsNote: { type: String, default: "" },
+      title: { type: String, default: "Plan your getaway" },
+      intro: { type: String, default: "Share your name and number, and we'll help you find the right villa on WhatsApp." },
+      buttonLabel: { type: String, default: "Let's connect on WhatsApp" },
+      note: { type: String, default: "No spam. We only message you about your stay." },
     },
   },
   { timestamps: true, minimize: false },
@@ -119,7 +105,8 @@ export const Settings = model("Settings", SettingsSchema);
 export type SettingsDoc = InferSchemaType<typeof SettingsSchema>;
 
 export async function getSettings() {
-  const doc = await Settings.findOne({ key: "site" }).lean();
-  if (doc) return doc;
+  // Not lean: hydrating applies schema defaults, so settings added later (e.g. welcomePopup) have values
+  const doc = await Settings.findOne({ key: "site" });
+  if (doc) return doc.toObject();
   return (await Settings.create({ key: "site" })).toObject();
 }

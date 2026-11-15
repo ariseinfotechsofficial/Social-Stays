@@ -309,27 +309,6 @@ export function defaultPages(img: Img): Record<string, SeedPage> {
       },
     },
 
-    booking: {
-      seo: { title: "Your booking", description: "Book a private villa near Indore with Social Stays." },
-      sections: {
-        labels: {
-          data: {
-            bookLabel: "Book now",
-            requestLabel: "Request to book",
-            orEnquire: "or ask us on WhatsApp first",
-            checkoutTitle: "Confirm and pay",
-            checkoutIntro: "Check your stay, add anything you'd like, and pay securely with Razorpay. Your dates are held while you pay.",
-            requestIntro: "Send your request and our team will confirm within a few hours. You pay only once we approve it.",
-            payLabel: "Pay and confirm",
-            submitRequestLabel: "Send booking request",
-            confirmedBody: "Your villa is booked. We've sent the details to your email, and your host's number and directions reach you the day before you arrive.",
-            requestedBody: "We have your request. Our team will check the dates and get back to you on WhatsApp and email, usually within a few hours.",
-            termsNote: "By booking you agree to our terms of stay and the villa's cancellation policy.",
-            manageIntro: "Enter your booking reference and the phone number you booked with.",
-          },
-        },
-      },
-    },
 
     "not-found": {
       sections: {

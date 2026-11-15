@@ -1,7 +1,6 @@
-import { Badge } from "@admin/components/ui/feedback";
 import { AMENITY_ICONS } from "@admin/lib/icons";
 import { formatINR } from "@admin/lib/utils";
-import { PUBLISH_OPTIONS, PublishBadge, TitleCell, idsFor, name, seoSection, statusField } from "./common";
+import { PublishBadge, TitleCell, idsFor, name, seoSection, statusField } from "./common";
 import type { ResourceConfig } from "./types";
 
 export const destinations: ResourceConfig = {
@@ -90,14 +89,6 @@ export const destinations: ResourceConfig = {
   ],
 };
 
-const CHARGE_TYPES = [
-  { value: "per_person", label: "Per person (× guests)" },
-  { value: "per_person_per_night", label: "Per person per night" },
-  { value: "per_unit", label: "Per item (guest picks a quantity)" },
-  { value: "per_night", label: "Per night" },
-  { value: "on_request", label: "Quoted on request (not charged online)" },
-];
-
 export const experiences: ResourceConfig = {
   key: "experiences",
   endpoint: "/admin/experiences",
@@ -119,7 +110,7 @@ export const experiences: ResourceConfig = {
     },
     { label: "Status", render: (d) => <PublishBadge status={d.status} /> },
   ],
-  defaults: { status: "draft", title: "", slug: "", price: { amount: 0, unit: "per person", from: false }, chargeType: "per_person", bookable: true, includes: [], availableAt: [] },
+  defaults: { status: "draft", title: "", slug: "", price: { amount: 0, unit: "per person", from: false }, includes: [], availableAt: [] },
   titleOf: (d) => String(d.title ?? ""),
   viewUrl: (d) => (d.status === "published" ? `/experiences#${d.slug}` : null),
   sections: [
@@ -137,14 +128,11 @@ export const experiences: ResourceConfig = {
     },
     {
       title: "Price",
-      description: "The price shown on the website, and how online bookings charge it.",
+      description: "The price shown on the website.",
       fields: [
         { name: "price.amount", label: "Amount", type: "money", width: "third" },
         { name: "price.unit", label: "Unit", type: "text", width: "third", help: "e.g. per person, per set-up" },
         { name: "price.from", label: 'Show as "From"', type: "boolean", width: "third" },
-        { name: "chargeType", label: "Charged at checkout", type: "select", options: CHARGE_TYPES, width: "half" },
-        { name: "minGuests", label: "Minimum guests charged", type: "number", min: 0, width: "third", showIf: (v) => String(v.chargeType).startsWith("per_person") },
-        { name: "bookable", label: "Can be added at online checkout", type: "boolean" },
       ],
     },
     {
@@ -253,125 +241,3 @@ export const occasions: ResourceConfig = {
     },
   ],
 };
-
-export const cancellationPolicies: ResourceConfig = {
-  key: "cancellation-policies",
-  endpoint: "/admin/cancellation-policies",
-  title: "Cancellation rules",
-  singular: "Cancellation rule",
-  description: "Refund tiers used for online cancellations. Each villa picks one. The written policy is edited under Policies.",
-  perms: ["catalog"],
-  columns: [
-    { label: "Rule", render: (d) => <TitleCell title={String(d.name)} sub={String(d.summary ?? "")} /> },
-    {
-      label: "Tiers",
-      render: (d) => (
-        <span className="text-ink-soft">
-          {((d.tiers as { daysBefore: number; refundPercent: number }[]) ?? []).map((t) => `${t.daysBefore}+ days: ${t.refundPercent}%`).join(" · ")}
-        </span>
-      ),
-    },
-  ],
-  defaults: { name: "", key: "", summary: "", tiers: [{ daysBefore: 15, refundPercent: 100 }, { daysBefore: 7, refundPercent: 50 }, { daysBefore: 0, refundPercent: 0 }], deductionPercent: 0 },
-  titleOf: (d) => String(d.name ?? ""),
-  sections: [
-    {
-      title: "Rule",
-      fields: [
-        { name: "name", label: "Name", type: "text", width: "half" },
-        { name: "key", label: "Key", type: "slug", from: "name", width: "third" },
-        { name: "summary", label: "One line on the villa page", type: "text" },
-        { name: "deductionPercent", label: "Payment charges kept on refunds", type: "number", min: 0, max: 10, step: 0.5, suffix: "%", width: "third" },
-      ],
-    },
-    {
-      title: "Refund tiers",
-      description: "Cancelling at least this many days before check-in refunds this share of what was paid. Add a 0-day tier for late cancellations.",
-      fields: [
-        {
-          name: "tiers",
-          label: "Tiers",
-          type: "list",
-          itemLabel: "Tier",
-          titleKey: "daysBefore",
-          fields: [
-            { name: "daysBefore", label: "Days before check-in (at least)", type: "number", min: 0, width: "half" },
-            { name: "refundPercent", label: "Refund", type: "number", min: 0, max: 100, suffix: "%", width: "half" },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
-export const coupons: ResourceConfig = {
-  key: "coupons",
-  endpoint: "/admin/coupons",
-  title: "Coupons",
-  singular: "Coupon",
-  description: "Discount codes guests can enter at online checkout.",
-  perms: ["coupons"],
-  searchable: true,
-  sort: "-createdAt",
-  duplicable: true,
-  filters: [
-    {
-      name: "active",
-      label: "Active",
-      options: [
-        { value: "true", label: "Active" },
-        { value: "false", label: "Off" },
-      ],
-    },
-  ],
-  columns: [
-    { label: "Code", render: (d) => <TitleCell title={String(d.code)} sub={String(d.description ?? "")} /> },
-    { label: "Discount", render: (d) => <span className="tabular-nums">{d.type === "percent" ? `${d.value}%${d.maxDiscount ? ` (max ${formatINR(d.maxDiscount as number)})` : ""}` : formatINR(d.value as number)}</span> },
-    { label: "Used", render: (d) => <span className="tabular-nums text-ink-soft">{`${d.usedCount ?? 0}${d.usageLimit ? ` / ${d.usageLimit}` : ""}`}</span> },
-    { label: "Status", render: (d) => (d.active ? <Badge tone="success">Active</Badge> : <Badge>Off</Badge>) },
-  ],
-  defaults: { code: "", description: "", type: "percent", value: 10, maxDiscount: 0, minAmount: 0, minNights: 0, usageLimit: 0, villas: [], active: true },
-  titleOf: (d) => String(d.code ?? ""),
-  toForm: (d) => ({ ...idsFor(d, ["villas"]), validFrom: d.validFrom ? String(d.validFrom).slice(0, 10) : "", validTo: d.validTo ? String(d.validTo).slice(0, 10) : "" }),
-  fromForm: (v) => ({ ...v, code: String(v.code ?? "").toUpperCase(), validFrom: v.validFrom || null, validTo: v.validTo || null }),
-  sections: [
-    {
-      title: "Code",
-      fields: [
-        { name: "code", label: "Code", type: "text", width: "third", help: "Letters and numbers, e.g. DIWALI10" },
-        { name: "active", label: "Active", type: "boolean", width: "third" },
-        { name: "description", label: "Internal note", type: "text" },
-      ],
-    },
-    {
-      title: "Discount",
-      fields: [
-        {
-          name: "type",
-          label: "Type",
-          type: "select",
-          width: "third",
-          options: [
-            { value: "percent", label: "Percentage" },
-            { value: "flat", label: "Fixed amount" },
-          ],
-        },
-        { name: "value", label: "Value", type: "number", min: 0, width: "third", help: "% or ₹" },
-        { name: "maxDiscount", label: "Maximum discount", type: "money", width: "third", help: "0 = no cap", showIf: (v) => v.type === "percent" },
-      ],
-    },
-    {
-      title: "Conditions",
-      fields: [
-        { name: "minAmount", label: "Minimum booking value", type: "money", width: "third" },
-        { name: "minNights", label: "Minimum nights", type: "number", min: 0, width: "third" },
-        { name: "usageLimit", label: "Total uses allowed", type: "number", min: 0, width: "third", help: "0 = unlimited" },
-        { name: "validFrom", label: "Valid from", type: "date", width: "third" },
-        { name: "validTo", label: "Valid until", type: "date", width: "third" },
-        { name: "villas", label: "Only for these villas", type: "ref", endpoint: "/admin/villas", labelKey: "name", multiple: true, help: "Leave empty for every villa" },
-      ],
-    },
-  ],
-};
-
-export { PUBLISH_OPTIONS };

@@ -4,7 +4,7 @@ Private villas and farmhouses around Indore, booked online or on WhatsApp. Two a
 
 | Folder | What it is | Local URL |
 | --- | --- | --- |
-| [`backend/`](backend/README.md) | Express + MongoDB API: content, photos, enquiries, bookings, Razorpay, owners | http://localhost:4000 |
+| [`backend/`](backend/README.md) | Express + MongoDB API: content, photos, enquiries, availability calendar, owners | http://localhost:4000 |
 | [`frontend/`](frontend/README.md) | One Next.js app: the public website (pre-rendered from the API, refreshed when the admin saves) and the admin panel at [`/admin`](frontend/ADMIN.md) | http://localhost:3000 and http://localhost:3000/admin |
 
 ```

@@ -2,7 +2,7 @@
  * Loads the website's original content and photo library into MongoDB.
  *
  *   npm run seed            add anything missing (never overwrites edits made in the admin)
- *   npm run seed -- --force overwrite seeded content with the original copy (users, bookings and leads untouched)
+ *   npm run seed -- --force overwrite seeded content with the original copy (users and leads untouched)
  *   npm run seed -- --demo  also create a demo owner account for testing the owner dashboard
  */
 import bcrypt from "bcryptjs";
@@ -13,7 +13,7 @@ import type { Model, Types } from "mongoose";
 import { env } from "../config/env.js";
 import { connectDb, disconnectDb } from "../db.js";
 import { blurDataUrl } from "../lib/storage.js";
-import { Amenity, CancellationPolicy, Destination, Experience, Occasion, Villa, VillaCategory } from "../models/catalog.js";
+import { Amenity, Destination, Experience, Occasion, Villa, VillaCategory } from "../models/catalog.js";
 import { FaqGroup, FaqItem, LandingPage, Media, Page, Policy, Redirect, Review, TeamMember } from "../models/content.js";
 import { Settings } from "../models/settings.js";
 import { User } from "../models/users.js";
@@ -133,32 +133,6 @@ const AMENITIES: [string, string, string][] = [
   ["workspace", "Work-friendly table", "Laptop"],
 ];
 
-/** How each add-on is charged when a guest adds it at checkout */
-const CHARGES: Record<string, { chargeType: string; minGuests?: number }> = {
-  "malwa-thali": { chargeType: "per_person", minGuests: 6 },
-  "indori-breakfast": { chargeType: "per_person_per_night" },
-  "bonfire-evening": { chargeType: "per_unit" },
-  "barbecue-dinner": { chargeType: "per_person", minGuests: 8 },
-  "celebration-decor": { chargeType: "on_request" },
-  "candlelit-dinner": { chargeType: "per_unit" },
-  "private-chef": { chargeType: "per_night" },
-  "haldi-mehendi": { chargeType: "on_request" },
-  "guided-day-trip": { chargeType: "on_request" },
-};
-
-/** Big event villas are confirmed by the team; the rest can be booked instantly */
-const BOOKING: Record<string, { mode: string; extraGuestCharge: number }> = {
-  "amaltas-house": { mode: "instant", extraGuestCharge: 1500 },
-  "sunset-ridge": { mode: "instant", extraGuestCharge: 1500 },
-  "palash-farm": { mode: "request", extraGuestCharge: 1200 },
-  "baobab-house": { mode: "instant", extraGuestCharge: 1000 },
-  "kesar-bagh": { mode: "enquiry", extraGuestCharge: 1500 },
-  "rewa-riverside": { mode: "instant", extraGuestCharge: 1000 },
-  "mahua-farm": { mode: "instant", extraGuestCharge: 1200 },
-  "avantika-house": { mode: "instant", extraGuestCharge: 1000 },
-  "shipra-farm": { mode: "request", extraGuestCharge: 1200 },
-};
-
 async function main() {
   await connectDb();
   console.info(`[seed] ${force ? "overwriting seeded content" : "adding missing content"}…`);
@@ -170,33 +144,6 @@ async function main() {
 
   const categoryIds = new Map<string, Types.ObjectId>();
   for (const [i, c] of villaCategories.entries()) categoryIds.set(c.slug, await upsert(VillaCategory, { slug: c.slug }, { label: c.label, short: c.short, blurb: c.blurb, order: i }));
-
-  const policyIds = new Map<string, Types.ObjectId>();
-  policyIds.set(
-    "standard",
-    await upsert(
-      CancellationPolicy,
-      { key: "standard" },
-      {
-        name: "Standard",
-        summary: "Full refund up to 15 days before; 50% up to 7 days before.",
-        tiers: [
-          { daysBefore: 15, refundPercent: 100 },
-          { daysBefore: 7, refundPercent: 50 },
-          { daysBefore: 0, refundPercent: 0 },
-        ],
-        deductionPercent: 2,
-      },
-    ),
-  );
-  policyIds.set(
-    "peak",
-    await upsert(
-      CancellationPolicy,
-      { key: "peak" },
-      { name: "Peak dates", summary: "Peak dates are non-refundable but can be moved once.", tiers: [{ daysBefore: 0, refundPercent: 0 }], deductionPercent: 0 },
-    ),
-  );
 
   const destinationIds = new Map<string, Types.ObjectId>();
   for (const [i, d] of destinations.entries()) {
@@ -229,7 +176,6 @@ async function main() {
 
   const villaIds = new Map<string, Types.ObjectId>();
   for (const [i, v] of villas.entries()) {
-    const extra = BOOKING[v.slug] ?? { mode: "enquiry", extraGuestCharge: 0 };
     villaIds.set(
       v.slug,
       await upsert(
@@ -247,7 +193,6 @@ async function main() {
           priceFrom: v.priceFrom,
           weekendPrice: v.weekendPrice ?? 0,
           guests: v.guests,
-          extraGuestCharge: extra.extraGuestCharge,
           minNights: 1,
           bedrooms: v.bedrooms,
           bathrooms: v.bathrooms,
@@ -260,7 +205,6 @@ async function main() {
           houseRules: v.houseRules,
           checkIn: v.checkIn,
           checkOut: v.checkOut,
-          cancellationPolicy: policyIds.get(v.cancellation),
           securityDeposit: v.securityDeposit,
           photos: v.photos.map((p) => img(p)),
           location: v.location,
@@ -268,8 +212,6 @@ async function main() {
           rating: v.rating ?? { score: 0, count: 0 },
           openingNote: v.openingNote ?? "",
           seo: v.seo,
-          booking: { mode: extra.mode, paymentMode: "default" },
-          commissionPercent: 20,
           order: i,
         },
       ),
@@ -305,7 +247,6 @@ async function main() {
   }
 
   for (const [i, e] of experiences.entries()) {
-    const charge = CHARGES[e.slug] ?? { chargeType: "on_request" };
     await upsert(
       Experience,
       { slug: e.slug },
@@ -314,9 +255,6 @@ async function main() {
         summary: e.summary,
         description: e.description,
         price: { amount: e.price.amount, unit: e.price.unit, from: Boolean(e.price.from) },
-        chargeType: charge.chargeType,
-        minGuests: charge.minGuests ?? 0,
-        bookable: charge.chargeType !== "on_request",
         includes: e.includes,
         photo: img(e.photo),
         availableAt: e.availableAt === "all" ? [] : e.availableAt.map((d) => destinationIds.get(d)),
@@ -418,7 +356,6 @@ async function main() {
               { label: "All stays", href: "/villas" },
               { label: "Experiences", href: "/experiences" },
               { label: "FAQ", href: "/faq" },
-              { label: "Find my booking", href: "/booking" },
             ],
           },
           {
@@ -451,22 +388,6 @@ async function main() {
         note: "No payment needed to enquire.",
         submitLabel: "Enquire on WhatsApp",
         flexibleNote: "Flexible? Leave the dates empty and tell us on WhatsApp.",
-      },
-      booking: {
-        enabled: true,
-        paymentMode: "advance",
-        advancePercent: 50,
-        balanceDueDays: 7,
-        holdMinutes: 20,
-        requestExpiryHours: 24,
-        paymentWindowHours: 24,
-        weekendNights: [5, 6],
-        gstPercent: 18,
-        gstInclusive: false,
-        gstin: "",
-        legalName: "",
-        maxAdvanceDays: 365,
-        termsNote: "",
       },
     },
   );

@@ -1,17 +1,16 @@
 import { Router } from "express";
 import { requireAuth, requirePermission } from "../../lib/auth.js";
-import { HttpError, pagination } from "../../lib/http.js";
-import { Booking, Coupon } from "../../models/booking.js";
-import { Amenity, CancellationPolicy, Destination, Experience, Occasion, PriceRule, Villa, VillaCategory } from "../../models/catalog.js";
+import { pagination } from "../../lib/http.js";
+import { Amenity, Destination, Experience, Occasion, Villa, VillaCategory } from "../../models/catalog.js";
 import { FaqGroup, FaqItem, LandingPage, Policy, Redirect, Review, TeamMember } from "../../models/content.js";
 import { Activity } from "../../models/users.js";
-import { bookingsRouter, calendarRouter } from "./bookings.js";
+import { calendarRouter } from "./calendar.js";
 import { crudRouter, inUseBy, slugFrom } from "./crud.js";
 import { dashboardRouter } from "./dashboard.js";
 import { enquiriesRouter, ownerLeadsRouter } from "./leads.js";
 import { mediaRouter } from "./media.js";
 import { pagesRouter } from "./pages.js";
-import { listingRequestsRouter, payoutsRouter } from "./payouts.js";
+import { listingRequestsRouter } from "./listing-requests.js";
 import { settingsRouter } from "./settings.js";
 import { usersRouter } from "./users.js";
 
@@ -35,10 +34,6 @@ adminRouter.use(
     listExclude: "-description -rooms -houseRules -seo",
     prepare: slugFrom("name"),
     duplicate: () => ({ status: "draft", rating: { score: 0, count: 0 } }),
-    beforeDelete: async (doc) => {
-      const count = await Booking.countDocuments({ villa: String(doc._id) });
-      if (count) throw new HttpError(409, `This villa has ${count} booking${count === 1 ? "" : "s"} on record. Archive it instead of deleting.`);
-    },
   }),
 );
 
@@ -93,31 +88,6 @@ adminRouter.use(
     label: (d) => String(d.label),
     prepare: slugFrom("label", "key"),
     beforeDelete: inUseBy([{ model: Villa, field: "amenities", what: "villa" }]),
-  }),
-);
-
-adminRouter.use(
-  "/cancellation-policies",
-  crudRouter(CancellationPolicy, {
-    entity: "cancellation policy",
-    permission: "catalog",
-    defaultSort: "name",
-    prepare: slugFrom("name", "key"),
-    beforeDelete: inUseBy([{ model: Villa, field: "cancellationPolicy", what: "villa" }]),
-  }),
-);
-
-adminRouter.use(
-  "/price-rules",
-  crudRouter(PriceRule, {
-    entity: "price rule",
-    permission: "catalog",
-    filters: ["villa", "active"],
-    defaultSort: "from",
-    populate: { path: "villa", select: "name slug" },
-    label: (d) => String(d.label),
-    // Booking prices aren't cached by the website
-    affectsSite: false,
   }),
 );
 
@@ -194,27 +164,11 @@ adminRouter.use("/users", usersRouter);
 adminRouter.use("/enquiries", enquiriesRouter);
 adminRouter.use("/owner-leads", ownerLeadsRouter);
 
-/* ---------- Bookings ---------- */
+/* ---------- Dashboard, calendar, owners ---------- */
 
 adminRouter.use("/dashboard", dashboardRouter);
-adminRouter.use("/bookings", bookingsRouter);
 adminRouter.use("/calendar", calendarRouter);
-adminRouter.use("/payouts", payoutsRouter);
 adminRouter.use("/listing-requests", listingRequestsRouter);
-adminRouter.use(
-  "/coupons",
-  crudRouter(Coupon, {
-    entity: "coupon",
-    permission: "coupons",
-    readPermission: "coupons",
-    searchFields: ["code", "description"],
-    filters: ["active"],
-    defaultSort: "-createdAt",
-    label: (d) => String(d.code),
-    affectsSite: false,
-    duplicate: () => ({ usedCount: 0, active: false }),
-  }),
-);
 
 /* ---------- Activity ---------- */
 

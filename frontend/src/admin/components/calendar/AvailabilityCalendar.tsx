@@ -3,7 +3,6 @@
 import { CaretLeftIcon, CaretRightIcon, LockIcon, PlusIcon } from "@phosphor-icons/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, addMonths, eachDayOfInterval, endOfMonth, format, isToday, isWeekend, parseISO, startOfMonth } from "date-fns";
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@admin/components/ui/button";
@@ -16,9 +15,7 @@ import { cn, isoDay } from "@admin/lib/utils";
 type Entry = {
   villa: string;
   date: string;
-  kind: "booking" | "block";
-  held: boolean;
-  booking: { id: string; ref: string; status: string; guest?: string; guests: number } | null;
+  kind: "block";
   block: { id: string; reason: string; note: string; by?: string } | null;
 };
 type CalendarData = { from: string; to: string; villas: { _id: string; name: string; status: string }[]; entries: Entry[] };
@@ -26,24 +23,12 @@ type CalendarData = { from: string; to: string; villas: { _id: string; name: str
 const REASONS = [
   { value: "owner", label: "Owner's use" },
   { value: "maintenance", label: "Maintenance" },
-  { value: "offline-booking", label: "Booked elsewhere" },
+  { value: "offline-booking", label: "Booked (confirmed on WhatsApp)" },
   { value: "other", label: "Other" },
 ];
 
-export function AvailabilityCalendar({
-  endpoint,
-  blocksEndpoint,
-  bookingHref,
-  ownerMode,
-}: {
-  endpoint: string;
-  blocksEndpoint: string;
-  /** Where clicking a booking goes; owners have no booking pages */
-  bookingHref?: (id: string) => string;
-  /** Owners can only add and lift their own "owner's use" blocks */
-  ownerMode?: boolean;
-}) {
-  const router = useRouter();
+/** The team's internal calendar: which nights each villa is blocked. The website doesn't show it. */
+export function AvailabilityCalendar({ endpoint, blocksEndpoint }: { endpoint: string; blocksEndpoint: string }) {
   const qc = useQueryClient();
   const confirm = useConfirm();
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
@@ -73,8 +58,7 @@ export function AvailabilityCalendar({
 
   const liftBlock = async (e: Entry) => {
     if (!e.block) return;
-    if (ownerMode && e.block.reason !== "owner") return toast.info("This block was added by the Social Stays team. Message them to lift it.");
-    const ok = await confirm({ title: "Lift this block?", body: `${REASONS.find((r) => r.value === e.block!.reason)?.label}${e.block.note ? `: ${e.block.note}` : ""}. The dates become bookable again.`, confirmLabel: "Lift block" });
+    const ok = await confirm({ title: "Lift this block?", body: `${REASONS.find((r) => r.value === e.block!.reason)?.label}${e.block.note ? `: ${e.block.note}` : ""}. The nights show as free again.`, confirmLabel: "Lift block" });
     if (!ok) return;
     try {
       await api(`${blocksEndpoint}/${e.block.id}`, { method: "DELETE" });
@@ -104,18 +88,12 @@ export function AvailabilityCalendar({
         </Button>
         <div className="ml-auto flex flex-wrap items-center gap-4 text-[0.75rem] text-ink-soft">
           <span className="flex items-center gap-1.5">
-            <span className="size-3 rounded-[3px] bg-gold" /> Booked
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-3 rounded-[3px] bg-warn-soft ring-1 ring-warn/40" /> Held / awaiting payment
-          </span>
-          <span className="flex items-center gap-1.5">
             <span className="size-3 rounded-[3px] bg-ink-muted/60" /> Blocked
           </span>
           <Button
             size="sm"
             icon={<PlusIcon className="size-4" />}
-            onClick={() => villas[0] && setBlock({ villa: villas[0]._id, from: isoDay(new Date()), to: isoDay(new Date()), reason: ownerMode ? "owner" : "maintenance", note: "" })}
+            onClick={() => villas[0] && setBlock({ villa: villas[0]._id, from: isoDay(new Date()), to: isoDay(new Date()), reason: "offline-booking", note: "" })}
             disabled={!villas.length}
           >
             Block dates
@@ -147,12 +125,10 @@ export function AvailabilityCalendar({
                     const key = isoDay(d);
                     const e = byKey.get(`${v._id}|${key}`);
                     const prev = byKey.get(`${v._id}|${isoDay(addDays(d, -1))}`);
-                    const sameAsPrev = e && prev && (e.booking?.id ?? e.block?.id) === (prev.booking?.id ?? prev.block?.id);
-                    const title = e?.booking
-                      ? `${e.booking.ref} · ${e.booking.guest ?? ""} · ${e.booking.guests} guests${e.held ? " (held)" : ""}`
-                      : e?.block
-                        ? `Blocked: ${REASONS.find((r) => r.value === e.block!.reason)?.label}${e.block.note ? ` – ${e.block.note}` : ""}`
-                        : `${v.name}, ${format(d, "d MMM")}: free`;
+                    const sameAsPrev = e?.block && prev?.block && e.block.id === prev.block.id;
+                    const title = e?.block
+                      ? `Blocked: ${REASONS.find((r) => r.value === e.block!.reason)?.label}${e.block.note ? ` – ${e.block.note}` : ""}`
+                      : `${v.name}, ${format(d, "d MMM")}: free`;
                     return (
                       <td key={key} className={cn("h-10 border-b border-line p-0.5", isWeekend(d) && "bg-canvas")}>
                         <button
@@ -160,20 +136,17 @@ export function AvailabilityCalendar({
                           title={title}
                           aria-label={title}
                           onClick={() => {
-                            if (e?.booking) return bookingHref && router.push(bookingHref(e.booking.id));
                             if (e?.block) return void liftBlock(e);
-                            setBlock({ villa: v._id, from: key, to: key, reason: ownerMode ? "owner" : "maintenance", note: "" });
+                            setBlock({ villa: v._id, from: key, to: key, reason: "offline-booking", note: "" });
                           }}
                           className={cn(
                             "flex h-full w-full items-center justify-center overflow-hidden rounded-[4px] text-[0.625rem] font-semibold transition-colors",
                             !e && "hover:bg-sand",
-                            e?.booking && !e.held && "bg-gold text-white",
-                            e?.booking && e.held && "bg-warn-soft text-warn ring-1 ring-warn/40 ring-inset",
                             e?.block && "bg-ink-muted/60 text-white",
                             sameAsPrev && "rounded-l-none",
                           )}
                         >
-                          {e && !sameAsPrev && (e.block ? <LockIcon className="size-3" /> : e.booking?.guest?.split(" ")[0]?.slice(0, 4))}
+                          {e?.block && !sameAsPrev && <LockIcon className="size-3" />}
                         </button>
                       </td>
                     );
@@ -189,7 +162,7 @@ export function AvailabilityCalendar({
         open={Boolean(block)}
         onOpenChange={(o) => !o && setBlock(null)}
         title="Block dates"
-        description="Blocked nights can't be booked online. Bookings already on those dates stop the block."
+        description="For your team's reference, e.g. a stay confirmed on WhatsApp or maintenance. The website doesn't show blocked dates."
         footer={
           <Button loading={busy} onClick={saveBlock}>
             Block dates
@@ -210,20 +183,18 @@ export function AvailabilityCalendar({
             <Field label="First night">
               <Input type="date" value={block.from} onChange={(e) => setBlock({ ...block, from: e.target.value, to: block.to < e.target.value ? e.target.value : block.to })} />
             </Field>
-            <Field label="Last night" help={block.to ? `Guests could check in again on ${format(addDays(parseISO(block.to), 1), "d MMM")}` : undefined}>
+            <Field label="Last night" help={block.to ? `Free again from ${format(addDays(parseISO(block.to), 1), "d MMM")}` : undefined}>
               <Input type="date" min={block.from} value={block.to} onChange={(e) => setBlock({ ...block, to: e.target.value })} />
             </Field>
-            {!ownerMode && (
-              <Field label="Reason" className="sm:col-span-2">
-                <Select value={block.reason} onChange={(e) => setBlock({ ...block, reason: e.target.value })}>
-                  {REASONS.map((r) => (
-                    <option key={r.value} value={r.value}>
-                      {r.label}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-            )}
+            <Field label="Reason" className="sm:col-span-2">
+              <Select value={block.reason} onChange={(e) => setBlock({ ...block, reason: e.target.value })}>
+                {REASONS.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </Select>
+            </Field>
             <Field label="Note (optional)" className="sm:col-span-2">
               <Textarea rows={2} value={block.note} onChange={(e) => setBlock({ ...block, note: e.target.value })} />
             </Field>

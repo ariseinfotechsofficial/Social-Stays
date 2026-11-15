@@ -10,14 +10,6 @@ import { ROLES, User } from "../../models/users.js";
 
 export const usersRouter = Router();
 
-const Payout = z.object({
-  method: z.enum(["bank", "upi", ""]).default(""),
-  upiId: z.string().default(""),
-  accountName: z.string().default(""),
-  accountNumber: z.string().default(""),
-  ifsc: z.string().default(""),
-});
-
 const UserBody = z.object({
   name: z.string().trim().min(1, "Enter a name"),
   email: z.email("Enter a valid email").trim().toLowerCase(),
@@ -26,7 +18,6 @@ const UserBody = z.object({
   villas: z.array(z.string()).default([]),
   active: z.boolean().default(true),
   password: z.string().min(8, "Use at least 8 characters").optional(),
-  payout: Payout.optional(),
 });
 
 /** Owners' villa list is the source of truth; keep each villa's `owner` field in step with it. */

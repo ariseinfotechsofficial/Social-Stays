@@ -1,3 +1,4 @@
+import { WelcomePopup } from "@/components/enquiry/WelcomePopup";
 import { FloatingWhatsApp } from "@/components/layout/FloatingWhatsApp";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -15,6 +16,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       <main id="main">{children}</main>
       <Footer />
       <FloatingWhatsApp />
+      <WelcomePopup />
     </>
   );
 }

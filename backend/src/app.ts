@@ -7,9 +7,7 @@ import { errorHandler } from "./lib/http.js";
 import { adminRouter } from "./routes/admin/index.js";
 import { authRouter } from "./routes/auth.js";
 import { ownerRouter } from "./routes/owner.js";
-import { bookingPublicRouter } from "./routes/public/bookings.js";
 import { publicRouter } from "./routes/public/index.js";
-import { webhooksRouter } from "./routes/webhooks.js";
 
 export function createApp() {
   const app = express();
@@ -31,9 +29,6 @@ export function createApp() {
     }),
   );
 
-  // Razorpay webhooks need the raw body for signature checks, so they are mounted before JSON parsing
-  app.use("/api/webhooks", express.raw({ type: "application/json", limit: "1mb" }), webhooksRouter);
-
   app.use(express.json({ limit: "2mb" }));
   app.use(cookieParser());
 
@@ -43,7 +38,7 @@ export function createApp() {
 
   app.get("/api/health", (_req, res) => res.json({ ok: true, time: new Date().toISOString() }));
   app.use("/api/auth", authRouter);
-  app.use("/api/public", publicRouter, bookingPublicRouter);
+  app.use("/api/public", publicRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/owner", ownerRouter);
 

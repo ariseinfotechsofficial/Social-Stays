@@ -12,14 +12,6 @@ const UserSchema = new Schema(
     role: { type: String, enum: ROLES, required: true },
     /** Owners: the villas they can see */
     villas: [{ type: Schema.Types.ObjectId, ref: "Villa" }],
-    /** Owners: where payouts go */
-    payout: {
-      method: { type: String, enum: ["bank", "upi", ""], default: "" },
-      upiId: { type: String, default: "" },
-      accountName: { type: String, default: "" },
-      accountNumber: { type: String, default: "" },
-      ifsc: { type: String, default: "" },
-    },
     active: { type: Boolean, default: true },
     /** Bumped on password change / sign-out-everywhere to invalidate old sessions */
     tokenVersion: { type: Number, default: 0 },

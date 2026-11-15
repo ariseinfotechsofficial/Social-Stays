@@ -15,7 +15,7 @@ import { ApiError, api } from "@admin/lib/api";
 import { SITE_URL, ago, formatINR } from "@admin/lib/utils";
 import { OwnerOnly } from "../OwnerOnly";
 
-type Villa = FormValue & { _id: string; name: string; slug: string; status: string; commissionPercent: number; destination?: { name: string }; photos?: { src: string }[]; priceFrom: number; weekendPrice?: number };
+type Villa = FormValue & { _id: string; name: string; slug: string; status: string; destination?: { name: string }; photos?: { src: string }[]; priceFrom: number; weekendPrice?: number };
 type Req = { _id: string; villa: { name: string }; changes: Record<string, unknown>; message: string; status: string; reviewNote?: string; createdAt: string };
 
 const EDITABLE = ["tagline", "summary", "description", "highlights", "rooms", "meals", "houseRules", "checkIn", "checkOut", "priceFrom", "weekendPrice", "photos", "host"];
@@ -103,7 +103,6 @@ export default function MyVillasPage() {
                     {v.destination?.name} · from {formatINR(v.priceFrom)}
                     {v.weekendPrice ? `, weekends ${formatINR(v.weekendPrice)}` : ""}
                   </p>
-                  <p className="mt-1 text-[0.8125rem] text-ink-soft">Social Stays commission: {v.commissionPercent}%</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Button size="sm" icon={<NotePencilIcon className="size-4" />} onClick={() => start(v)}>
                       Suggest changes

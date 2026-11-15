@@ -1,7 +1,6 @@
 import type { FieldDef } from "@admin/components/fields/types";
 import { Badge } from "@admin/components/ui/feedback";
 import { formatINR } from "@admin/lib/utils";
-import { PriceRules } from "@admin/components/villa/PriceRules";
 import { TitleCell, idsFor, seoSection } from "./common";
 import type { ResourceConfig } from "./types";
 
@@ -21,7 +20,7 @@ export const villas: ResourceConfig = {
   endpoint: "/admin/villas",
   title: "Villas",
   singular: "Villa",
-  description: "Every villa on the website, with photos, prices, rooms and booking rules. Drag to set the order on the website.",
+  description: "Every villa on the website, with photos, prices, rooms and house rules. Drag to set the order on the website.",
   perms: ["catalog"],
   searchable: true,
   sortable: true,
@@ -35,13 +34,6 @@ export const villas: ResourceConfig = {
     },
     { label: "Category", render: (d) => <span className="text-ink-soft">{(d.category as { label?: string })?.label ?? "—"}</span> },
     { label: "From", render: (d) => <span className="tabular-nums">{formatINR(d.priceFrom as number)}</span> },
-    {
-      label: "Booking",
-      render: (d) => {
-        const mode = (d.booking as { mode?: string })?.mode;
-        return <span className="text-ink-soft">{mode === "instant" ? "Instant" : mode === "request" ? "Request" : "WhatsApp only"}</span>;
-      },
-    },
     { label: "Status", render: (d) => <Badge tone={statusTone[d.status as keyof typeof statusTone] ?? "neutral"}>{VILLA_STATUS.find((s) => s.value === d.status)?.label.replace(/ \(.*\)/, "")}</Badge> },
   ],
   defaults: {
@@ -54,7 +46,6 @@ export const villas: ResourceConfig = {
     bathrooms: 3,
     priceFrom: 0,
     weekendPrice: 0,
-    extraGuestCharge: 0,
     minNights: 1,
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
@@ -65,8 +56,6 @@ export const villas: ResourceConfig = {
     rooms: [],
     houseRules: [],
     occasions: [],
-    booking: { mode: "enquiry", paymentMode: "default" },
-    commissionPercent: 20,
     location: { area: "", lat: 22.72, lng: 75.86, fromIndore: "" },
     host: { name: "", note: "" },
     rating: { score: 0, count: 0 },
@@ -74,7 +63,7 @@ export const villas: ResourceConfig = {
   },
   titleOf: (d) => String(d.name ?? ""),
   viewUrl: (d) => (d.slug && (d.status === "live" || d.status === "coming-soon") ? `/villas/${d.slug}` : null),
-  toForm: (d) => idsFor(d, ["destination", "category", "owner", "cancellationPolicy", "amenities", "occasions"]),
+  toForm: (d) => idsFor(d, ["destination", "category", "owner", "amenities", "occasions"]),
   tabs: [
     {
       key: "basics",
@@ -147,58 +136,25 @@ export const villas: ResourceConfig = {
     },
     {
       key: "pricing",
-      label: "Pricing & booking",
+      label: "Prices & owner",
       sections: [
         {
           title: "Prices",
-          description: "Per night for the whole villa. Seasonal and festival prices go in the Seasonal prices tab.",
+          description: "Shown on the website, per night for the whole villa. Guests confirm the final quote on WhatsApp.",
           fields: f([
             { name: "priceFrom", label: "Weekday price", type: "money", width: "third" },
-            { name: "weekendPrice", label: "Weekend price", type: "money", width: "third", help: "Nights set as weekends in Settings → Booking" },
-            { name: "extraGuestCharge", label: "Extra guest, per night", type: "money", width: "third", help: "Above the base guests" },
+            { name: "weekendPrice", label: "Weekend price", type: "money", width: "third", help: "Optional" },
             { name: "minNights", label: "Minimum nights", type: "number", min: 1, width: "third" },
             { name: "securityDeposit", label: "Security deposit", type: "money", width: "third" },
-          ]),
-        },
-        {
-          title: "Online booking",
-          description: "Instant: guests pay and it's confirmed. Request: your team approves first. WhatsApp only: no online booking.",
-          fields: f([
-            {
-              name: "booking.mode",
-              label: "How guests book",
-              type: "select",
-              width: "half",
-              options: [
-                { value: "instant", label: "Instant book" },
-                { value: "request", label: "Request to book" },
-                { value: "enquiry", label: "WhatsApp enquiry only" },
-              ],
-            },
-            {
-              name: "booking.paymentMode",
-              label: "Payment",
-              type: "select",
-              width: "half",
-              options: [
-                { value: "default", label: "Use the site setting" },
-                { value: "advance", label: "Advance now, balance later" },
-                { value: "full", label: "Full amount upfront" },
-                { value: "choice", label: "Guest chooses" },
-              ],
-            },
-            { name: "booking.advancePercent", label: "Advance %", type: "number", min: 1, max: 100, suffix: "%", width: "third", help: "Empty = site setting", showIf: (v) => ["advance", "choice"].includes(String((v.booking as { paymentMode?: string })?.paymentMode)) },
-            { name: "cancellationPolicy", label: "Cancellation rules", type: "ref", endpoint: "/admin/cancellation-policies", labelKey: "name", width: "half" },
             { name: "checkIn", label: "Check-in time", type: "text", width: "third" },
             { name: "checkOut", label: "Check-out time", type: "text", width: "third" },
           ]),
         },
         {
-          title: "Owner & commission",
-          description: "The owner sees this villa's bookings and earnings in their dashboard.",
+          title: "Owner & WhatsApp",
+          description: "The owner can request changes to this listing from their account.",
           fields: f([
             { name: "owner", label: "Owner account", type: "ref", endpoint: "/admin/users", query: { role: "owner" }, labelKey: "name", width: "half", help: "Owner accounts are created under Users." },
-            { name: "commissionPercent", label: "Social Stays commission", type: "number", min: 0, max: 100, suffix: "%", width: "third" },
             { name: "whatsappNumber", label: "WhatsApp number for this villa", type: "text", width: "half", help: "Optional. Digits with country code, e.g. 919812345678" },
           ]),
         },
@@ -243,5 +199,4 @@ export const villas: ResourceConfig = {
     },
     { key: "seo", label: "SEO", sections: [seoSection()] },
   ],
-  extraTabs: [{ key: "prices", label: "Seasonal prices", render: (doc) => <PriceRules villa={doc} /> }],
 };

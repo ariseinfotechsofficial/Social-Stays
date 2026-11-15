@@ -11,7 +11,11 @@ export type Enquiry = {
   guests?: number;
   occasion?: string;
   name?: string;
+  /** Saved for the admin inbox; WhatsApp already shows the team the sender's number */
+  phone?: string;
   note?: string;
+  /** First line of the message, instead of the availability request */
+  greeting?: string;
 };
 
 export function formatStayDates(checkIn?: Date, checkOut?: Date) {
@@ -25,7 +29,7 @@ export function formatStayDates(checkIn?: Date, checkOut?: Date) {
 
 /** The pre-filled WhatsApp text. Plain lines so it reads well on a phone. */
 export function buildEnquiryMessage(enquiry: Enquiry, pageUrl: string, brand = "Social Stays") {
-  const lines = [`Hello ${brand}, I'd like to check availability.`, ""];
+  const lines = [enquiry.greeting ?? `Hello ${brand}, I'd like to check availability.`, ""];
   if (enquiry.villa) lines.push(`Villa: ${enquiry.villa.name}, ${enquiry.villa.destination}`);
   else if (enquiry.destination) lines.push(`Destination: ${enquiry.destination}`);
   const dates = formatStayDates(enquiry.checkIn, enquiry.checkOut);
@@ -59,6 +63,7 @@ function saveEnquiry(enquiry: Enquiry, placement: string) {
         guests: enquiry.guests,
         occasion: enquiry.occasion,
         name: enquiry.name,
+        phone: enquiry.phone,
         note: enquiry.note,
         placement,
         page: window.location.href.slice(0, 500),

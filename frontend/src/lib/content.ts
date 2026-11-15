@@ -46,7 +46,6 @@ export const getReviewsFor = (c: Content, villaSlug: string) => c.reviews.filter
 export const getPolicy = (c: Content, slug: string) => c.policies.find((p) => p.slug === slug);
 export const getLandingPage = (c: Content, slug: string) => c.landingPages.find((p) => p.slug === slug);
 export const getAmenity = (c: Content, key: string) => c.amenities.find((a) => a.key === key);
-export const getCancellation = (c: Content, key: string) => c.cancellationPolicies.find((p) => p.key === key);
 
 /** Lowest weekday price among live villas in a destination */
 export function startingPrice(c: Content, destination: string) {

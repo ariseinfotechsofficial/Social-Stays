@@ -1,5 +1,7 @@
 # Social Stays: backend, admin panel and booking: build plan
 
+> **Update, 15 Nov 2026:** online booking, Razorpay payments, coupons, seasonal prices, GST, cancellation/refund rules, guest emails and owner earnings/payouts were removed at the client's request. Guests enquire on WhatsApp only. The availability calendar stays as an internal tool for blocking dates, and owners keep listing edit requests. The rest of this plan is kept as a record.
+
 Agreed 26 Oct 2026. Covers the requirements brief (`Social-Stays-Website-Requirements.pdf`), the client corrections, and the Phase 2 items the client chose to bring forward (availability, online booking with Razorpay, owner dashboard).
 
 ## Decisions

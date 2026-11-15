@@ -2,7 +2,6 @@
 
 import { PhoneIcon, WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import { m, AnimatePresence, useMotionValueEvent, useScroll } from "motion/react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useEnquiry } from "@/components/enquiry/EnquiryDialog";
 import { EnquiryForm } from "@/components/enquiry/EnquiryForm";
@@ -97,7 +96,7 @@ export function VillaEnquiryCard({ villa, labels }: { villa: BookingVilla; label
 }
 
 /** Bottom bar on phones: price on the left, enquiry on the right. Appears once the gallery scrolls away. */
-export function MobileBookingBar({ villa, labels, book }: { villa: BookingVilla; labels: CardLabels; /** Bookable villas go straight to checkout */ book?: { href: string; label: string } }) {
+export function MobileBookingBar({ villa, labels }: { villa: BookingVilla; labels: CardLabels }) {
   const { openEnquiry } = useEnquiry();
   const site = useSite();
   const { scrollY } = useScroll();
@@ -126,11 +125,7 @@ export function MobileBookingBar({ villa, labels, book }: { villa: BookingVilla;
               <CallLink placement="villa_mobile_bar" aria-label={`Call ${site.phone.display}`} className="grid size-12 place-items-center rounded-full border border-line text-ink">
                 <PhoneIcon className="size-5" />
               </CallLink>
-              {villa.status === "live" && book ? (
-                <Link href={book.href} className={buttonClasses("primary", "md")}>
-                  {book.label}
-                </Link>
-              ) : villa.status === "live" ? (
+              {villa.status === "live" ? (
                 <Button
                   size="md"
                   onClick={() =>

@@ -185,51 +185,15 @@ const TABS: Tab[] = [
           { name: "enquiry.flexibleNote", label: "Note under the calendar", type: "text" },
         ],
       },
-    ],
-  },
-  {
-    key: "booking",
-    label: "Booking & payments",
-    perm: "booking-settings",
-    groups: [
       {
-        title: "Online booking",
-        description: "Each villa chooses instant, request or WhatsApp-only. Online payment also needs the Razorpay keys on the server.",
+        title: "Welcome pop-up",
+        description: "Asks new visitors for their name and mobile number once per visit, then opens WhatsApp. Submissions appear in Enquiries as Welcome pop-up.",
         fields: [
-          { name: "booking.enabled", label: "Online booking switched on", type: "boolean" },
-          {
-            name: "booking.paymentMode",
-            label: "Payment",
-            type: "select",
-            width: "half",
-            options: [
-              { value: "advance", label: "Advance now, balance later" },
-              { value: "full", label: "Full amount upfront" },
-              { value: "choice", label: "Guest chooses" },
-            ],
-          },
-          { name: "booking.advancePercent", label: "Advance", type: "number", min: 1, max: 100, suffix: "%", width: "third" },
-          { name: "booking.balanceDueDays", label: "Balance due before check-in", type: "number", min: 0, suffix: "days", width: "third" },
-          { name: "booking.weekendNights", label: "Weekend nights (use the weekend price)", type: "weekdays", help: "Nights starting on these days. Fri + Sat is usual." },
-        ],
-      },
-      {
-        title: "Holds & requests",
-        fields: [
-          { name: "booking.holdMinutes", label: "Hold dates while paying", type: "number", min: 5, max: 120, suffix: "min", width: "third" },
-          { name: "booking.requestExpiryHours", label: "Requests lapse after", type: "number", min: 1, suffix: "hours", width: "third" },
-          { name: "booking.paymentWindowHours", label: "Time to pay after approval", type: "number", min: 1, suffix: "hours", width: "third" },
-          { name: "booking.maxAdvanceDays", label: "Book up to", type: "number", min: 30, suffix: "days ahead", width: "third" },
-        ],
-      },
-      {
-        title: "Tax & invoices",
-        fields: [
-          { name: "booking.gstPercent", label: "GST", type: "number", min: 0, max: 28, step: 0.5, suffix: "%", width: "third" },
-          { name: "booking.gstInclusive", label: "Prices already include GST", type: "boolean", width: "two-thirds" },
-          { name: "booking.legalName", label: "Registered business name", type: "text", width: "half" },
-          { name: "booking.gstin", label: "GSTIN", type: "text", width: "half" },
-          { name: "booking.termsNote", label: "Terms line at checkout", type: "textarea", rows: 2, help: "Leave empty to use the text from Pages → Online booking" },
+          { name: "welcomePopup.enabled", label: "Show the welcome pop-up", type: "boolean" },
+          { name: "welcomePopup.title", label: "Heading", type: "text", width: "half" },
+          { name: "welcomePopup.buttonLabel", label: "Button label", type: "text", width: "half" },
+          { name: "welcomePopup.intro", label: "Intro text", type: "textarea", rows: 2 },
+          { name: "welcomePopup.note", label: "Note under the button", type: "text" },
         ],
       },
     ],
@@ -280,7 +244,7 @@ export default function SettingsPage() {
     <>
       <PageHeader
         title="Site settings"
-        description="Contact details, menus, SEO, tracking and booking rules for the whole website."
+        description="Contact details, menus, SEO, tracking and enquiry forms for the whole website."
         actions={
           <Button onClick={save} loading={saving} disabled={!dirty}>
             {dirty ? "Save settings" : "Saved"}

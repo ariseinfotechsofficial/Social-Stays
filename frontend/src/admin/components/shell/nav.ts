@@ -6,7 +6,6 @@ import {
   ChartLineUpIcon,
   ClockCounterClockwiseIcon,
   CompassIcon,
-  CurrencyInrIcon,
   EnvelopeSimpleIcon,
   FileTextIcon,
   GearSixIcon,
@@ -17,20 +16,16 @@ import {
   MegaphoneIcon,
   NotePencilIcon,
   QuestionIcon,
-  ScrollIcon,
   ShuffleIcon,
   SparkleIcon,
   StackIcon,
   StarIcon,
-  TagIcon,
-  TicketIcon,
   UserCircleIcon,
   UsersThreeIcon,
-  WalletIcon,
 } from "@phosphor-icons/react";
 import type { Permission } from "@admin/lib/session";
 
-export type CountKey = "needsAction" | "newEnquiries" | "newOwnerLeads" | "listingRequests";
+export type CountKey = "newEnquiries" | "newOwnerLeads" | "listingRequests";
 
 export type NavItem = { href: string; label: string; icon: Icon; perms?: Permission[]; count?: CountKey };
 export type NavGroup = { label?: string; items: NavItem[] };
@@ -38,19 +33,11 @@ export type NavGroup = { label?: string; items: NavItem[] };
 export const STAFF_NAV: NavGroup[] = [
   { items: [{ href: "/admin", label: "Dashboard", icon: ChartLineUpIcon }] },
   {
-    label: "Bookings",
-    items: [
-      { href: "/admin/bookings", label: "Bookings", icon: TicketIcon, perms: ["bookings"], count: "needsAction" },
-      { href: "/admin/calendar", label: "Calendar", icon: CalendarDotsIcon, perms: ["bookings"] },
-      { href: "/admin/coupons", label: "Coupons", icon: TagIcon, perms: ["coupons"] },
-      { href: "/admin/payouts", label: "Owner payouts", icon: WalletIcon, perms: ["payouts"] },
-    ],
-  },
-  {
-    label: "Leads",
+    label: "Guests",
     items: [
       { href: "/admin/enquiries", label: "Enquiries", icon: EnvelopeSimpleIcon, perms: ["leads"], count: "newEnquiries" },
       { href: "/admin/owner-leads", label: "Owner leads", icon: HandshakeIcon, perms: ["leads"], count: "newOwnerLeads" },
+      { href: "/admin/calendar", label: "Calendar", icon: CalendarDotsIcon, perms: ["calendar"] },
     ],
   },
   {
@@ -62,7 +49,6 @@ export const STAFF_NAV: NavGroup[] = [
       { href: "/admin/categories", label: "Villa categories", icon: StackIcon, perms: ["catalog"] },
       { href: "/admin/amenities", label: "Amenities", icon: ListChecksIcon, perms: ["catalog"] },
       { href: "/admin/occasions", label: "Occasions", icon: MegaphoneIcon, perms: ["catalog"] },
-      { href: "/admin/cancellation-policies", label: "Cancellation rules", icon: ScrollIcon, perms: ["catalog"] },
     ],
   },
   {
@@ -80,7 +66,7 @@ export const STAFF_NAV: NavGroup[] = [
   {
     label: "Settings",
     items: [
-      { href: "/admin/settings", label: "Site settings", icon: GearSixIcon, perms: ["settings", "booking-settings"] },
+      { href: "/admin/settings", label: "Site settings", icon: GearSixIcon, perms: ["settings"] },
       { href: "/admin/redirects", label: "Redirects", icon: ShuffleIcon, perms: ["settings"] },
     ],
   },
@@ -97,10 +83,6 @@ export const STAFF_NAV: NavGroup[] = [
 export const OWNER_NAV: NavGroup[] = [
   {
     items: [
-      { href: "/admin", label: "Dashboard", icon: ChartLineUpIcon },
-      { href: "/admin/my/bookings", label: "Bookings", icon: TicketIcon },
-      { href: "/admin/my/calendar", label: "Calendar", icon: CalendarDotsIcon },
-      { href: "/admin/my/earnings", label: "Earnings & payouts", icon: CurrencyInrIcon },
       { href: "/admin/my/villas", label: "My villas", icon: BuildingsIcon },
     ],
   },

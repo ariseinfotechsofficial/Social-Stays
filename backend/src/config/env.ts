@@ -15,14 +15,6 @@ const schema = z.object({
   REVALIDATE_SECRET: z.string().default(""),
   /** Optional private address of the website for cache refreshes (defaults to SITE_URL) */
   REVALIDATE_URL: z.string().default(""),
-  RAZORPAY_KEY_ID: z.string().default(""),
-  RAZORPAY_KEY_SECRET: z.string().default(""),
-  RAZORPAY_WEBHOOK_SECRET: z.string().default(""),
-  SMTP_HOST: z.string().default(""),
-  SMTP_PORT: z.coerce.number().default(587),
-  SMTP_USER: z.string().default(""),
-  SMTP_PASS: z.string().default(""),
-  MAIL_FROM: z.string().default("Social Stays <bookings@socialstays.in>"),
   SEED_ADMIN_EMAIL: z.string().default("admin@socialstays.in"),
   SEED_ADMIN_PASSWORD: z.string().default(""),
 });
@@ -47,6 +39,4 @@ export const env = {
   corsOrigins: [parsed.data.SITE_URL, parsed.data.ADMIN_URL, ...parsed.data.CORS_ORIGINS.split(",")]
     .map((o) => trim(o.trim()))
     .filter(Boolean),
-  razorpayEnabled: Boolean(parsed.data.RAZORPAY_KEY_ID && parsed.data.RAZORPAY_KEY_SECRET),
-  smtpEnabled: Boolean(parsed.data.SMTP_HOST),
 };

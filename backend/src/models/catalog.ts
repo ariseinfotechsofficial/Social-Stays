@@ -69,32 +69,6 @@ const AmenitySchema = new Schema(
 
 export const Amenity = model("Amenity", AmenitySchema);
 
-/* ---------- Cancellation policies ---------- */
-
-const RefundTierSchema = new Schema(
-  {
-    /** Applies when the guest cancels at least this many days before check-in */
-    daysBefore: { type: Number, required: true, min: 0 },
-    refundPercent: { type: Number, required: true, min: 0, max: 100 },
-  },
-  { _id: false },
-);
-
-const CancellationPolicySchema = new Schema(
-  {
-    key: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    name: { type: String, required: true },
-    /** One line shown on the villa page */
-    summary: { type: String, default: "" },
-    tiers: { type: [RefundTierSchema], default: [] },
-    /** Gateway/bank charges kept on refunds, as a % of the refund */
-    deductionPercent: { type: Number, default: 0 },
-  },
-  { timestamps: true },
-);
-
-export const CancellationPolicy = model("CancellationPolicy", CancellationPolicySchema);
-
 /* ---------- Occasions ---------- */
 
 const OccasionSchema = new Schema(
@@ -120,8 +94,6 @@ export const Occasion = model("Occasion", OccasionSchema);
 
 /* ---------- Experiences / add-ons ---------- */
 
-export const CHARGE_TYPES = ["per_person", "per_person_per_night", "per_unit", "per_night", "on_request"] as const;
-
 const ExperienceSchema = new Schema(
   {
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -134,10 +106,6 @@ const ExperienceSchema = new Schema(
       unit: { type: String, default: "" },
       from: { type: Boolean, default: false },
     },
-    /** How the booking engine charges it when added at checkout */
-    chargeType: { type: String, enum: CHARGE_TYPES, default: "on_request" },
-    minGuests: { type: Number, default: 0 },
-    bookable: { type: Boolean, default: true },
     includes: { type: [String], default: [] },
     photo: { type: ImageSchema, default: null },
     /** Empty = available at every destination */
@@ -155,8 +123,6 @@ export const Experience = model("Experience", ExperienceSchema);
 const RoomSchema = new Schema({ name: { type: String, required: true }, beds: { type: String, default: "" }, note: { type: String, default: "" } }, { _id: false });
 
 export const VILLA_STATUS = ["live", "coming-soon", "draft", "archived"] as const;
-export const BOOKING_MODES = ["instant", "request", "enquiry"] as const;
-export const PAYMENT_MODES = ["default", "advance", "full", "choice"] as const;
 
 const VillaSchema = new Schema(
   {
@@ -174,8 +140,6 @@ const VillaSchema = new Schema(
     priceFrom: { type: Number, required: true, min: 0 },
     weekendPrice: { type: Number, default: 0 },
     guests: { base: { type: Number, default: 2 }, max: { type: Number, default: 2 } },
-    /** Per extra guest per night above `guests.base` */
-    extraGuestCharge: { type: Number, default: 0 },
     minNights: { type: Number, default: 1 },
 
     bedrooms: { type: Number, default: 1 },
@@ -189,7 +153,6 @@ const VillaSchema = new Schema(
     houseRules: { type: [String], default: [] },
     checkIn: { type: String, default: "1:00 pm" },
     checkOut: { type: String, default: "11:00 am" },
-    cancellationPolicy: { type: Schema.Types.ObjectId, ref: "CancellationPolicy" },
     securityDeposit: { type: Number, default: 0 },
     photos: { type: [ImageSchema], default: [] },
     /** Approximate — never the exact gate */
@@ -205,14 +168,6 @@ const VillaSchema = new Schema(
     openingNote: { type: String, default: "" },
     seo: { type: SeoSchema, default: () => ({}) },
 
-    booking: {
-      /** instant = pay and confirm; request = team approves first; enquiry = WhatsApp only */
-      mode: { type: String, enum: BOOKING_MODES, default: "enquiry" },
-      /** "default" follows the global setting */
-      paymentMode: { type: String, enum: PAYMENT_MODES, default: "default" },
-      advancePercent: { type: Number, min: 1, max: 100 },
-    },
-    commissionPercent: { type: Number, default: 20, min: 0, max: 100 },
     owner: { type: Schema.Types.ObjectId, ref: "User" },
     /** Overrides the global WhatsApp number for this villa's enquiries */
     whatsappNumber: { type: String, default: "" },
@@ -225,23 +180,3 @@ VillaSchema.index({ destination: 1, status: 1 });
 
 export const Villa = model("Villa", VillaSchema);
 export type VillaDoc = InferSchemaType<typeof VillaSchema>;
-
-/* ---------- Seasonal / special-date prices ---------- */
-
-const PriceRuleSchema = new Schema(
-  {
-    villa: { type: Schema.Types.ObjectId, ref: "Villa", required: true, index: true },
-    label: { type: String, required: true, trim: true },
-    /** Night dates, inclusive, stored as UTC midnight */
-    from: { type: Date, required: true },
-    to: { type: Date, required: true },
-    price: { type: Number, required: true, min: 0 },
-    /** Optional separate Fri/Sat price inside the range */
-    weekendPrice: { type: Number, default: 0 },
-    minNights: { type: Number, default: 0 },
-    active: { type: Boolean, default: true },
-  },
-  { timestamps: true },
-);
-
-export const PriceRule = model("PriceRule", PriceRuleSchema);

@@ -10,12 +10,8 @@ export type Permission =
   | "catalog"
   | "media"
   | "settings"
-  | "booking-settings"
   | "leads"
-  | "bookings"
-  | "payments"
-  | "coupons"
-  | "payouts"
+  | "calendar"
   | "users"
   | "owners"
   | "activity";
@@ -30,10 +26,10 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_HELP: Record<Role, string> = {
-  superadmin: "Everything, including users, payments and settings",
+  superadmin: "Everything, including users and settings",
   editor: "Website content, villas, photos, SEO and leads",
-  sales: "Leads, bookings, calendar and coupons",
-  owner: "Their own villas: bookings, calendar, earnings and edit requests",
+  sales: "Leads and the availability calendar",
+  owner: "Their own villas: request changes to the listing",
 };
 
 export type Me = {

@@ -17,12 +17,8 @@ export const PERMISSIONS = [
   "catalog",
   "media",
   "settings",
-  "booking-settings",
   "leads",
-  "bookings",
-  "payments",
-  "coupons",
-  "payouts",
+  "calendar",
   "users",
   "owners",
   "activity",
@@ -32,7 +28,7 @@ export type Permission = (typeof PERMISSIONS)[number];
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   superadmin: PERMISSIONS,
   editor: ["content", "catalog", "media", "settings", "leads"],
-  sales: ["leads", "bookings", "coupons", "media"],
+  sales: ["leads", "calendar", "media"],
   owner: [],
 };
 

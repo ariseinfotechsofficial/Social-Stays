@@ -1,8 +1,7 @@
-import { CalendarXIcon, CheckIcon, ClockIcon, MapPinIcon, WalletIcon, WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
+import { CheckIcon, ClockIcon, MapPinIcon, WalletIcon, WhatsappLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BookingWidget, type BookingLabels } from "@/components/booking/BookingWidget";
 import { EnquireTrigger } from "@/components/enquiry/EnquiryDialog";
 import { amenityIcon } from "@/components/icons";
 import { WhatsAppLink } from "@/components/layout/ContactLinks";
@@ -10,11 +9,11 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { MapEmbed } from "@/components/shared/MapEmbed";
 import { Stars } from "@/components/shared/Reviews";
-import { ButtonLink, TextLink, buttonClasses } from "@/components/ui/Button";
+import { TextLink, buttonClasses } from "@/components/ui/Button";
 import { Gallery } from "@/components/villa/Gallery";
 import { MobileBookingBar, TrackVillaView, VillaEnquiryCard, type BookingVilla, type CardLabels } from "@/components/villa/VillaBooking";
 import { VillaCard } from "@/components/villa/VillaCard";
-import { fill, getAmenity, getCancellation, getContent, getDestination, getReviewsFor, getVilla, labels, similarVillas } from "@/lib/content";
+import { fill, getAmenity, getContent, getDestination, getReviewsFor, getVilla, labels, similarVillas } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { siteUrl } from "@/lib/site";
 import { cn, formatINR, priceLabel } from "@/lib/utils";
@@ -59,7 +58,6 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
   const villaReviews = getReviewsFor(c, villa.slug);
   const addOns = c.experiences.filter((e) => e.availableAt === "all" || e.availableAt.includes(villa.destination)).slice(0, 4);
   const amenities = villa.amenities.map((key) => getAmenity(c, key)).filter((a) => a !== undefined);
-  const cancellation = getCancellation(c, villa.cancellation);
   const soon = villa.status === "coming-soon";
   const booking: BookingVilla = {
     slug: villa.slug,
@@ -80,17 +78,6 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
     waitlistLabel: t.text("waitlistLabel", "Join the list"),
   };
   const vars = { villa: villa.name };
-  const bl = labels(c, "booking");
-  // Online booking shows when payments are set up and the villa isn't WhatsApp-only
-  const bookable = !soon && settings.booking.available && villa.bookingMode !== "enquiry";
-  const bookLabel = villa.bookingMode === "instant" ? bl.text("bookLabel", "Book now") : bl.text("requestLabel", "Request to book");
-  const bookingLabels: BookingLabels = {
-    bookLabel: bl.text("bookLabel", "Book now"),
-    requestLabel: bl.text("requestLabel", "Request to book"),
-    orEnquire: bl.text("orEnquire", "or ask us on WhatsApp first"),
-    cardNote: cardLabels.cardNote,
-    callPrompt: cardLabels.callPrompt,
-  };
 
   return (
     <>
@@ -183,21 +170,6 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
               >
                 <WhatsappLogoIcon className="size-5" /> {t.text("notifyLabel", "Notify me when it opens")}
               </WhatsAppLink>
-            ) : bookable ? (
-              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <ButtonLink href={`/booking/checkout?villa=${villa.slug}`} size="lg">
-                  {bookLabel}
-                </ButtonLink>
-                <EnquireTrigger
-                  className="font-semibold text-gold-deep underline-offset-4 hover:underline"
-                  prefill={{
-                    title: fill(t.text("enquireLabel", "Enquire for {villa}"), vars),
-                    villa: { name: villa.name, slug: villa.slug, destination: destination.name, maxGuests: villa.guests.max, whatsappNumber: villa.whatsappNumber },
-                  }}
-                >
-                  {bl.text("orEnquire", "or ask us on WhatsApp first")}
-                </EnquireTrigger>
-              </div>
             ) : (
               <EnquireTrigger
                 className={buttonClasses("primary", "lg", "mt-7")}
@@ -320,22 +292,6 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
                     </div>
                   </li>
                 )}
-                {cancellation && (
-                  <li className="flex gap-3">
-                    <CalendarXIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
-                    <div>
-                      <p className="font-semibold">Cancellation</p>
-                      <p className="mt-1 text-ink-soft">
-                        {cancellation.summary}{" "}
-                        {c.policies.some((p) => p.slug === "cancellation-refund") && (
-                          <Link href="/policies/cancellation-refund" className="font-semibold text-gold-deep underline-offset-4 hover:underline">
-                            Full policy
-                          </Link>
-                        )}
-                      </p>
-                    </div>
-                  </li>
-                )}
               </ul>
               {villa.houseRules.length > 0 && (
                 <>
@@ -383,24 +339,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
 
           <aside className="hidden pt-10 lg:block">
             <div className="sticky top-28">
-              {bookable ? (
-                <BookingWidget
-                  villa={{
-                    slug: villa.slug,
-                    name: villa.name,
-                    destination: destination.name,
-                    priceFrom: villa.priceFrom,
-                    weekendPrice: villa.weekendPrice,
-                    baseGuests: villa.guests.base,
-                    maxGuests: villa.guests.max,
-                    mode: villa.bookingMode === "instant" ? "instant" : "request",
-                    whatsappNumber: villa.whatsappNumber,
-                  }}
-                  labels={bookingLabels}
-                />
-              ) : (
-                <VillaEnquiryCard villa={booking} labels={cardLabels} />
-              )}
+              <VillaEnquiryCard villa={booking} labels={cardLabels} />
             </div>
           </aside>
         </div>
@@ -419,7 +358,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
         </div>
       </section>
 
-      <MobileBookingBar villa={booking} labels={cardLabels} book={bookable ? { href: `/booking/checkout?villa=${villa.slug}`, label: bookLabel } : undefined} />
+      <MobileBookingBar villa={booking} labels={cardLabels} />
     </>
   );
 }

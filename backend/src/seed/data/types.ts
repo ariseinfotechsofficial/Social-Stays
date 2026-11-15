@@ -94,7 +94,6 @@ export type Villa = {
   houseRules: string[];
   checkIn: string;
   checkOut: string;
-  cancellation: "standard" | "peak";
   securityDeposit: number;
   photos: PhotoKey[];
   /** Approximate — never the exact gate */

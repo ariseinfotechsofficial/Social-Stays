@@ -1,8 +1,7 @@
 import type { Types } from "mongoose";
 import { normalisePage } from "../admin/pages.js";
 import { PAGES } from "../../content/registry.js";
-import { env } from "../../config/env.js";
-import { Amenity, CancellationPolicy, Destination, Experience, Occasion, Villa, VillaCategory } from "../../models/catalog.js";
+import { Amenity, Destination, Experience, Occasion, Villa, VillaCategory } from "../../models/catalog.js";
 import { FaqGroup, FaqItem, LandingPage, Page, Policy, Redirect, Review, TeamMember } from "../../models/content.js";
 import { getSettings } from "../../models/settings.js";
 
@@ -19,21 +18,17 @@ const seo = (s?: { title?: string | null; description?: string | null; keywords?
 });
 const month = (d?: Date | null) => (d ? new Date(d).toISOString().slice(0, 7) : "");
 
-/** Whether guests can pay online right now */
-export const bookingAvailable = (settings: { booking?: { enabled?: boolean | null } | null }) => Boolean(settings.booking?.enabled && env.razorpayEnabled);
-
 /**
  * Everything the website renders, published items only, with references turned into slugs.
  * The website caches this under one tag and refreshes it when the admin saves anything.
  */
 export async function buildContentBundle() {
-  const [settings, pages, destinations, categories, amenities, policiesCx, villas, experiences, occasions, reviews, faqGroups, faqs, team, policies, landing, redirects] = await Promise.all([
+  const [settings, pages, destinations, categories, amenities, villas, experiences, occasions, reviews, faqGroups, faqs, team, policies, landing, redirects] = await Promise.all([
     getSettings(),
     Page.find().lean(),
     Destination.find({ status: "published" }).sort("order").lean(),
     VillaCategory.find().sort("order").lean(),
     Amenity.find().sort("order").lean(),
-    CancellationPolicy.find().lean(),
     Villa.find({ status: { $in: ["live", "coming-soon"] } }).sort("order").lean(),
     Experience.find({ status: "published" }).sort("order").lean(),
     Occasion.find({ status: "published" }).sort("order").lean(),
@@ -53,7 +48,6 @@ export async function buildContentBundle() {
   const destSlug = slugOf(destinations, "slug");
   const catSlug = slugOf(categories, "slug");
   const amenityKey = slugOf(amenities, "key");
-  const policyKey = slugOf(policiesCx, "key");
   const villaSlug = slugOf(villas, "slug");
   const occasionSlug = slugOf(occasions, "slug");
   const groupKey = slugOf(faqGroups, "key");
@@ -65,7 +59,7 @@ export async function buildContentBundle() {
     pageMap[def.key] = { seo: seo(doc?.seo), sections: normalisePage(def.key, doc) };
   }
 
-  const { booking, ...publicSettings } = settings;
+  const publicSettings = settings;
 
   return {
     generatedAt: new Date().toISOString(),
@@ -81,15 +75,7 @@ export async function buildContentBundle() {
       tracking: publicSettings.tracking,
       reviewSummary: publicSettings.reviewSummary,
       enquiry: publicSettings.enquiry,
-      booking: {
-        available: bookingAvailable(settings),
-        razorpayKeyId: env.razorpayEnabled ? env.RAZORPAY_KEY_ID : "",
-        weekendNights: booking?.weekendNights ?? [5, 6],
-        gstPercent: booking?.gstPercent ?? 0,
-        gstInclusive: Boolean(booking?.gstInclusive),
-        maxAdvanceDays: booking?.maxAdvanceDays ?? 365,
-        termsNote: booking?.termsNote ?? "",
-      },
+      welcomePopup: publicSettings.welcomePopup,
     },
     pages: pageMap,
     destinations: destinations.map((d) => ({
@@ -112,7 +98,6 @@ export async function buildContentBundle() {
     })),
     categories: categories.map((c) => ({ slug: c.slug, label: c.label, short: c.short, blurb: c.blurb })),
     amenities: amenities.map((a) => ({ key: a.key, label: a.label, icon: a.icon })),
-    cancellationPolicies: policiesCx.map((p) => ({ key: p.key, name: p.name, summary: p.summary, tiers: p.tiers })),
     villas: villas
       .filter((v) => destSlug(v.destination))
       .map((v) => ({
@@ -127,7 +112,6 @@ export async function buildContentBundle() {
         description: v.description,
         priceFrom: v.priceFrom,
         weekendPrice: v.weekendPrice || undefined,
-        extraGuestCharge: v.extraGuestCharge,
         minNights: v.minNights,
         guests: { base: v.guests?.base ?? 1, max: v.guests?.max ?? 1 },
         bedrooms: v.bedrooms,
@@ -141,7 +125,6 @@ export async function buildContentBundle() {
         houseRules: v.houseRules,
         checkIn: v.checkIn,
         checkOut: v.checkOut,
-        cancellation: policyKey(v.cancellationPolicy) ?? "",
         securityDeposit: v.securityDeposit,
         photos: v.photos.map(image).filter(Boolean),
         location: v.location,
@@ -150,7 +133,6 @@ export async function buildContentBundle() {
         occasions: many(v.occasions, occasionSlug),
         openingNote: v.openingNote || undefined,
         seo: seo(v.seo),
-        bookingMode: v.booking?.mode ?? "enquiry",
         whatsappNumber: v.whatsappNumber || undefined,
         updatedAt: v.updatedAt,
       })),
@@ -160,9 +142,6 @@ export async function buildContentBundle() {
       summary: e.summary,
       description: e.description,
       price: { amount: e.price?.amount ?? 0, unit: e.price?.unit ?? "", from: Boolean(e.price?.from) },
-      chargeType: e.chargeType,
-      minGuests: e.minGuests,
-      bookable: e.bookable,
       includes: e.includes,
       photo: image(e.photo),
       availableAt: e.availableAt?.length ? many(e.availableAt, destSlug) : ("all" as const),

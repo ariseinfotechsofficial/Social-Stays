@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Fields } from "@admin/components/fields/Fields";
-import type { FieldDef, FormValue } from "@admin/components/fields/types";
+import type { FormValue } from "@admin/components/fields/types";
 import { NoAccess } from "@admin/components/NoAccess";
 import { Button } from "@admin/components/ui/button";
 import { Badge, Card, Empty, Loading } from "@admin/components/ui/feedback";
@@ -15,7 +15,7 @@ import { ApiError, api, fieldErrors } from "@admin/lib/api";
 import { ROLE_HELP, ROLE_LABELS, useCan, useMe, type Role } from "@admin/lib/session";
 import { ago } from "@admin/lib/utils";
 
-type User = { _id: string; name: string; email: string; phone?: string; role: Role; villas: { _id: string; name: string }[]; active: boolean; lastLoginAt?: string; payout?: Record<string, string> };
+type User = { _id: string; name: string; email: string; phone?: string; role: Role; villas: { _id: string; name: string }[]; active: boolean; lastLoginAt?: string };
 
 export default function UsersPage() {
   const can = useCan();
@@ -68,12 +68,11 @@ export default function UsersPage() {
     setErrors({});
     setEditing(
       u
-        ? { id: u._id, value: { ...u, villas: u.villas.map((v) => v._id), password: "", payout: u.payout ?? {} } }
-        : { value: { name: "", email: "", phone: "", role: manager ? "editor" : "owner", villas: [], active: true, password: "", payout: { method: "" } } },
+        ? { id: u._id, value: { ...u, villas: u.villas.map((v) => v._id), password: "" } }
+        : { value: { name: "", email: "", phone: "", role: manager ? "editor" : "owner", villas: [], active: true, password: "" } },
     );
   };
 
-  const isOwner = editing?.value.role === "owner";
 
   return (
     <>
@@ -155,26 +154,6 @@ export default function UsersPage() {
               { name: "role", label: "Role", type: "select", options: roles },
               { name: "villas", label: "Their villas", type: "ref", endpoint: "/admin/villas", labelKey: "name", multiple: true, showIf: (v) => v.role === "owner", help: "Each villa has one owner account" },
               { name: "active", label: "Account active", type: "boolean" },
-              ...(isOwner
-                ? ([
-                    { name: "payout-heading", label: "Payout details", type: "heading" },
-                    {
-                      name: "payout.method",
-                      label: "Paid by",
-                      type: "select",
-                      width: "third",
-                      options: [
-                        { value: "", label: "Not set" },
-                        { value: "bank", label: "Bank transfer" },
-                        { value: "upi", label: "UPI" },
-                      ],
-                    },
-                    { name: "payout.upiId", label: "UPI ID", type: "text", width: "two-thirds", showIf: (v: FormValue) => (v.payout as { method?: string })?.method === "upi" },
-                    { name: "payout.accountName", label: "Account name", type: "text", width: "half", showIf: (v: FormValue) => (v.payout as { method?: string })?.method === "bank" },
-                    { name: "payout.accountNumber", label: "Account number", type: "text", width: "half", showIf: (v: FormValue) => (v.payout as { method?: string })?.method === "bank" },
-                    { name: "payout.ifsc", label: "IFSC", type: "text", width: "third", showIf: (v: FormValue) => (v.payout as { method?: string })?.method === "bank" },
-                  ] satisfies FieldDef[])
-                : []),
             ]}
           />
         )}

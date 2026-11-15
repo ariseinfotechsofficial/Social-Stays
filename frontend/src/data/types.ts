@@ -37,11 +37,7 @@ export type VillaCategory = { slug: string; label: string; short: string; blurb:
 
 export type Amenity = { key: string; label: string; icon: string };
 
-export type CancellationPolicy = { key: string; name: string; summary: string; tiers: { daysBefore: number; refundPercent: number }[] };
-
 export type Room = { name: string; beds: string; note?: string };
-
-export type BookingMode = "instant" | "request" | "enquiry";
 
 export type Villa = {
   slug: string;
@@ -56,7 +52,6 @@ export type Villa = {
   /** Weekday price per night, whole villa */
   priceFrom: number;
   weekendPrice?: number;
-  extraGuestCharge: number;
   minNights: number;
   guests: { base: number; max: number };
   bedrooms: number;
@@ -70,7 +65,6 @@ export type Villa = {
   houseRules: string[];
   checkIn: string;
   checkOut: string;
-  cancellation: string;
   securityDeposit: number;
   photos: Photo[];
   /** Approximate — never the exact gate */
@@ -80,12 +74,9 @@ export type Villa = {
   occasions: string[];
   openingNote?: string;
   seo: Seo;
-  bookingMode: BookingMode;
   whatsappNumber?: string;
   updatedAt?: string;
 };
-
-export type ChargeType = "per_person" | "per_person_per_night" | "per_unit" | "per_night" | "on_request";
 
 export type Experience = {
   slug: string;
@@ -93,9 +84,6 @@ export type Experience = {
   summary: string;
   description: string;
   price: { amount: number; unit: string; from?: boolean };
-  chargeType: ChargeType;
-  minGuests: number;
-  bookable: boolean;
   includes: string[];
   photo: Photo | null;
   availableAt: "all" | string[];
@@ -158,6 +146,8 @@ export type Section = { key: string; type: string; enabled: boolean; data: Recor
 
 export type PageContent = { seo: Seo; sections: Section[] };
 
+export type WelcomePopup = { enabled: boolean; title: string; intro: string; buttonLabel: string; note: string };
+
 export type SiteSettings = {
   brand: { name: string; tagline: string; description: string; logo: Photo | null; logoLight: Photo | null; badge: Photo | null; favicon: Photo | null };
   contact: {
@@ -179,7 +169,8 @@ export type SiteSettings = {
   tracking: { gtmId: string; ga4Id: string; metaPixelId: string; googleSiteVerification: string };
   reviewSummary: { score: number; count: number; source: string };
   enquiry: { occasions: string[]; dialogTitle: string; dialogIntro: string; note: string; submitLabel: string; flexibleNote: string };
-  booking: { available: boolean; razorpayKeyId: string; weekendNights: number[]; gstPercent: number; gstInclusive: boolean; maxAdvanceDays: number; termsNote: string };
+  /** Missing until the backend is redeployed with this setting */
+  welcomePopup?: WelcomePopup;
 };
 
 export type Content = {
@@ -189,7 +180,6 @@ export type Content = {
   destinations: Destination[];
   categories: VillaCategory[];
   amenities: Amenity[];
-  cancellationPolicies: CancellationPolicy[];
   villas: Villa[];
   experiences: Experience[];
   occasions: Occasion[];

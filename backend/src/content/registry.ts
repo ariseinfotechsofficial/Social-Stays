@@ -310,27 +310,6 @@ export const SECTION_TYPES: SectionType[] = [
     description: "Destination links are added under the button automatically.",
     fields: [t("eyebrow", "Small label"), t("title", "Heading"), ta("body", "Text"), t("primaryLabel", "Button label"), t("primaryHref", "Button link")],
   },
-
-  /* ---------- Booking ---------- */
-  {
-    type: "booking-labels",
-    label: "Online booking text",
-    description: "Text on the booking card, checkout and confirmation pages.",
-    fields: [
-      t("bookLabel", "Instant book button"),
-      t("requestLabel", "Request to book button"),
-      t("orEnquire", "Enquiry link under the button"),
-      t("checkoutTitle", "Checkout heading"),
-      ta("checkoutIntro", "Checkout intro"),
-      ta("requestIntro", "Request intro", "Shown at checkout for request-to-book villas"),
-      t("payLabel", "Pay button"),
-      t("submitRequestLabel", "Send request button"),
-      ta("confirmedBody", "Confirmed: text"),
-      ta("requestedBody", "Request sent: text"),
-      ta("termsNote", "Terms note at checkout"),
-      ta("manageIntro", "Find my booking: intro"),
-    ],
-  },
 ];
 
 export const PAGES: PageDef[] = [
@@ -440,7 +419,6 @@ export const PAGES: PageDef[] = [
       { key: "form", type: "owners-form" },
     ],
   },
-  { key: "booking", label: "Online booking", path: "/booking", reorderable: false, seo: true, sections: [{ key: "labels", type: "booking-labels" }] },
   { key: "not-found", label: "Page not found", path: "/404", reorderable: false, seo: false, sections: [{ key: "content", type: "not-found" }] },
 ];
 

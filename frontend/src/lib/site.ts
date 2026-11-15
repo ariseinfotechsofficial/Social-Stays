@@ -1,4 +1,13 @@
-import type { Content, Link, Photo } from "@/data/types";
+import type { Content, Link, Photo, WelcomePopup } from "@/data/types";
+
+/** Used until the admin saves its own pop-up text (and while the backend predates the setting). */
+const WELCOME_POPUP: WelcomePopup = {
+  enabled: true,
+  title: "Plan your getaway",
+  intro: "Share your name and number, and we'll help you find the right villa on WhatsApp.",
+  buttonLabel: "Let's connect on WhatsApp",
+  note: "No spam. We only message you about your stay.",
+};
 
 /**
  * Canonical site URL. Set NEXT_PUBLIC_SITE_URL once the custom domain is live; until then
@@ -25,8 +34,8 @@ export type ClientSite = {
   logo: Photo | null;
   logoLight: Photo | null;
   enquiry: Content["settings"]["enquiry"];
+  welcomePopup: WelcomePopup;
   destinations: { slug: string; name: string }[];
-  booking: Content["settings"]["booking"];
 };
 
 export function clientSite(c: Content): ClientSite {
@@ -46,7 +55,7 @@ export function clientSite(c: Content): ClientSite {
     logo: s.brand.logo,
     logoLight: s.brand.logoLight,
     enquiry: s.enquiry,
+    welcomePopup: { ...WELCOME_POPUP, ...s.welcomePopup },
     destinations: c.destinations.map((d) => ({ slug: d.slug, name: d.name })),
-    booking: s.booking,
   };
 }

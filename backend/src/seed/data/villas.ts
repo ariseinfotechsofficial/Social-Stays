@@ -47,7 +47,6 @@ export const villas: Villa[] = [
     houseRules: [...commonRules, "Pets welcome: up to two, with a ₹1,000 cleaning fee per stay."],
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "standard",
     securityDeposit: 10000,
     photos: [
       "villas/amaltas-house/01",
@@ -99,7 +98,6 @@ export const villas: Villa[] = [
     houseRules: [...commonRules, "The pool edge is open to the drop: children must be supervised at all times.", "Not suitable for pets."],
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "standard",
     securityDeposit: 10000,
     photos: [
       "villas/sunset-ridge/01",
@@ -159,7 +157,6 @@ export const villas: Villa[] = [
     ],
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "standard",
     securityDeposit: 15000,
     photos: [
       "villas/palash-farm/01",
@@ -212,7 +209,6 @@ export const villas: Villa[] = [
     houseRules: [...commonRules, "Not suitable for pets."],
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "standard",
     securityDeposit: 8000,
     photos: [
       "villas/baobab-house/01",
@@ -261,7 +257,6 @@ export const villas: Villa[] = [
     houseRules: commonRules,
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "standard",
     securityDeposit: 10000,
     photos: ["villas/kesar-bagh/01", "villas/kesar-bagh/02", "villas/kesar-bagh/03"],
     location: { area: "Mandu plateau", lat: 22.3401, lng: 75.3922, fromIndore: "2 hrs 15 min" },
@@ -305,7 +300,6 @@ export const villas: Villa[] = [
     houseRules: [...commonRules, "This is an alcohol-free, vegetarian property.", "Not suitable for pets."],
     checkIn: "12:00 pm",
     checkOut: "10:00 am",
-    cancellation: "standard",
     securityDeposit: 8000,
     photos: [
       "villas/rewa-riverside/01",
@@ -363,7 +357,6 @@ export const villas: Villa[] = [
     ],
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "standard",
     securityDeposit: 10000,
     photos: [
       "villas/mahua-farm/01",
@@ -416,7 +409,6 @@ export const villas: Villa[] = [
     houseRules: [...commonRules, "Alcohol-free, vegetarian property.", "Not suitable for pets."],
     checkIn: "12:00 pm",
     checkOut: "10:00 am",
-    cancellation: "standard",
     securityDeposit: 8000,
     photos: [
       "villas/avantika-house/01",
@@ -478,7 +470,6 @@ export const villas: Villa[] = [
     ],
     checkIn: "1:00 pm",
     checkOut: "11:00 am",
-    cancellation: "peak",
     securityDeposit: 20000,
     photos: [
       "villas/shipra-farm/01",

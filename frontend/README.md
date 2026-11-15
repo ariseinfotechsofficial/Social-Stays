@@ -59,16 +59,14 @@ src/
       villas/          listing with filters + villa detail template
       destinations/    index + one page per destination
       experiences/  owners/  about/  faq/  contact/  policies/
-      booking/         checkout, the guest's booking page, find my booking
       [...path]/       redirects from the admin, otherwise 404
     (landing)/lp/      ad landing template: no menu, one villa or one occasion
     admin/             the admin panel: its own root layout and stylesheet (see ADMIN.md)
     api/revalidate/    called by the backend after admin saves
     sitemap.ts  robots.ts
-  components/          layout, enquiry form, booking, villa, home sections, motion helpers
+  components/          layout, enquiry forms and welcome pop-up, villa, home sections, motion helpers
   data/types.ts        the content model (matches the backend's bundle)
   lib/content.ts       getContent() + lookups (getVilla, villasIn, getPage…)
-  lib/booking.ts       quotes, availability, Razorpay Checkout
   lib/                 site config, WhatsApp message builder, UTM capture, analytics
   assets/brand/        fallback logos, used until logos are uploaded in Settings
   admin/               the admin's components, lib and resource configs (imported as @admin/…)
@@ -80,13 +78,7 @@ src/
 2. The enquiry is saved to the admin's Enquiries inbox in the background (`keepalive` request), then `lib/whatsapp.ts` opens `wa.me/<number>` with a pre-filled message. The number comes from Settings, or from the villa if it has its own.
 3. The message ends with the traffic source, e.g. `Source: Instagram ad (diwali-weekends)`, captured by `lib/attribution.ts` from `utm_*`, `gclid`/`fbclid` or the referrer, and kept for 30 days. The same source is stored with the enquiry.
 
-## Online booking
-
-Shown on a villa only when the backend has Razorpay keys, booking is switched on in Settings, and the villa is set to Instant or Request. Otherwise the villa keeps the WhatsApp enquiry card.
-
-- **Booking card** (villa sidebar): dates with booked nights struck through, guests, live price.
-- **Checkout** (`/booking/checkout`): add-ons, coupon, guest details, then Razorpay (instant) or a request the team approves.
-- **Booking page** (`/booking/<ref>?key=…`): status, payment of the balance, cancellation with the policy's refund shown. Guests reach it from their email or from Find my booking (reference + phone).
+There is no online booking or payment. Every villa uses the WhatsApp enquiry card, and the welcome pop-up (name + mobile, once per visit) saves to the same Enquiries inbox with the form `welcome_popup`.
 
 ## Tracking
 
@@ -95,7 +87,7 @@ Set the Google Tag Manager ID in the admin (Settings → SEO & tracking) and con
 | Event | Fired when | Extra fields |
 | --- | --- | --- |
 | `whatsapp_click` | any WhatsApp button or enquiry submit | `placement`, `villa` |
-| `form_submit` | an enquiry form, checkout or booking request is submitted | `form`, `villa`, `occasion` |
+| `form_submit` | an enquiry form or the welcome pop-up is submitted | `form`, `villa`, `occasion` |
 | `call_click` | any click-to-call link | `placement` |
 | `villa_view` | a villa page is opened | `villa`, `villa_name` |
 | `owner_lead` | the owner partnership form succeeds | `rooms` |
