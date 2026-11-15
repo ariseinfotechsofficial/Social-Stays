@@ -31,7 +31,7 @@ See [.env.example](.env.example). The important ones:
 | `PUBLIC_URL` | This API's public address (photo URLs) |
 | `SITE_URL`, `ADMIN_URL`, `CORS_ORIGINS` | Allowed browser origins; `SITE_URL` also receives revalidation calls |
 | `REVALIDATE_SECRET` | Shared with the website; lets admin saves refresh cached pages |
-| `UPLOADS_DIR` | Where uploaded photos are written. On a VPS, a backed-up folder outside the code |
+| `UPLOADS_DIR` | Where uploaded photos are written. **In production it must be an absolute path outside the deployed app folder** (e.g. `/home/<user>/socialstays-uploads`), or every redeploy deletes the photos uploaded in the admin. The server logs a warning and `/api/health` reports `uploadsPersistent: false` when it isn't. Back this folder up. |
 
 ## How it's organised
 

@@ -10,7 +10,7 @@ import { Badge, Card, Empty, Loading } from "@admin/components/ui/feedback";
 import { Checkbox, Field, Textarea } from "@admin/components/ui/form";
 import { PageHeader, Table, Tabs, tdClass } from "@admin/components/ui/layout";
 import { Drawer } from "@admin/components/ui/overlay";
-import { ApiError, api } from "@admin/lib/api";
+import { ApiError, api, mediaUrl } from "@admin/lib/api";
 import { useCan } from "@admin/lib/session";
 import { ago, formatINR } from "@admin/lib/utils";
 
@@ -40,7 +40,7 @@ function Value({ field, v }: { field: string; v: unknown }): ReactNode {
       <div className="flex flex-wrap gap-1.5">
         {(v as { src: string }[]).map((p, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={p.src} alt="" className="size-14 rounded-[6px] object-cover" />
+          <img key={i} src={mediaUrl(p.src)} alt="" className="size-14 rounded-[6px] object-cover" />
         ))}
       </div>
     );

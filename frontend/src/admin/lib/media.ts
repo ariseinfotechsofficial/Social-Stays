@@ -1,4 +1,4 @@
-import { ApiError } from "@admin/lib/api";
+import { API_BASE, ApiError } from "@admin/lib/api";
 
 /** An image as stored on a document (snapshot of a media item plus alt text for this use) */
 export type ImageValue = { src: string; width?: number; height?: number; alt?: string; blur?: string; media?: string };
@@ -54,7 +54,7 @@ export async function uploadFiles(files: File[], opts: { folder: string; onProgr
       const blob = await prepare(f);
       form.append("files", blob, f.name);
     }
-    const res = await fetch("/api/admin/media", { method: "POST", body: form, credentials: "same-origin" });
+    const res = await fetch(`${API_BASE}/api/admin/media`, { method: "POST", body: form, credentials: "include" });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new ApiError(res.status, data.error ?? "Upload failed");
     out.push(...(data.items as MediaItem[]));

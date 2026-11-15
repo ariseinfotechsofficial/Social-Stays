@@ -10,7 +10,7 @@ import { Badge, Card, Empty, Loading } from "@admin/components/ui/feedback";
 import { Field, Input, Select, Textarea } from "@admin/components/ui/form";
 import { PageHeader, Pagination, Tabs } from "@admin/components/ui/layout";
 import { Drawer, useConfirm } from "@admin/components/ui/overlay";
-import { ApiError, api, withQuery, type ListResponse } from "@admin/lib/api";
+import { API_BASE, ApiError, api, withQuery, type ListResponse } from "@admin/lib/api";
 import { useCan } from "@admin/lib/session";
 import { ago, dateTime } from "@admin/lib/utils";
 
@@ -101,7 +101,7 @@ export function LeadsInbox({ config }: { config: LeadsConfig }) {
         title={config.title}
         description={config.description}
         actions={
-          <a href={`/api${withQuery(`${config.endpoint}/export.csv`, filters)}`} className={buttonClass("secondary")}>
+          <a href={`${API_BASE}/api${withQuery(`${config.endpoint}/export.csv`, filters)}`} className={buttonClass("secondary")}>
             <DownloadSimpleIcon className="size-4" /> Export CSV
           </a>
         }

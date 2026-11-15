@@ -8,10 +8,11 @@ import { Button } from "@admin/components/ui/button";
 import { Field, Input } from "@admin/components/ui/form";
 import { Dialog } from "@admin/components/ui/overlay";
 import { toImage, type ImageValue } from "@admin/lib/media";
+import { mediaUrl } from "@admin/lib/api";
 
 function Thumb({ img, className }: { img: ImageValue; className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={img.src} alt={img.alt ?? ""} loading="lazy" className={className} />;
+  return <img src={mediaUrl(img.src)} alt={img.alt ?? ""} loading="lazy" className={className} />;
 }
 
 /** One photo with its alt text for this use */

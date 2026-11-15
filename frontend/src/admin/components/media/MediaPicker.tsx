@@ -9,7 +9,7 @@ import { Empty, Spinner } from "@admin/components/ui/feedback";
 import { Input, Select } from "@admin/components/ui/form";
 import { Tabs } from "@admin/components/ui/layout";
 import { Dialog } from "@admin/components/ui/overlay";
-import { ApiError, api } from "@admin/lib/api";
+import { ApiError, api, mediaUrl } from "@admin/lib/api";
 import { uploadFiles, type MediaItem } from "@admin/lib/media";
 import { cn } from "@admin/lib/utils";
 
@@ -98,7 +98,7 @@ export function MediaGrid({ items, selected, onToggle }: { items: MediaItem[]; s
               title={m.alt || m.filename}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={m.src} alt={m.alt} loading="lazy" className="size-full object-cover" />
+              <img src={mediaUrl(m.src)} alt={m.alt} loading="lazy" className="size-full object-cover" />
               {on && <CheckCircleIcon weight="fill" className="absolute top-1.5 right-1.5 size-6 rounded-full bg-white text-gold" />}
             </button>
           </li>

@@ -1,4 +1,13 @@
-/** Calls the backend through the /api rewrite. The session cookie travels automatically. */
+/**
+ * Calls the backend directly at NEXT_PUBLIC_API_URL (e.g. https://api.socialstays.in), with the session cookie.
+ * Not through the website's /api rewrite: Hostinger's CDN in front of the API rejects browser requests that
+ * Vercel forwards (429). Without NEXT_PUBLIC_API_URL the /api rewrite on the same origin is used.
+ */
+export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
+
+/** Uploaded photos are stored as "/uploads/…"; point them at the backend too. */
+export const mediaUrl = (src?: string | null) => (src && src.startsWith("/uploads/") ? `${API_BASE}${src}` : (src ?? ""));
+
 
 export class ApiError extends Error {
   constructor(
@@ -21,8 +30,8 @@ export function withQuery(path: string, query?: Options["query"]) {
 }
 
 export async function api<T = unknown>(path: string, { json, query, headers, ...init }: Options = {}): Promise<T> {
-  const res = await fetch(`/api${withQuery(path, query)}`, {
-    credentials: "same-origin",
+  const res = await fetch(`${API_BASE}/api${withQuery(path, query)}`, {
+    credentials: "include",
     ...init,
     headers: { ...(json !== undefined ? { "Content-Type": "application/json" } : {}), ...headers },
     body: json !== undefined ? JSON.stringify(json) : init.body,

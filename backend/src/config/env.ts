@@ -27,16 +27,31 @@ if (!parsed.success) {
 
 const trim = (url: string) => url.replace(/\/+$/, "");
 
+/** https://example.com and https://www.example.com, whichever one was configured */
+const withWwwVariant = (origin: string) => {
+  const m = /^(https?:\/\/)(www\.)?([^/]+)$/.exec(origin);
+  if (!m || /^(localhost|\d+\.\d+\.\d+\.\d+)(:\d+)?$/.test(m[3])) return [origin];
+  return [`${m[1]}${m[3]}`, `${m[1]}www.${m[3]}`];
+};
+
+/** The deployed backend folder; a redeploy replaces everything inside it */
+const appRoot = path.resolve(import.meta.dirname, "../..");
+const uploadsDir = path.resolve(parsed.data.UPLOADS_DIR);
+
 export const env = {
   ...parsed.data,
   PUBLIC_URL: trim(parsed.data.PUBLIC_URL),
   SITE_URL: trim(parsed.data.SITE_URL),
   ADMIN_URL: trim(parsed.data.ADMIN_URL),
   isProd: parsed.data.NODE_ENV === "production",
-  uploadsDir: path.resolve(parsed.data.UPLOADS_DIR),
+  uploadsDir,
+  /** True when uploads live inside the app folder, where the next redeploy deletes them */
+  uploadsInsideApp: uploadsDir === appRoot || uploadsDir.startsWith(appRoot + path.sep),
   /** Photos shipped with the code (seed library); served under /uploads as a fallback so they survive disk wipes */
   seedAssetsDir: path.resolve(import.meta.dirname, "../../seed-assets"),
-  corsOrigins: [parsed.data.SITE_URL, parsed.data.ADMIN_URL, ...parsed.data.CORS_ORIGINS.split(",")]
+  // The site is reachable with and without "www", so both are allowed whichever is configured
+  corsOrigins: [...new Set([parsed.data.SITE_URL, parsed.data.ADMIN_URL, ...parsed.data.CORS_ORIGINS.split(",")]
     .map((o) => trim(o.trim()))
-    .filter(Boolean),
+    .filter(Boolean)
+    .flatMap(withWwwVariant))],
 };

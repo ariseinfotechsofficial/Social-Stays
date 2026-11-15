@@ -11,7 +11,7 @@ import { Card, Empty, Loading } from "@admin/components/ui/feedback";
 import { Field, Input, Select } from "@admin/components/ui/form";
 import { PageHeader } from "@admin/components/ui/layout";
 import { Drawer, useConfirm } from "@admin/components/ui/overlay";
-import { ApiError, api } from "@admin/lib/api";
+import { ApiError, api, mediaUrl } from "@admin/lib/api";
 import { fileSize, type MediaItem } from "@admin/lib/media";
 import { useCan } from "@admin/lib/session";
 import { shortDate } from "@admin/lib/utils";
@@ -156,7 +156,7 @@ export default function MediaPage() {
         {current && (
           <div className="space-y-5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={current.src} alt={current.alt} className="w-full rounded-[10px] bg-sand-deep object-contain" />
+            <img src={mediaUrl(current.src)} alt={current.alt} className="w-full rounded-[10px] bg-sand-deep object-contain" />
             <dl className="grid grid-cols-2 gap-3 text-[0.8125rem]">
               <div>
                 <dt className="text-ink-soft">Size</dt>
@@ -185,7 +185,7 @@ export default function MediaPage() {
               size="sm"
               icon={<CopyIcon className="size-4" />}
               onClick={() => {
-                void navigator.clipboard.writeText(new URL(current.src, window.location.origin).toString());
+                void navigator.clipboard.writeText(new URL(mediaUrl(current.src), window.location.origin).toString());
                 toast.success("Link copied");
               }}
             >

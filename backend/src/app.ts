@@ -36,7 +36,7 @@ export function createApp() {
   const staticOpts = { maxAge: "365d", immutable: true, index: false as const };
   app.use("/uploads", express.static(env.uploadsDir, staticOpts), express.static(env.seedAssetsDir, staticOpts));
 
-  app.get("/api/health", (_req, res) => res.json({ ok: true, time: new Date().toISOString() }));
+  app.get("/api/health", (_req, res) => res.json({ ok: true, time: new Date().toISOString(), uploadsPersistent: !env.uploadsInsideApp }));
   app.use("/api/auth", authRouter);
   app.use("/api/public", publicRouter);
   app.use("/api/admin", adminRouter);

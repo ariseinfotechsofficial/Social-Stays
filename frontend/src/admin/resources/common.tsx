@@ -1,6 +1,7 @@
 import type { FieldDef, FormValue } from "@admin/components/fields/types";
 import { Badge } from "@admin/components/ui/feedback";
 import type { ImageValue } from "@admin/lib/media";
+import { mediaUrl } from "@admin/lib/api";
 
 export const PUBLISH_OPTIONS = [
   { value: "published", label: "Published" },
@@ -16,7 +17,7 @@ export function PublishBadge({ status }: { status?: unknown }) {
 export function Thumb({ img, rounded = "rounded-[6px]" }: { img?: ImageValue | null; rounded?: string }) {
   return img?.src ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={img.src} alt="" loading="lazy" className={`size-10 shrink-0 object-cover ${rounded}`} />
+    <img src={mediaUrl(img.src)} alt="" loading="lazy" className={`size-10 shrink-0 object-cover ${rounded}`} />
   ) : (
     <span className={`block size-10 shrink-0 bg-sand-deep ${rounded}`} />
   );

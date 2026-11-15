@@ -11,7 +11,7 @@ import { Badge, Card, Empty, Loading } from "@admin/components/ui/feedback";
 import { Field, Textarea } from "@admin/components/ui/form";
 import { PageHeader } from "@admin/components/ui/layout";
 import { Dialog } from "@admin/components/ui/overlay";
-import { ApiError, api } from "@admin/lib/api";
+import { ApiError, api, mediaUrl } from "@admin/lib/api";
 import { SITE_URL, ago, formatINR } from "@admin/lib/utils";
 import { OwnerOnly } from "../OwnerOnly";
 
@@ -95,7 +95,7 @@ export default function MyVillasPage() {
               <div className="flex gap-4 p-4">
                 {v.photos?.[0] && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={v.photos[0].src} alt="" className="size-24 shrink-0 rounded-[10px] object-cover" />
+                  <img src={mediaUrl(v.photos[0].src)} alt="" className="size-24 shrink-0 rounded-[10px] object-cover" />
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="type-heading">{v.name}</p>
