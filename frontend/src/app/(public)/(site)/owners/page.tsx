@@ -112,6 +112,15 @@ export default async function OwnersPage() {
                         successTitle: data.text("successTitle", "Thank you, we have your details"),
                         successBody: data.text("successBody"),
                         privacyNote: data.text("privacyNote"),
+                        nameLabel: data.text("nameLabel", "Your name"),
+                        phoneLabel: data.text("phoneLabel", "Mobile number"),
+                        locationLabel: data.text("locationLabel", "Property location"),
+                        locationHint: data.text("locationHint", "Village or town, and the nearest destination"),
+                        roomsLabel: data.text("roomsLabel", "Bedrooms"),
+                        roomsHint: data.text("roomsHint", "With attached bathrooms"),
+                        photosLabel: data.text("photosLabel", "Link to photos"),
+                        photosHint: data.text("photosHint", "Google Drive, Google Photos or Instagram. Optional, but it helps."),
+                        noteLabel: data.text("noteLabel", "Anything else we should know?"),
                       }}
                     />
                   </div>

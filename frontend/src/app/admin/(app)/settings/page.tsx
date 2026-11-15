@@ -186,6 +186,22 @@ const TABS: Tab[] = [
         ],
       },
       {
+        title: "Enquiry form fields",
+        description: "Labels and placeholder text in every enquiry form: the home page bar, villa pages and the enquiry pop-up. The short versions are used on phones.",
+        fields: [
+          { name: "enquiry.destinationLabel", label: "Destination: label", type: "text", width: "third" },
+          { name: "enquiry.destinationPlaceholder", label: "Destination: placeholder", type: "text", width: "third" },
+          { name: "enquiry.destinationShort", label: "Destination: short placeholder", type: "text", width: "third" },
+          { name: "enquiry.datesLabel", label: "Dates: label", type: "text", width: "half" },
+          { name: "enquiry.datesPlaceholder", label: "Dates: placeholder", type: "text", width: "half" },
+          { name: "enquiry.guestsLabel", label: "Guests: label", type: "text", width: "half" },
+          { name: "enquiry.guestsPlaceholder", label: "Guests: placeholder", type: "text", width: "half" },
+          { name: "enquiry.occasionLabel", label: "Occasion: label", type: "text", width: "third" },
+          { name: "enquiry.occasionPlaceholder", label: "Occasion: placeholder", type: "text", width: "third" },
+          { name: "enquiry.occasionShort", label: "Occasion: short placeholder", type: "text", width: "third" },
+        ],
+      },
+      {
         title: "Welcome pop-up",
         description: "Asks new visitors for their name and mobile number once per visit, then opens WhatsApp. Submissions appear in Enquiries as Welcome pop-up.",
         fields: [
@@ -194,6 +210,9 @@ const TABS: Tab[] = [
           { name: "welcomePopup.buttonLabel", label: "Button label", type: "text", width: "half" },
           { name: "welcomePopup.intro", label: "Intro text", type: "textarea", rows: 2 },
           { name: "welcomePopup.note", label: "Note under the button", type: "text" },
+          { name: "welcomePopup.nameLabel", label: "Name field: label", type: "text", width: "third" },
+          { name: "welcomePopup.namePlaceholder", label: "Name field: placeholder", type: "text", width: "third" },
+          { name: "welcomePopup.phoneLabel", label: "Mobile field: label", type: "text", width: "third" },
         ],
       },
     ],

@@ -35,6 +35,9 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
   const destinationOptions = site.destinations.map((d) => ({ value: d.name, label: d.name }));
   const occasionOptions = site.enquiry.occasions.map((o) => ({ value: o, label: o }));
   const defaultLabel = site.enquiry.submitLabel || "Enquire on WhatsApp";
+  const e = site.enquiry;
+  const destLabel = e.destinationLabel || "Destination";
+  const occLabel = e.occasionLabel || "Occasion";
   const [dest, setDest] = useState(destination ?? "");
   const [range, setRange] = useState<DateRange | undefined>();
   const [guests, setGuests] = useState(0);
@@ -67,11 +70,11 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
       <form onSubmit={submit} className={cn("overflow-hidden rounded-[14px] bg-white", className)} aria-label="Check availability">
         <div className="grid grid-cols-2 gap-px bg-line md:grid-cols-4">
           {!villa && (
-            <SelectField id={`${id}-dest`} label="Destination" value={dest} onChange={setDest} options={destinationOptions} placeholder="Anywhere" className={tile} />
+            <SelectField id={`${id}-dest`} label={destLabel} value={dest} onChange={setDest} options={destinationOptions} placeholder={e.destinationShort || "Anywhere"} className={tile} />
           )}
           <DatesField id={`${id}-dates`} range={range} onChange={setRange} compact className={tile} />
           <GuestsSelect id={`${id}-guests`} value={guests} onChange={setGuests} max={villa?.maxGuests ?? 30} className={tile} />
-          <SelectField id={`${id}-occasion`} label="Occasion" value={occ} onChange={setOcc} options={occasionOptions} placeholder="Getaway" className={tile} />
+          <SelectField id={`${id}-occasion`} label={occLabel} value={occ} onChange={setOcc} options={occasionOptions} placeholder={e.occasionShort || "Getaway"} className={tile} />
         </div>
         <div className="border-t border-line p-2.5">
           <Button type="submit" size="lg" className="w-full" icon={<WhatsappLogoIcon weight="regular" className="size-5" />}>
@@ -99,11 +102,11 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
       {!villa && (
         <SelectField
           id={`${id}-dest`}
-          label="Destination"
+          label={destLabel}
           value={dest}
           onChange={setDest}
           options={destinationOptions}
-          placeholder="Anywhere near Indore"
+          placeholder={e.destinationPlaceholder || "Anywhere near Indore"}
           className={cell}
         />
       )}
@@ -111,11 +114,11 @@ export function EnquiryForm({ villa, destination, occasion, layout = "stack", pl
       <GuestsField id={`${id}-guests`} value={guests} onChange={setGuests} max={villa?.maxGuests ?? 30} className={cell} />
       <SelectField
         id={`${id}-occasion`}
-        label="Occasion"
+        label={occLabel}
         value={occ}
         onChange={setOcc}
         options={occasionOptions}
-        placeholder="Just a getaway"
+        placeholder={e.occasionPlaceholder || "Just a getaway"}
         className={cn(cell, bar && "lg:border-r-0")}
       />
       <div className={cn(bar ? "p-3 lg:p-2" : "p-4 pt-5")}>

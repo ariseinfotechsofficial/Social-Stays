@@ -135,7 +135,7 @@ export function WelcomePopup() {
                 <form onSubmit={submit} noValidate className="mt-6 space-y-3.5">
                   <div>
                     <label htmlFor={`${id}-name`} className="type-label text-ink-soft">
-                      Your name
+                      {popup.nameLabel || "Your name"}
                     </label>
                     <input
                       id={`${id}-name`}
@@ -143,7 +143,7 @@ export function WelcomePopup() {
                       onChange={(e) => setName(e.target.value)}
                       autoComplete="name"
                       maxLength={120}
-                      placeholder="Full name"
+                      placeholder={popup.namePlaceholder || "Full name"}
                       className={cn(inputClass, "mt-1.5")}
                       aria-invalid={!!errors.name}
                       aria-describedby={errors.name ? `${id}-name-error` : undefined}
@@ -157,7 +157,7 @@ export function WelcomePopup() {
 
                   <div>
                     <label htmlFor={`${id}-phone`} className="type-label text-ink-soft">
-                      Mobile number
+                      {popup.phoneLabel || "Mobile number"}
                     </label>
                     <div
                       className={cn(

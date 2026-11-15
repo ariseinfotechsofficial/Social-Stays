@@ -146,7 +146,7 @@ export type Section = { key: string; type: string; enabled: boolean; data: Recor
 
 export type PageContent = { seo: Seo; sections: Section[] };
 
-export type WelcomePopup = { enabled: boolean; title: string; intro: string; buttonLabel: string; note: string };
+export type WelcomePopup = { enabled: boolean; title: string; intro: string; buttonLabel: string; note: string; nameLabel: string; namePlaceholder: string; phoneLabel: string };
 
 export type SiteSettings = {
   brand: { name: string; tagline: string; description: string; logo: Photo | null; logoLight: Photo | null; badge: Photo | null; favicon: Photo | null };
@@ -168,7 +168,25 @@ export type SiteSettings = {
   titleTemplate: string;
   tracking: { gtmId: string; ga4Id: string; metaPixelId: string; googleSiteVerification: string };
   reviewSummary: { score: number; count: number; source: string };
-  enquiry: { occasions: string[]; dialogTitle: string; dialogIntro: string; note: string; submitLabel: string; flexibleNote: string };
+  enquiry: {
+    occasions: string[];
+    dialogTitle: string;
+    dialogIntro: string;
+    note: string;
+    submitLabel: string;
+    flexibleNote: string;
+    /** Field labels and placeholders; missing until the backend is redeployed */
+    destinationLabel?: string;
+    destinationPlaceholder?: string;
+    destinationShort?: string;
+    datesLabel?: string;
+    datesPlaceholder?: string;
+    guestsLabel?: string;
+    guestsPlaceholder?: string;
+    occasionLabel?: string;
+    occasionPlaceholder?: string;
+    occasionShort?: string;
+  };
   /** Missing until the backend is redeployed with this setting */
   welcomePopup?: WelcomePopup;
 };

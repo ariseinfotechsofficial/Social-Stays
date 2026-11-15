@@ -89,9 +89,9 @@ export default async function DestinationPage({ params }: PageProps<"/destinatio
             <h3 className="font-display text-[1.5rem] font-medium">{t.text("planTitle", "Plan the trip")}</h3>
             <dl className="mt-4 divide-y divide-ink/10 text-[0.9375rem]">
               {[
-                ["From Indore", `${formatDriveTime(d.driveMinutes)}, ${d.distanceKm} km`],
+                [t.text("fromIndoreLabel", "From Indore"), `${formatDriveTime(d.driveMinutes)}, ${d.distanceKm} km`],
                 ["Route", d.route],
-                ["Best time", d.bestTime],
+                [t.text("bestTimeLabel", "Best time"), d.bestTime],
                 ["Stays", `${stays.length} ${stays.length === 1 ? "villa" : "villas"} in ${d.name}`],
               ]
                 .filter(([, v]) => v)
@@ -137,7 +137,7 @@ export default async function DestinationPage({ params }: PageProps<"/destinatio
                       >
                         {t.text("suggestButton", "Ask on WhatsApp")}
                       </WhatsAppLink>
-                      <TextLink href="/villas">See all villas</TextLink>
+                      <TextLink href="/villas">{t.text("seeAllLabel", "See all villas")}</TextLink>
                     </div>
                   </div>
                 </li>

@@ -108,11 +108,11 @@ export function DatesField({
       : compact
         ? `${format(range.from, "d MMM")} – …`
         : `${format(range.from, "d MMM")} – add check-out`
-    : "Add dates";
+    : enquiry.datesPlaceholder || "Add dates";
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <FieldShell label="Dates" htmlFor={id} className={className}>
+      <FieldShell label={enquiry.datesLabel || "Dates"} htmlFor={id} className={className}>
         <Popover.Trigger
           id={id}
           className={cn(
@@ -168,14 +168,15 @@ export function GuestsSelect({
   max?: number;
   className?: string;
 }) {
+  const { enquiry } = useSite();
   return (
     <SelectField
       id={id}
-      label="Guests"
+      label={enquiry.guestsLabel || "Guests"}
       value={value ? String(value) : ""}
       onChange={(v) => onChange(Number(v) || 0)}
       options={Array.from({ length: max }, (_, i) => ({ value: String(i + 1), label: `${i + 1} guest${i ? "s" : ""}` }))}
-      placeholder="Add guests"
+      placeholder={enquiry.guestsPlaceholder || "Add guests"}
       className={className}
     />
   );
@@ -194,12 +195,13 @@ export function GuestsField({
   max?: number;
   className?: string;
 }) {
+  const { enquiry } = useSite();
   const step = (delta: number) => onChange(Math.min(max, Math.max(0, value + delta)));
   return (
-    <FieldShell label="Guests" htmlFor={id} className={className}>
+    <FieldShell label={enquiry.guestsLabel || "Guests"} htmlFor={id} className={className}>
       <div className="flex items-center justify-between gap-3">
         <output id={id} aria-live="polite" className={cn("text-[0.98rem] font-medium", value ? "text-ink" : "text-ink-soft")}>
-          {value ? `${value} guest${value === 1 ? "" : "s"}` : "Add guests"}
+          {value ? `${value} guest${value === 1 ? "" : "s"}` : enquiry.guestsPlaceholder || "Add guests"}
         </output>
         <div className="flex items-center gap-1.5">
           <button

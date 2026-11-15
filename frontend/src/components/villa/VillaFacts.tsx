@@ -1,13 +1,15 @@
 import { BathtubIcon, BedIcon, PawPrintIcon, SwimmingPoolIcon, UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Villa } from "@/data/types";
+import { fill, getContent, labels } from "@/lib/content";
 
-export function VillaFacts({ villa }: { villa: Villa }) {
+export async function VillaFacts({ villa }: { villa: Villa }) {
+  const t = labels(await getContent(), "villa");
   const facts = [
-    { icon: UsersThreeIcon, label: `Up to ${villa.guests.max} guests`, note: `${villa.guests.base} at the base price` },
-    { icon: BedIcon, label: `${villa.bedrooms} bedrooms` },
-    { icon: BathtubIcon, label: `${villa.bathrooms} bathrooms` },
-    villa.privatePool && { icon: SwimmingPoolIcon, label: "Private pool" },
-    villa.petFriendly && { icon: PawPrintIcon, label: "Pets welcome" },
+    { icon: UsersThreeIcon, label: fill(t.text("factGuests", "Up to {n} guests"), { n: villa.guests.max }), note: fill(t.text("factBase", "{n} at the base price"), { n: villa.guests.base }) },
+    { icon: BedIcon, label: fill(t.text("factBedrooms", "{n} bedrooms"), { n: villa.bedrooms }) },
+    { icon: BathtubIcon, label: fill(t.text("factBathrooms", "{n} bathrooms"), { n: villa.bathrooms }) },
+    villa.privatePool && { icon: SwimmingPoolIcon, label: t.text("factPool", "Private pool") },
+    villa.petFriendly && { icon: PawPrintIcon, label: t.text("factPets", "Pets welcome") },
   ].filter(Boolean) as { icon: typeof BedIcon; label: string; note?: string }[];
 
   return (

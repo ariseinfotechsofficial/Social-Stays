@@ -7,6 +7,9 @@ const WELCOME_POPUP: WelcomePopup = {
   intro: "Share your name and number, and we'll help you find the right villa on WhatsApp.",
   buttonLabel: "Let's connect on WhatsApp",
   note: "No spam. We only message you about your stay.",
+  nameLabel: "Your name",
+  namePlaceholder: "Full name",
+  phoneLabel: "Mobile number",
 };
 
 /**

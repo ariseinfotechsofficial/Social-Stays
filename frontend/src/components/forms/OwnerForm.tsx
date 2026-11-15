@@ -30,7 +30,21 @@ function Field({ id, label, hint, error, children }: { id: string; label: string
   );
 }
 
-export type OwnerFormCopy = { submitLabel: string; successTitle: string; successBody: string; privacyNote: string };
+export type OwnerFormCopy = {
+  submitLabel: string;
+  successTitle: string;
+  successBody: string;
+  privacyNote: string;
+  nameLabel: string;
+  phoneLabel: string;
+  locationLabel: string;
+  locationHint: string;
+  roomsLabel: string;
+  roomsHint: string;
+  photosLabel: string;
+  photosHint: string;
+  noteLabel: string;
+};
 
 /** Owner partnership lead form from the brief: name, location, rooms, photos link → the admin's Owner leads inbox. */
 export function OwnerForm({ copy }: { copy: OwnerFormCopy }) {
@@ -91,25 +105,25 @@ export function OwnerForm({ copy }: { copy: OwnerFormCopy }) {
   return (
     <form onSubmit={submit} noValidate className="rounded-[8px] bg-white p-6 sm:p-10">
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field id="owner-name" label="Your name" error={errors.name}>
+        <Field id="owner-name" label={copy.nameLabel} error={errors.name}>
           <input id="owner-name" name="name" autoComplete="name" className={inputClass} aria-invalid={!!errors.name} aria-describedby={errors.name ? "owner-name-error" : undefined} />
         </Field>
-        <Field id="owner-phone" label="Mobile number" error={errors.phone}>
+        <Field id="owner-phone" label={copy.phoneLabel} error={errors.phone}>
           <input id="owner-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+91" className={inputClass} aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "owner-phone-error" : undefined} />
         </Field>
-        <Field id="owner-location" label="Property location" hint="Village or town, and the nearest destination" error={errors.location}>
+        <Field id="owner-location" label={copy.locationLabel} hint={copy.locationHint} error={errors.location}>
           <input id="owner-location" name="location" placeholder="e.g. Simrol, near Jaam Gate" className={inputClass} aria-invalid={!!errors.location} aria-describedby={errors.location ? "owner-location-error" : undefined} />
         </Field>
-        <Field id="owner-rooms" label="Bedrooms" hint="With attached bathrooms" error={errors.rooms}>
+        <Field id="owner-rooms" label={copy.roomsLabel} hint={copy.roomsHint} error={errors.rooms}>
           <input id="owner-rooms" name="rooms" type="number" min={1} inputMode="numeric" className={inputClass} aria-invalid={!!errors.rooms} aria-describedby={errors.rooms ? "owner-rooms-error" : undefined} />
         </Field>
         <div className="sm:col-span-2">
-          <Field id="owner-photos" label="Link to photos" hint="Google Drive, Google Photos or Instagram. Optional, but it helps." error={errors.photos}>
+          <Field id="owner-photos" label={copy.photosLabel} hint={copy.photosHint} error={errors.photos}>
             <input id="owner-photos" name="photos" type="url" inputMode="url" placeholder="https://" className={inputClass} aria-invalid={!!errors.photos} aria-describedby={errors.photos ? "owner-photos-error" : undefined} />
           </Field>
         </div>
         <div className="sm:col-span-2">
-          <Field id="owner-note" label="Anything else we should know?">
+          <Field id="owner-note" label={copy.noteLabel}>
             <textarea id="owner-note" name="note" rows={4} className={cn(inputClass, "resize-y")} />
           </Field>
         </div>

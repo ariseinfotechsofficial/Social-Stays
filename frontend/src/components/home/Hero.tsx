@@ -1,6 +1,7 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { EnquiryForm } from "@/components/enquiry/EnquiryForm";
+import type { Photo } from "@/data/types";
 import type { SectionData } from "@/lib/content";
 
 /** Splits a line into words that rise out of a mask in sequence (CSS only, runs before hydration). */
@@ -17,8 +18,31 @@ function RiseLine({ text, offset = 0 }: { text: string; offset?: number }) {
   );
 }
 
+const photoClass = "hero-settle -z-10 object-cover object-[54%_center] lg:object-[60%_center]";
+
+/** The hero photo; with a separate phone photo it becomes a <picture> that swaps at the sm breakpoint. */
+function HeroPhoto({ photo, mobile }: { photo: Photo; mobile: Photo | null }) {
+  if (!mobile) return <Image src={photo.src} alt={photo.alt} fill preload sizes="100vw" className={photoClass} />;
+  const common = { alt: photo.alt, sizes: "100vw", fill: true } as const;
+  const {
+    props: { srcSet: desktop },
+  } = getImageProps({ ...common, src: photo.src });
+  const {
+    props: { srcSet: phone, ...rest },
+  } = getImageProps({ ...common, src: mobile.src, fetchPriority: "high", loading: "eager" });
+  return (
+    <picture>
+      <source media="(min-width: 640px)" srcSet={desktop} />
+      <img {...rest} alt={photo.alt} srcSet={phone} className={photoClass} />
+    </picture>
+  );
+}
+
 export function Hero({ data }: { data: SectionData }) {
   const heroPhoto = data.photo("image");
+  const mobilePhoto = data.photo("imageMobile");
+  // Admin-set darkening (0–90%); without it the original phone/desktop strengths apply
+  const overlay = data.num("overlay", -1);
   const line1 = data.text("line1");
   const line2 = data.text("line2");
   const caption = data.text("caption");
@@ -28,17 +52,12 @@ export function Hero({ data }: { data: SectionData }) {
   return (
     <section className="relative">
       <div className="relative isolate flex items-end overflow-hidden bg-night text-white sm:min-h-[72svh] lg:min-h-[94svh]">
-        {heroPhoto && (
-          <Image
-            src={heroPhoto.src}
-            alt={heroPhoto.alt}
-            fill
-            preload
-            sizes="100vw"
-            className="hero-settle -z-10 object-cover object-[54%_center] lg:object-[60%_center]"
-          />
+        {heroPhoto ? <HeroPhoto photo={heroPhoto} mobile={mobilePhoto} /> : mobilePhoto && <HeroPhoto photo={mobilePhoto} mobile={null} />}
+        {overlay >= 0 ? (
+          <div aria-hidden className="absolute inset-0 -z-10" style={{ backgroundColor: `rgb(29 25 19 / ${Math.min(90, overlay) / 100})` }} />
+        ) : (
+          <div aria-hidden className="absolute inset-0 -z-10 bg-night/50 lg:bg-night/40" />
         )}
-        <div aria-hidden className="absolute inset-0 -z-10 bg-night/50 lg:bg-night/40" />
 
         <div className="container-page w-full pt-[7.75rem] pb-20 sm:pt-32 lg:pb-32">
           <h1 className="type-display-xl max-w-[13ch] max-lg:text-[clamp(2.75rem,11.5vw,3.75rem)] max-lg:leading-[0.98]">

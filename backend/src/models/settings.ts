@@ -88,6 +88,17 @@ const SettingsSchema = new Schema(
       note: { type: String, default: "No payment needed to enquire." },
       submitLabel: { type: String, default: "Enquire on WhatsApp" },
       flexibleNote: { type: String, default: "Flexible? Leave the dates empty and tell us on WhatsApp." },
+      /** Field labels and placeholders, used by every enquiry form */
+      destinationLabel: { type: String, default: "Destination" },
+      destinationPlaceholder: { type: String, default: "Anywhere near Indore" },
+      destinationShort: { type: String, default: "Anywhere" },
+      datesLabel: { type: String, default: "Dates" },
+      datesPlaceholder: { type: String, default: "Add dates" },
+      guestsLabel: { type: String, default: "Guests" },
+      guestsPlaceholder: { type: String, default: "Add guests" },
+      occasionLabel: { type: String, default: "Occasion" },
+      occasionPlaceholder: { type: String, default: "Just a getaway" },
+      occasionShort: { type: String, default: "Getaway" },
     },
     /** Name + phone pop-up shown once per visit; submissions land in Enquiries as "welcome_popup" */
     welcomePopup: {
@@ -96,6 +107,9 @@ const SettingsSchema = new Schema(
       intro: { type: String, default: "Share your name and number, and we'll help you find the right villa on WhatsApp." },
       buttonLabel: { type: String, default: "Let's connect on WhatsApp" },
       note: { type: String, default: "No spam. We only message you about your stay." },
+      nameLabel: { type: String, default: "Your name" },
+      namePlaceholder: { type: String, default: "Full name" },
+      phoneLabel: { type: String, default: "Mobile number" },
     },
   },
   { timestamps: true, minimize: false },

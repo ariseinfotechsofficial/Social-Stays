@@ -4,19 +4,20 @@ import { ViewTransition } from "react";
 import { EnquireTrigger } from "@/components/enquiry/EnquiryDialog";
 import { buttonClasses } from "@/components/ui/Button";
 import type { Villa } from "@/data/types";
-import { destinationName, getContent } from "@/lib/content";
+import { destinationName, fill, getContent, labels, type SectionData } from "@/lib/content";
 import { cn, formatINR } from "@/lib/utils";
 
-/** Short pills for the listing grid, most distinctive first */
-export function villaPills(v: Villa, max = 4) {
+/** Short pills for the listing grid, most distinctive first. Labels come from the admin (villa card text and amenity names). */
+export function villaPills(v: Villa, max = 4, t?: SectionData, amenityLabel: (key: string) => string | undefined = () => undefined) {
   const has = (key: Villa["amenities"][number]) => v.amenities.includes(key);
+  const label = (key: string, fallback: string) => amenityLabel(key) ?? fallback;
   return [
-    v.privatePool && "Private pool",
-    has("lawn") && has("bonfire") ? "Lawn & bonfire" : has("lawn") ? "Lawn" : has("bonfire") && "Bonfire",
-    has("events") && "Event lawn",
-    has("view") && "Views",
-    has("terrace") && "Terrace",
-    v.petFriendly && "Pets OK",
+    v.privatePool && (t?.text("pillPool", "Private pool") ?? "Private pool"),
+    has("lawn") && has("bonfire") ? "Lawn & bonfire" : has("lawn") ? label("lawn", "Lawn") : has("bonfire") && label("bonfire", "Bonfire"),
+    has("events") && (t?.text("pillEvents", "Event lawn") ?? "Event lawn"),
+    has("view") && label("view", "Views"),
+    has("terrace") && label("terrace", "Terrace"),
+    v.petFriendly && (t?.text("pillPets", "Pets OK") ?? "Pets OK"),
   ]
     .filter((p): p is string => Boolean(p))
     .slice(0, max);
@@ -40,7 +41,13 @@ export async function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min
   const cover = villa.photos[0];
   const soon = villa.status === "coming-soon";
   const destination = destinationName(c, villa.destination);
-  const badge = soon ? (villa.openingNote ?? "Coming soon") : villa.badge;
+  const t = labels(c, "villa");
+  const badge = soon ? (villa.openingNote ?? t.text("comingSoonBadge", "Coming soon")) : villa.badge;
+  const fromLabel = soon ? t.text("soonFromLabel", "Expected from") : t.text("fromLabel", "from");
+  const perNight = t.text("perNightLabel", "per night");
+  const facts = fill(t.text("cardFacts", "{bedrooms} bedrooms · up to {guests} guests · {baths} baths"), { bedrooms: villa.bedrooms, guests: villa.guests.max, baths: villa.bathrooms });
+  const datesLabel = t.text("cardDatesLabel", "Check dates");
+  const amenityLabel = (key: string) => c.amenities.find((a) => a.key === key)?.label;
   const img = cover ? (
     <Image
       src={cover.src}
@@ -85,17 +92,17 @@ export async function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min
               </h3>
             </div>
             <p className="shrink-0 text-right">
-              <span className="block text-[0.8125rem] text-ink-soft">{soon ? "Expected from" : "from"}</span>
+              <span className="block text-[0.8125rem] text-ink-soft">{fromLabel}</span>
               <span className="type-price text-[1.375rem] leading-tight">{formatINR(villa.priceFrom)}</span>
-              <span className="block text-[0.8125rem] text-ink-soft">per night</span>
+              <span className="block text-[0.8125rem] text-ink-soft">{perNight}</span>
             </p>
           </div>
           <p className="mt-2 text-[0.9375rem] text-ink-soft">
-            {`${villa.bedrooms} bedrooms · up to ${villa.guests.max} guests · ${villa.bathrooms} baths`}
+            {facts}
           </p>
           {/* One row only, so every card in a row ends at the same height */}
           <ul className="mt-3 mb-5 flex gap-1.5 overflow-hidden">
-            {villaPills(villa, 3).map((p) => (
+            {villaPills(villa, 3, t, amenityLabel).map((p) => (
               <li key={p} className="shrink-0 rounded-full bg-sand px-3 py-1 text-[0.8125rem] font-medium whitespace-nowrap">
                 {p}
               </li>
@@ -104,14 +111,14 @@ export async function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min
           {/* Pinned to the bottom, above the card's stretched link */}
           <div className="relative z-10 mt-auto grid grid-cols-2 gap-2.5 border-t border-line pt-4">
             <Link href={`/villas/${villa.slug}`} className={buttonClasses("outline", "sm", cn("w-full", soon && "col-span-2"))}>
-              View villa
+              {t.text("cardViewLabel", "View villa")}
             </Link>
             {!soon && (
               <EnquireTrigger
                 className={buttonClasses("primary", "sm", "w-full")}
-                prefill={{ title: "Check dates", villa: { name: villa.name, slug: villa.slug, destination, maxGuests: villa.guests.max, whatsappNumber: villa.whatsappNumber } }}
+                prefill={{ title: datesLabel, villa: { name: villa.name, slug: villa.slug, destination, maxGuests: villa.guests.max, whatsappNumber: villa.whatsappNumber } }}
               >
-                Check dates
+                {datesLabel}
               </EnquireTrigger>
             )}
           </div>
@@ -128,13 +135,13 @@ export async function VillaCard({ villa, sizes = "(min-width: 1024px) 30vw, (min
               </h3>
             </div>
             <p className="shrink-0 pt-1 text-right">
-              <span className="block text-[0.8125rem] text-ink-soft">{soon ? "Expected from" : "from"}</span>
+              <span className="block text-[0.8125rem] text-ink-soft">{fromLabel}</span>
               <span className="type-price text-[1.375rem] leading-none">{formatINR(villa.priceFrom)}</span>
-              <span className="block text-[0.8125rem] text-ink-soft">per night</span>
+              <span className="block text-[0.8125rem] text-ink-soft">{perNight}</span>
             </p>
           </div>
           <p className="mt-1.5 text-[0.9375rem] text-ink-soft">
-            {`${villa.bedrooms} bedrooms · up to ${villa.guests.max} guests · ${villa.bathrooms} baths`}
+            {facts}
           </p>
         </>
       )}

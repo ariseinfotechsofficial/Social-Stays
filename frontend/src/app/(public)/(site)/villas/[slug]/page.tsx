@@ -76,6 +76,13 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
     callPrompt: t.text("callPrompt", "Prefer to talk?"),
     waitlistBody: t.text("waitlistBody"),
     waitlistLabel: t.text("waitlistLabel", "Join the list"),
+    fromLabel: t.text("fromLabel", "From"),
+    soonFromLabel: t.text("soonFromLabel", "Expected from"),
+    perNightLabel: t.text("perNightLabel", "/ night"),
+    baseNote: t.text("baseNote", "Whole villa for up to {n} guests"),
+    weekendNote: t.text("weekendNote", "weekends {price}"),
+    cardButton: t.text("cardButton", "Check availability"),
+    mobileButton: t.text("mobileButton", "Check dates"),
   };
   const vars = { villa: villa.name };
 
@@ -140,10 +147,10 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
 
             <dl className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
               {[
-                { label: "Bedrooms", value: `${villa.bedrooms} · ${villa.bathrooms} baths` },
-                { label: "Guests", value: `Up to ${villa.guests.max}` },
-                { label: "Check-in / out", value: `${villa.checkIn} / ${villa.checkOut}` },
-                { label: "Price", value: `${soon ? "Expected from" : "From"} ${formatINR(villa.priceFrom)} / night` },
+                { label: t.text("quickBedrooms", "Bedrooms"), value: `${villa.bedrooms} · ${fill(t.text("factBathrooms", "{n} baths"), { n: villa.bathrooms })}` },
+                { label: t.text("quickGuests", "Guests"), value: fill(t.text("factGuests", "Up to {n}"), { n: villa.guests.max }) },
+                { label: t.text("quickTimes", "Check-in / out"), value: `${villa.checkIn} / ${villa.checkOut}` },
+                { label: t.text("quickPrice", "Price"), value: `${soon ? cardLabels.soonFromLabel : cardLabels.fromLabel} ${formatINR(villa.priceFrom)} ${cardLabels.perNightLabel}` },
               ].map((f) => (
                 <div key={f.label} className="rounded-[10px] border border-line bg-white px-4 py-3">
                   <dt className="text-[0.75rem] font-semibold tracking-[0.12em] text-gold-deep uppercase">{f.label}</dt>
@@ -208,7 +215,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
               )}
               {villa.host.name && (
                 <p className="mt-6 border-l-2 border-brass pl-4 text-[0.9375rem] leading-relaxed text-ink-soft">
-                  <span className="font-semibold text-ink">Hosted by {villa.host.name}.</span> {villa.host.note}
+                  <span className="font-semibold text-ink">{t.text("hostedBy", "Hosted by")} {villa.host.name}.</span> {villa.host.note}
                 </p>
               )}
             </section>
@@ -245,8 +252,8 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
                   {amenities.length > MOBILE_AMENITIES && (
                     <label className="mt-5 inline-flex cursor-pointer items-center rounded-full border border-ink/25 px-5 py-2.5 text-[0.9375rem] font-semibold has-focus-visible:outline-2 has-focus-visible:outline-gold sm:hidden">
                       <input type="checkbox" className="sr-only" />
-                      <span className="group-has-checked:hidden">Show all {amenities.length} amenities</span>
-                      <span className="hidden group-has-checked:inline">Show fewer</span>
+                      <span className="group-has-checked:hidden">{fill(t.text("showAllAmenities", "Show all {n} amenities"), { n: amenities.length })}</span>
+                      <span className="hidden group-has-checked:inline">{t.text("showFewer", "Show fewer")}</span>
                     </label>
                   )}
                 </div>
@@ -273,11 +280,11 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
                 <li className="flex gap-3">
                   <ClockIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
                   <div>
-                    <p className="font-semibold">Check-in and out</p>
+                    <p className="font-semibold">{t.text("timesTitle", "Check-in and out")}</p>
                     <p className="mt-1 text-ink-soft">
-                      In from {villa.checkIn}
+                      {t.text("timesIn", "In from")} {villa.checkIn}
                       <br />
-                      Out by {villa.checkOut}
+                      {t.text("timesOut", "Out by")} {villa.checkOut}
                     </p>
                   </div>
                 </li>
@@ -285,7 +292,7 @@ export default async function VillaPage({ params }: PageProps<"/villas/[slug]">)
                   <li className="flex gap-3">
                     <WalletIcon aria-hidden weight="light" className="size-6 shrink-0 text-gold" />
                     <div>
-                      <p className="font-semibold">Security deposit</p>
+                      <p className="font-semibold">{t.text("depositTitle", "Security deposit")}</p>
                       <p className="mt-1 text-ink-soft">
                         {formatINR(villa.securityDeposit)}, {t.text("depositNote", "refunded within 3 working days")}
                       </p>

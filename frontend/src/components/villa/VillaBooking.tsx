@@ -26,7 +26,19 @@ export type BookingVilla = {
 };
 
 /** Editable text from Pages → Villa page */
-export type CardLabels = { cardNote: string; callPrompt: string; waitlistBody: string; waitlistLabel: string };
+export type CardLabels = {
+  cardNote: string;
+  callPrompt: string;
+  waitlistBody: string;
+  waitlistLabel: string;
+  fromLabel: string;
+  soonFromLabel: string;
+  perNightLabel: string;
+  baseNote: string;
+  weekendNote: string;
+  cardButton: string;
+  mobileButton: string;
+};
 
 export function TrackVillaView({ slug, name }: { slug: string; name: string }) {
   useEffect(() => {
@@ -35,16 +47,17 @@ export function TrackVillaView({ slug, name }: { slug: string; name: string }) {
   return null;
 }
 
-function Price({ villa }: { villa: BookingVilla }) {
+function Price({ villa, labels }: { villa: BookingVilla; labels: CardLabels }) {
   return (
     <div>
       <p className="flex items-baseline gap-2">
-        <span className="text-[0.875rem] text-ink-soft">{villa.status === "live" ? "From" : "Expected from"}</span>
+        <span className="text-[0.875rem] text-ink-soft">{villa.status === "live" ? labels.fromLabel : labels.soonFromLabel}</span>
         <span className="type-price text-[2rem] leading-none">{formatINR(villa.priceFrom)}</span>
-        <span className="text-[0.875rem] text-ink-soft">/ night</span>
+        <span className="text-[0.875rem] text-ink-soft">{labels.perNightLabel}</span>
       </p>
       <p className="mt-1.5 text-[0.8125rem] text-ink-soft">
-        Whole villa for up to {villa.baseGuests} guests{villa.weekendPrice ? `; weekends ${formatINR(villa.weekendPrice)}` : ""}.
+        {fill(labels.baseNote, { n: villa.baseGuests })}
+        {villa.weekendPrice ? `; ${fill(labels.weekendNote, { price: formatINR(villa.weekendPrice) })}` : ""}.
       </p>
     </div>
   );
@@ -73,12 +86,12 @@ export function VillaEnquiryCard({ villa, labels }: { villa: BookingVilla; label
   return (
     <div className="overflow-hidden rounded-[8px] border border-line bg-white shadow-[0_30px_60px_-40px_rgb(42_36_27/0.45)]">
       <div className="px-5 pt-6 pb-4">
-        <Price villa={villa} />
+        <Price villa={villa} labels={labels} />
       </div>
       <EnquiryForm
         villa={{ name: villa.name, slug: villa.slug, destination: villa.destination, maxGuests: villa.maxGuests, whatsappNumber: villa.whatsappNumber }}
         placement="villa_sidebar"
-        submitLabel="Check availability"
+        submitLabel={labels.cardButton}
       />
       <div className="space-y-2 px-5 pb-6 text-[0.8125rem] text-ink-soft">
         <p>
@@ -118,7 +131,7 @@ export function MobileBookingBar({ villa, labels }: { villa: BookingVilla; label
               <p className="truncate text-[0.8125rem] text-ink-soft">{villa.name}</p>
               <p>
                 <span className="type-price text-xl">{formatINR(villa.priceFrom)}</span>
-                <span className="text-[0.8125rem] text-ink-soft"> / night</span>
+                <span className="text-[0.8125rem] text-ink-soft"> {labels.perNightLabel}</span>
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2">
@@ -130,12 +143,12 @@ export function MobileBookingBar({ villa, labels }: { villa: BookingVilla; label
                   size="md"
                   onClick={() =>
                     openEnquiry({
-                      title: "Check availability",
+                      title: labels.cardButton,
                       villa: { name: villa.name, slug: villa.slug, destination: villa.destination, maxGuests: villa.maxGuests, whatsappNumber: villa.whatsappNumber },
                     })
                   }
                 >
-                  Check dates
+                  {labels.mobileButton}
                 </Button>
               ) : (
                 <WhatsAppLink
