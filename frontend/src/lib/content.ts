@@ -21,13 +21,17 @@ function absolutise<T>(value: T): T {
 }
 
 /**
- * All published content. Cached by Next.js until the admin changes something (and at most an hour),
- * so pages stay static and fast. Deduplicated within a render by React's cache().
+ * All published content. Cached by Next.js until the admin changes something, so pages stay static
+ * and fast. Admin saves refresh it instantly via /api/revalidate; the 60-second limit is the safety
+ * net when that call can't reach the site (e.g. mismatched REVALIDATE_SECRET), so edits still show
+ * within a minute or two. Deduplicated within a render by React's cache().
  */
+const CONTENT_MAX_AGE = 60;
+
 export const getContent = cache(async (): Promise<Content> => {
   let res: Response;
   try {
-    res = await fetch(`${API_URL}/api/public/content`, { cache: "force-cache", next: { tags: [CONTENT_TAG], revalidate: 3600 } });
+    res = await fetch(`${API_URL}/api/public/content`, { cache: "force-cache", next: { tags: [CONTENT_TAG], revalidate: CONTENT_MAX_AGE } });
   } catch (err) {
     throw new Error(`Could not reach the Social Stays API at ${API_URL}. Is the backend running? (${(err as Error).message})`);
   }
