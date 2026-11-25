@@ -1,6 +1,6 @@
 "use client";
 
-import { CopyIcon, DotsThreeIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
+import { CopyIcon, DotsThreeIcon, MagnifyingGlassIcon, PencilSimpleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -63,7 +63,8 @@ export function ResourceList({ config }: { config: ResourceConfig }) {
   const items = list.data?.items ?? [];
   const canWrite = can(...config.perms);
   const dragging = Boolean(config.sortable && !filtered && canWrite);
-  const cols = `${dragging ? "2.25rem " : ""}${config.columns.map((c) => c.className ?? "minmax(0,1fr)").join(" ")} 2.75rem`;
+  const cols = `${dragging ? "2.25rem " : ""}${config.columns.map((c) => c.className ?? "minmax(0,1fr)").join(" ")} 4.5rem`;
+  const editHref = (doc: Doc) => `/admin/${config.key}/${doc._id}`;
 
   const row = (doc: Doc, handle?: Parameters<typeof DragHandle>[0]["handle"]) => (
     <div
@@ -72,7 +73,7 @@ export function ResourceList({ config }: { config: ResourceConfig }) {
       style={{ gridTemplateColumns: cols }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest("button,a")) return;
-        router.push(`/admin/${config.key}/${doc._id}`);
+        router.push(editHref(doc));
       }}
     >
       {handle && <DragHandle handle={handle} />}
@@ -81,17 +82,29 @@ export function ResourceList({ config }: { config: ResourceConfig }) {
           {c.render(doc)}
         </div>
       ))}
-      <Menu
-        trigger={
-          <button type="button" aria-label="More actions" className="grid size-8 place-items-center rounded-full hover:bg-sand">
-            <DotsThreeIcon weight="bold" className="size-5" />
-          </button>
-        }
-        items={[
-          config.duplicable && canWrite && { label: "Duplicate", icon: <CopyIcon className="size-4" />, onSelect: () => duplicate(doc) },
-          canWrite && { label: "Delete", icon: <TrashIcon className="size-4" />, danger: true, onSelect: () => remove(doc) },
-        ]}
-      />
+      <div className="flex items-center justify-end gap-0.5">
+        <button
+          type="button"
+          aria-label={`Edit ${config.titleOf(doc)}`}
+          title="Edit"
+          onClick={() => router.push(editHref(doc))}
+          className="grid size-8 place-items-center rounded-full text-ink-soft hover:bg-sand hover:text-ink"
+        >
+          <PencilSimpleIcon className="size-[1.125rem]" />
+        </button>
+        <Menu
+          trigger={
+            <button type="button" aria-label="More actions" className="grid size-8 place-items-center rounded-full hover:bg-sand">
+              <DotsThreeIcon weight="bold" className="size-5" />
+            </button>
+          }
+          items={[
+            { label: canWrite ? "Edit" : "View", icon: <PencilSimpleIcon className="size-4" />, onSelect: () => router.push(editHref(doc)) },
+            config.duplicable && canWrite && { label: "Duplicate", icon: <CopyIcon className="size-4" />, onSelect: () => duplicate(doc) },
+            canWrite && { label: "Delete", icon: <TrashIcon className="size-4" />, danger: true, onSelect: () => remove(doc) },
+          ]}
+        />
+      </div>
     </div>
   );
 
